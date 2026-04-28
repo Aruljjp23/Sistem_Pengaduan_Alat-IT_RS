@@ -1,0 +1,87 @@
+#edit_ruangan{
+    margin-left: auto;
+}
+
+@media (max-width: 768px) {
+
+    .search.col-md-5 {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .search .input-group {
+        width: 100%;
+    }
+
+    button.btn.btn-primary[data-bs-target="#modalTambahruangan"] {
+        display: block;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    table.table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+    }
+
+    thead th {
+        font-size: 0.82rem;
+        padding: 6px 8px;
+    }
+
+    tbody td {
+        font-size: 0.82rem;
+        padding: 6px 8px;
+        vertical-align: middle;
+    }
+
+    td .btn-sm {
+        display: inline-block;
+        margin-bottom: 4px;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .pagination .page-link {
+        padding: 4px 10px;
+        font-size: 0.85rem;
+    }
+
+    .modal-dialog {
+        margin: 10px;
+        max-width: calc(100% - 20px);
+    }
+
+    .modal-body .mb-3 {
+        margin-bottom: 0.6rem !important;
+    }
+
+    .modal-body input.form-control,
+    .modal-body select.form-control {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 400px) {
+
+    thead th,
+    tbody td {
+        font-size: 0.75rem;
+        padding: 5px 6px;
+    }
+
+    .btn-sm {
+        font-size: 0.72rem;
+        padding: 3px 7px;
+    }
+
+    .modal-body input.form-control,
+    .modal-body select.form-control {
+        font-size: 15px;
+    }
+}
