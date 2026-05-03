@@ -403,7 +403,7 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">@yield("page_title")</h1>
+                        <h1 class="mb-4 mt-4">@yield("page_title")</h1>
                         @yield("content")
                     </div>
                 </main>

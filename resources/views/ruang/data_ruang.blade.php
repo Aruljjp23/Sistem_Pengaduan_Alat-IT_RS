@@ -7,130 +7,151 @@
 <br>
 
 @if(session('success'))
-    <div class="alert alert-success fade show" role="alert">
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+        <i class="fa fa-check-circle me-2"></i> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
 
-<form id="formSearch">
-  <div class="search col-md-5">
-    <div class="input-group">
-        <input id="search" type="text" class="form-control" placeholder="search" name="search" value="{{ request()->get('search', '') }}">
-        <button type="button" class="btn btn-primary" onclick="navigateWithParams()">Submit</button>
+<div class="row mb-4 mt-3 align-items-end">
+    <div class="col-md-5">
+        <form id="formSearch" action="{{ url()->current() }}" method="GET">
+            <div class="input-group shadow-sm">
+                <input id="search" type="text" class="form-control" 
+                    placeholder="Cari nama ruangan atau lokasi..." 
+                    name="search" value="{{ request('search') }}">
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+        </form>
     </div>
-  </div>
-</form>
-<br>
-<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahruangan">
-    <i class="bi bi-person-plus-fill"></i> Add ruangan
-</button>
-<table class="table table-bordered table-hover" style="margin-top:20px">
-    <thead class="table" style="background-color: skyblue">
-        <tr>
-            <th class="text-center" scope="col">No</th>
-            <th class="text-center" scope="col">Nama Ruangan</th>
-            <th class="text-center" scope="col">Lokasi</th>
-            <th class="text-center" scope="col">Aksi</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if($data_ruangan->count() == 0)
+    <div class="col-md-7 text-md-end mt-3 mt-md-0">
+        <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#modalTambahruangan">
+            <i class="fa fa-plus-circle me-1"></i> Tambah Ruangan
+        </button>
+    </div>
+</div>
+
+<div class="table-responsive shadow-sm rounded">
+    <table class="table table-bordered table-hover mb-0">
+        <thead class="table-primary text-center">
             <tr>
-                <td colspan="5" class="text-center text-muted">Tidak ada data ruangan</td>
+                <th width="60">No</th>
+                <th>Nama Ruangan</th>
+                <th>Lokasi / Lantai</th>
+                <th width="150">Aksi</th>
             </tr>
-        @else
-            @foreach ($data_ruangan as $index => $ruangan)
-            <tr id="row-{{ $ruangan->id}}">
-                <td class="text-center">{{ $offset + (($currentLantaiPage - 1) * $perPage) + $index + 1 }}</td>
-                <td class="text-center">
-                    <a href="{{ url('/perangkat/data_perangkat?id_ruangan=' . $ruangan->id) }}">
-                        {{ $ruangan->nama_ruangan }}
+        </thead>
+        <tbody id="ruanganTable">
+            <tr id="noRoomData" style="display: none;">
+                <td colspan="4" class="text-center text-muted">
+                    Data tidak ditemukan
+                </td>
+            </tr>
+            @forelse ($data_ruangan as $index => $ruangan)
+            <tr id="row-{{ $ruangan->id }}" class="align-middle text-center">
+                <td>{{ $data_ruangan->firstItem() + $index }}</td>
+                <td class="text-start ps-4">
+                    <a href="{{ url('/perangkat/data_perangkat?id_ruangan=' . $ruangan->id) }}" class="fw-bold text-decoration-none">
+                        <i class="fa fa-door-open me-2 text-secondary"></i>{{ $ruangan->nama_ruangan }}
                     </a>
                 </td>
-                <td class="text-center">{{ $ruangan->lokasi }}</td>
-                <td class="text-center">
-                    <button class="btn btn-warning btn-sm btn-edit"
-                        data-id="{{ $ruangan->id }}"
-                        data-nama_ruangan="{{ $ruangan->nama_ruangan }}"
-                        data-lantai="{{ $ruangan->lokasi }}">
-                        <i class="fa-solid fa-pencil"></i>
-                    </button>
-                    <button class="btn btn-danger btn-sm btn-hapus"
-                        data-id="{{ $ruangan->id }}"
-                        data-nama_ruangan="{{ $ruangan->nama_ruangan }}">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
+                <td>
+                    <span class="badge bg-light text-dark border">
+                        <i class="fa fa-layer-group me-1"></i>{{ $ruangan->lokasi }}
+                    </span>
+                </td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-warning btn-sm btn-edit"
+                            data-id="{{ $ruangan->id }}"
+                            data-nama_ruangan="{{ $ruangan->nama_ruangan }}"
+                            data-lantai="{{ $ruangan->lokasi }}">
+                            <i class="fa fa-pencil"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm btn-hapus"
+                            data-id="{{ $ruangan->id }}"
+                            data-nama_ruangan="{{ $ruangan->nama_ruangan }}">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
                 </td>
             </tr>
-            @endforeach
-        @endif
-    </tbody>
-</table>
+            @empty
+            <tr>
+                <td colspan="4" class="text-center py-4 text-muted">
+                    <i class="fa fa-folder-open d-block mb-2" style="font-size: 2rem;"></i>
+                    Tidak ada data ruangan ditemukan
+                </td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
 
-@php $search = request()->get('search', ''); @endphp
-
-<nav aria-label="Page navigation">
-    <ul class="pagination">
-
-        <li class="page-item {{ $data_ruangan->onFirstPage() ? 'disabled' : '' }}">
-            <a class="page-link" href="{{ $data_ruangan->previousPageUrl() ? $data_ruangan->previousPageUrl() . '&' . http_build_query(request()->except('page')) : '#' }}" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-
-        @for ($i = 1; $i <= $data_ruangan->lastPage(); $i++)
-            <li class="page-item {{ $data_ruangan->currentPage() == $i ? 'active' : '' }}">
-                <a class="page-link" href="{{ $data_ruangan->url($i) . '&' . http_build_query(request()->except('page')) }}">
-                    @if ($search || !isset($halamanLantai1))
-                        {{ $i }}
-                    @elseif ($i <= $halamanLantai1)
-                        Lantai 1 ({{ $i }})
-                    @elseif ($i <= $halamanLantai1 + $halamanLantai2)
-                        Lantai 2 ({{ $i - $halamanLantai1 }})
-                    @else
-                        Lantai 3 ({{ $i - $halamanLantai1 - $halamanLantai2 }})
-                    @endif
+<div class="mt-4">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center shadow-sm">
+            <li class="page-item {{ $data_ruangan->onFirstPage() ? 'disabled' : '' }}">
+                <a class="page-link" href="{{ $data_ruangan->appends(request()->query())->previousPageUrl() ?? '#' }}">
+                    &laquo;
                 </a>
             </li>
-        @endfor
 
-        <li class="page-item {{ !$data_ruangan->hasMorePages() ? 'disabled' : '' }}">
-            <a class="page-link" href="{{ $data_ruangan->nextPageUrl() ? $data_ruangan->nextPageUrl() . '&' . http_build_query(request()->except('page')) : '#' }}" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
+            @for ($i = 1; $i <= $data_ruangan->lastPage(); $i++)
+                <li class="page-item {{ $data_ruangan->currentPage() == $i ? 'active' : '' }}">
+                    <a class="page-link" href="{{ $data_ruangan->url($i) . '&' . http_build_query(request()->except('page')) }}">
+                        @php
+                            $search = request('search');
+                            $label = $i;
+                            if (!$search && isset($halamanLantai1)) {
+                                if ($i <= $halamanLantai1) $label = "Lantai 1 ($i)";
+                                elseif ($i <= ($halamanLantai1 + $halamanLantai2)) $label = "Lantai 2 (" . ($i - $halamanLantai1) . ")";
+                                else $label = "Lantai 3 (" . ($i - $halamanLantai1 - $halamanLantai2) . ")";
+                            }
+                        @endphp
+                        {{ $label }}
+                    </a>
+                </li>
+            @endfor
 
-    </ul>
-</nav>
+            <li class="page-item {{ !$data_ruangan->hasMorePages() ? 'disabled' : '' }}">
+                <a class="page-link" href="{{ $data_ruangan->appends(request()->query())->nextPageUrl() ?? '#' }}">
+                    &raquo;
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
 
 <div class="modal fade" id="modalTambahruangan" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
             <form action="{{ url('ruang/data_ruang') }}" method="POST">
                 @csrf
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">Tambah Ruangan</h5>
+                    <h5 class="modal-title"><i class="fa fa-plus-circle me-2"></i>Tambah Ruangan</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label">Nama Ruangan</label>
-                        <input type="text" class="form-control" name="nama_ruangan" placeholder="Masukkan nama ruangan" required>
+                        <label class="form-label fw-bold">Nama Ruangan</label>
+                        <input type="text" class="form-control" name="nama_ruangan" placeholder="Contoh: Ruang Farmasi" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Lantai</label>
-                        <select class="form-control" name="lantai" aria-label="Default select example">
-                            <option selected><---- Pilih Lantai ----></option>
+                        <label class="form-label fw-bold">Pilih Lokasi Lantai</label>
+                        <select class="form-select" name="lantai" required>
+                            <option value="" hidden>-- Pilih Lantai --</option>
                             <option value="Lantai 1">Lantai 1</option>
                             <option value="Lantai 2">Lantai 2</option>
                             <option value="Lantai 3">Lantai 3</option>
                         </select>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer bg-light">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="submit" class="btn btn-primary px-4">Simpan Ruangan</button>
                 </div>
             </form>
         </div>
@@ -138,32 +159,32 @@
 </div>
 
 <div class="modal fade" id="modalEditruangan" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
             <form id="formEditruangan" method="POST">
                 @csrf
                 <div class="modal-header bg-warning">
-                    <h5 class="modal-title">Edit ruangan</h5>
+                    <h5 class="modal-title fw-bold"><i class="fa fa-edit me-2"></i>Edit Ruangan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label">Nama Ruangan</label>
+                        <label class="form-label fw-bold">Nama Ruangan</label>
                         <input type="text" class="form-control" id="edit_ruangan" name="nama_ruangan" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Lantai</label>
-                        <select class="form-control" name="lokasi" id="edit_lokasi" aria-label="Default select example">
-                            <option selected><---- Pilih Lantai ----></option>
+                        <label class="form-label fw-bold">Lokasi Lantai</label>
+                        <select class="form-select" name="lokasi" id="edit_lokasi" required>
+                            <option value="" hidden>-- Pilih Lantai --</option>
                             <option value="Lantai 1">Lantai 1</option>
                             <option value="Lantai 2">Lantai 2</option>
                             <option value="Lantai 3">Lantai 3</option>
                         </select>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer bg-light">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-warning">Update</button>
+                    <button type="submit" class="btn btn-warning px-4 fw-bold">Update Data</button>
                 </div>
             </form>
         </div>
@@ -171,22 +192,19 @@
 </div>
 
 <div class="modal fade" id="modalHapusruangan" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Hapus ruangan</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body text-center">
-                <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 2rem;"></i>
-                <p class="mt-2">Apakah Anda yakin ingin menghapus ruangan <strong id="hapus_nama_ruangan"></strong>?</p>
-            </div>
-            <div class="modal-footer justify-content-center">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <form id="formHapus" method="POST">
-                    @csrf
-                    <button type="submit" class="btn btn-danger">Ya, Hapus</button>
-                </form>
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-body text-center p-4">
+                <i class="fa fa-exclamation-circle text-danger mb-3" style="font-size: 3.5rem;"></i>
+                <h5 class="fw-bold">Hapus Ruangan?</h5>
+                <p class="text-muted small">Anda akan menghapus <strong id="hapus_nama_ruangan" class="text-dark"></strong>. Data yang terkait mungkin ikut terhapus.</p>
+                <div class="d-flex gap-2 justify-content-center mt-4">
+                    <button type="button" class="btn btn-light w-50" data-bs-dismiss="modal">Batal</button>
+                    <form id="formHapus" method="POST" class="w-50">
+                        @csrf
+                        <button type="submit" class="btn btn-danger w-100 shadow-sm">Ya, Hapus</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

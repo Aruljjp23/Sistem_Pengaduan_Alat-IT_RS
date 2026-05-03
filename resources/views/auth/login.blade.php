@@ -35,11 +35,11 @@
                @csrf
                <div class="field">
                   <span class="fa fa-user"></span>
-                  <input type="text" name="name" required placeholder="Username">
+                  <input type="text" name="name" id="input-name" value="{{ old('name') }}" placeholder="Username">
                </div>
                <div class="field space">
                   <span class="fa fa-lock"></span>
-                  <input type="password" name="password" class="pass-key" required placeholder="Password">
+                  <input type="password" name="password" class="pass-key" required placeholder="Password" title="Password maksimal 10 karakter">
                   <span class="show">SHOW</span>
                </div>
                <br>

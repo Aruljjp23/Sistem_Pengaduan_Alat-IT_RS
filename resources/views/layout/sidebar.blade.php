@@ -88,6 +88,29 @@
                         Laporan Pengaduan
                     </a>
 
+                @elseif(Auth::user()->role == "teknisi")
+
+                    <a class="nav-link" href="{{ url('homepage') }}" style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                        <div class="sb-nav-link-icon"><i class="fas fa-chart-line" style="color: #ffffff;"></i></div>
+                        Homepage
+                    </a>
+
+                    <div class="sb-sidenav-menu-heading" style="color: #ffffff !important;">Pengaduan</div>
+                    <a class="nav-link" href="{{ url('/tindakan/data_tindakan') }}" style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                        <div class="sb-nav-link-icon"><i class="fas fa-exclamation-triangle" style="color: #ffffff;"></i></div>
+                        Data Pengaduan
+                    </a>
+
+                    <div class="sb-sidenav-menu-heading" style="color: #ffffff !important;">Tindakan Pengaduan</div>
+                     <a class="nav-link" href="{{ url('/pengaduan/data_pengaduan') }}" style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                        <div class="sb-nav-link-icon"><i class="fas fa-comments" style="color: #ffffff;"></i></div>
+                        Edit Pengaduan
+                    </a>
+                    <a class="nav-link" href="{{ url('/tindakan/riwayat_tindakan') }}" style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                        <div class="sb-nav-link-icon"><i class="fas fa-history" style="color: #ffffff;"></i></div>
+                        Riwayat Pengaduan
+                    </a>
+
                 @elseif(Auth::user()->role == "pengadu")
 
                     @php

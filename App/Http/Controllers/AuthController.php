@@ -12,65 +12,96 @@ class AuthController extends Controller
         return view('auth/login');
     }
 
-    public function login(Request $request){
-
+    public function login(Request $request)
+    {
         $request->validate([
-            'name' => 'required',
-            'password' => 'required'
+            'name' => [
+                'required',
+                'max:10',
+                'regex:/^[A-Z][a-zA-Z0-9]*$/'
+            ],
+            'password' => 'required|max:10'
+        ], [
+            'name.required' => 'Username wajib diisi',
+            'name.max' => 'Username maksimal 10 karakter',
+            'name.regex' => 'Username harus diawali huruf besar dan tanpa simbol',
+            'password.required' => 'Password wajib diisi',
+            'password.max' => 'Password maksimal 10 karakter'
         ]);
 
-        $credentials = $request->only('name', 'password');
+        if (filter_var($request->name, FILTER_VALIDATE_EMAIL)) {
+            return back()->withErrors(['name' => 'Username tidak boleh berupa email']);
+        }
+
         $user = DB::table('users')->where('name', $request->name)->first();
 
-        if (!$user) 
-        {
-            return redirect()->back()->with('error', 'Login gagal, pengguna tidak ditemukan');
+        if (!$user) {
+            return back()->with('error', 'Login gagal, username tidak ditemukan');
         }
 
-        if (Auth::attempt($credentials)) 
-        {
+        if (Auth::attempt($request->only('name', 'password'))) {
+
             $role = Auth::user()->role;
 
-            if (is_null($role) || $role === '') {
+            if (!$role) {
                 Auth::logout();
-                return redirect()->back()->with('error', 'Akun Anda belum memiliki role. Silakan hubungi Admin.');
+                return back()->with('error', 'Akun belum memiliki role, hubungi admin');
             }
 
-            if ($role == 'admin') 
-            {
-                return redirect('dashboard')->with('pesan', 'Login Sebagai Admin Success');
+            switch ($role) {
+                case 'admin':
+                    return redirect('dashboard')->with('pesan', 'Login sebagai Admin berhasil');
 
-            } elseif ($role == 'teknisi') {
-                return redirect('/home')->with('pesan', 'Login Sebagai Pegawai Success');
+                case 'teknisi':
+                    return redirect('homepage')->with('pesan', 'Login sebagai Teknisi berhasil');
 
-            } elseif ($role == 'pengadu') {
-                $id_ruangan = Auth::user()->id_ruangan;
-                return redirect('/pengaduan/form_pengaduan/' . $id_ruangan)->with('pesan', 'Login Sebagai Pengaduan Success');    
-            } else {
-                Auth::logout();
-                return redirect()->back()->with('error', 'Role tidak dikenali. Silakan hubungi Admin.');
+                case 'pengadu':
+                    $id_ruangan = Auth::user()->id_ruangan;
+                    return redirect('/pengaduan/form_pengaduan/' . $id_ruangan)
+                        ->with('pesan', 'Login sebagai Pengadu berhasil');
+
+                default:
+                    Auth::logout();
+                    return back()->with('error', 'Role tidak dikenali');
             }
-
-        } else {
-            return redirect()->back()->with('error', 'Login gagal, password salah');
         }
+
+        return back()->with('error', 'Login gagal, password salah');
     }
 
     public function form_register(){
         return view('auth/register');
     }
 
-    public function register(Request $request){
-        
+    public function register(Request $request)
+    {
         $request->validate([
-            'name' => 'required',
-            'password' => 'required|min:6'
+            'name' => [
+                'required',
+                'max:20',
+                'unique:users,name',
+                'regex:/^[A-Z][a-zA-Z0-9]*$/'
+            ],
+            'password' => 'required|max:10'
+        ], [
+            'name.required' => 'Username wajib diisi',
+            'name.max' => 'Username maksimal 20 karakter',
+            'name.unique' => 'Username sudah digunakan',
+            'name.regex' => 'Username harus diawali huruf besar dan hanya boleh huruf & angka',
+            'password.required' => 'Password wajib diisi',
+            'password.max' => 'Password maksimal 10 karakter'
         ]);
+
+        if (filter_var($request->name, FILTER_VALIDATE_EMAIL)) {
+            return back()->withErrors([
+                'name' => 'Username tidak boleh menggunakan format email (contoh: user123)'
+            ]);
+        }
 
         DB::table('users')->insert([
             'name' => $request->name,
-            'password' => bcrypt($request->input('password')),
-            'role' => null,      
+            'password' => bcrypt($request->password),
+            'role' => null,
             'created_at' => now(),
             'updated_at' => now()
         ]);

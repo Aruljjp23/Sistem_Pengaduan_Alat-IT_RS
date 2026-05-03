@@ -1,25 +1,31 @@
-let searchTimeout;
+document.addEventListener('DOMContentLoaded', function () {
 
-document.getElementById('search').addEventListener('input', function () {
-    clearTimeout(searchTimeout);
-    const value = this.value;
+    const input = document.getElementById('search');
+    if (!input) return;
 
-    searchTimeout = setTimeout(() => {
-        if (value.length >= 2 || value.length === 0) {
-            navigateWithParams();
-        }
-    }, 2000);
+    input.addEventListener('keyup', function () {
+        let keyword = this.value.toLowerCase();
+        let rows = document.querySelectorAll('#ruanganTable tr');
+
+        rows.forEach(function(row) {
+
+            if (row.id === 'noRoomData') return;
+
+            let nama = row.children[1]?.innerText.toLowerCase() || '';
+            let lokasi = row.children[2]?.innerText.toLowerCase() || '';
+
+            if (nama.includes(keyword) || lokasi.includes(keyword)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+
+        });
+
+        document.getElementById('noRoomData').style.display = found ? 'none' : '';
+    });
+
 });
-
-function navigateWithParams() {
-    const search = document.getElementById('search').value;
-
-    const params = new URLSearchParams();
-    if (search) params.append('search', search);
-
-    const query = params.toString();
-    window.location.href = '/ruang/data_ruang/cari' + (query ? '?' + query : '');
-}
 
 document.getElementById('modalTambahruangan').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {

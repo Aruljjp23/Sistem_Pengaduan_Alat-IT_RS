@@ -1,6 +1,5 @@
 const baseUrl = "{{ url('') }}";
 
-
 document.querySelectorAll('.btn-edit').forEach(function(btn) {
     btn.addEventListener('click', function() {
         const id    = this.dataset.id;
@@ -37,25 +36,29 @@ document.querySelectorAll('.btn-hapus').forEach(function(btn) {
     });
 });
 
-let searchTimeout;
+document.addEventListener('DOMContentLoaded', function () {
 
-document.getElementById('searchInput').addEventListener('input', function () {
-    clearTimeout(searchTimeout);
-    const value = this.value;
+    const searchInput = document.getElementById('searchInput');
 
-    searchTimeout = setTimeout(() => {
-        if (value.length >= 2 || value.length === 0) {
-            navigateWithParams();
-        }
-    }, 500);
+    if (!searchInput) return;
+
+    searchInput.addEventListener('keyup', function () {
+        let keyword = this.value.toLowerCase();
+        let rows = document.querySelectorAll('#userTable tr');
+
+        rows.forEach(function(row) {
+            if (row.id === 'noUserData') return; 
+            let name = row.children[1]?.innerText.toLowerCase() || '';
+            let role = row.children[2]?.innerText.toLowerCase() || '';
+
+            if (name.includes(keyword) || role.includes(keyword)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        document.getElementById('noUserData').style.display = found ? 'none' : '';
+    });
+
 });
-
-function navigateWithParams() {
-    const search = document.getElementById('searchInput').value;
-
-    const params = new URLSearchParams();
-    if (search) params.append('search', search);
-
-    const query = params.toString();
-    window.location.href = '/user/data_user' + (query ? '?' + query : '');
-}

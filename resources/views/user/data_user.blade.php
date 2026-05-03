@@ -4,283 +4,234 @@
 
 @section('content')
 <style>
-    @media (max-width: 768px) {
- 
-    table.table {
-        display: block;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        white-space: nowrap;
-    }
- 
-    .search.col-md-5 {
-        width: 100% !important;
-        max-width: 100% !important;
-    }
 
-    .search .input-group {
-        width: 100%;
+    .table-responsive-custom { margin-top: 20px; }
+    .action-btns .btn { margin: 2px; }
+
+    @media (max-width: 768px) {
+        .table-responsive-custom {
+            display: block;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .search-container, .btn-add-user {
+            width: 100% !important;
+            margin-bottom: 15px;
+        }
+        .pagination { 
+            justify-content: center;
+            flex-wrap: wrap; 
+        }
+        .form-mobile-lg { font-size: 16px; } 
     }
- 
-    button.btn.btn-primary[data-bs-target="#modalTambahUser"] {
-        width: 100%;
-        margin-bottom: 10px;
-    }
- 
-    .btn[data-bs-toggle="modal"] {
-        display: block;
-        width: 100%;
-    }
- 
-    td .btn-sm {
-        display: inline-block;
-        margin-bottom: 4px;
-    }
- 
-    .pagination {
-        flex-wrap: wrap;
-        gap: 4px;
-    }
- 
-    .pagination .page-link {
-        padding: 4px 10px;
-        font-size: 0.85rem;
-    }
- 
-    .modal-dialog {
-        margin: 10px;
-        max-width: calc(100% - 20px);
-    }
- 
-    .modal-body .mb-3 {
-        margin-bottom: 0.6rem !important;
-    }
- 
-    .modal-body input.form-control,
-    .modal-body select.form-control,
-    .modal-body select.form-select {
-        font-size: 16px;
-    }
- 
-    thead th {
-        font-size: 0.82rem;
-        padding: 6px 8px;
-    }
- 
-    tbody td {
-        font-size: 0.82rem;
-        padding: 6px 8px;
-        vertical-align: middle;
-    }
- 
-    .badge {
-        font-size: 0.72rem;
-        padding: 4px 7px;
-    }
-}
- 
-@media (max-width: 400px) {
- 
-    thead th,
-    tbody td {
-        font-size: 0.75rem;
-        padding: 5px 6px;
-    }
- 
-    .btn-sm {
-        font-size: 0.72rem;
-        padding: 3px 7px;
-    }
- 
-    .modal-body input.form-control,
-    .modal-body select.form-control,
-    .modal-body select.form-select {
-        font-size: 15px;
-    }
-}
- 
 </style>
+
 <br>
 
 @if(session('success'))
-    <div class="alert alert-success" role="alert">
-        {{ session('success') }}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fa fa-check-circle me-2"></i> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
 
-<form id="formSearch">
-    <div class="search col-md-5 mb-3">
-        <div class="input-group">
-            <input id="searchInput" type="text" class="form-control" 
-                placeholder="Cari nama, ruangan, role..." 
-                name="search" 
-                value="{{ request()->get('search', '') }}"
-                autocomplete="off">
-            <button type="button" class="btn btn-primary" onclick="navigateWithParams()">Submit</button>
-        </div>
+<div class="row mb-4 align-items-end">
+    <div class="col-md-5 search-container">
+        <form id="formSearch" action="{{ url()->current() }}" method="GET">
+            <label class="form-label d-none d-md-block">Cari Pengguna</label>
+            <div class="input-group">
+                <input id="searchInput" type="text" class="form-control" 
+                    placeholder="Cari nama, ruangan, role..." 
+                    name="search" value="{{ request('search') }}" autocomplete="off">
+                <button class="btn btn-primary" type="submit">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+        </form>
     </div>
-</form>
+    <div class="col-md-7 text-md-end">
+        <button class="btn btn-primary btn-add-user" data-bs-toggle="modal" data-bs-target="#modalTambahUser">
+            <i class="fa fa-plus-circle me-1"></i> Tambah User
+        </button>
+    </div>
+</div>
 
-<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahUser">
-    <i class="fa fa-plus"></i> Add User
-</button>
+<div class="table-responsive-custom">
+    <table class="table table-bordered table-hover shadow-sm">
+        <thead class="table-primary text-center">
+            <tr>
+                <th width="50">No</th>
+                <th>Username</th>
+                <th>Role</th>
+                <th width="150">Aksi</th>
+            </tr>
+        </thead>
+        <tbody id="userTable">
+            <tr id="noUserData" style="display: none;">
+                <td colspan="4" class="text-center text-muted">
+                    Data tidak ditemukan
+                </td>
+            </tr>
+            @forelse ($data_user as $index => $user)
+            <tr class="text-center align-middle">
+                <td>{{ $data_user->firstItem() + $index }}</td>
+                <td class="text-start ps-3">{{ $user->name }}</td>
+                <td>
+                    @php
+                        $badgeClass = [
+                            'admin' => 'bg-info',
+                            'teknisi' => 'bg-success',
+                            'pengadu' => 'bg-secondary'
+                        ][$user->role] ?? 'bg-dark';
+                    @endphp
+                    <span class="badge {{ $badgeClass }} text-capitalize">{{ $user->role }}</span>
+                </td>
+                <td class="action-btns">
+                    <button class="btn btn-warning btn-sm btn-edit"
+                        data-id="{{ $user->id }}"
+                        data-name="{{ $user->name }}"
+                        data-role="{{ $user->role }}"
+                        data-id_ruangan="{{ $user->id_ruangan }}">
+                        <i class="fa-solid fa-pencil"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm btn-hapus"
+                        data-id="{{ $user->id }}"
+                        data-name="{{ $user->name }}">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="4" class="text-center">Data tidak ditemukan.</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
 
-<table class="table table-bordered table-hover" style="margin-top:20px">
-    <thead class="table-primary">
-        <tr class="text-center">
-            <th scope="col">No</th>
-            <th scope="col">Username</th>
-            <th scope="col">Role</th>
-            <th scope="col">Aksi</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ($data_user as $index => $user)
-        <tr class="text-center">
-            <td>{{ $index + 1 }}</td>
-            <td>{{ $user->name }}</td>
-            <td>
-                @if($user->role === 'admin')
-                    <span class="badge bg-info">Admin</span>
-                @elseif($user->role === 'teknisi')
-                    <span class="badge bg-success">Teknisi</span>
-                @else
-                    <span class="badge bg-secondary">Pengadu</span>
-                @endif
-            </td>
-            <td>
-                <button class="btn btn-warning btn-sm btn-edit"
-                    data-id="{{ $user->id }}"
-                    data-name="{{ $user->name }}"
-                    data-role="{{ $user->role }}"
-                    data-id_ruangan="{{ $user->id_ruangan }}">
-                    <i class="fa-solid fa-pencil"></i>
-                </button>
-                <button class="btn btn-danger btn-sm btn-hapus"
-                    data-id="{{ $user->id }}"
-                    data-name="{{ $user->name }}">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
-            </td>
-        </tr>
-        @endforeach
-    </tbody>
-</table>
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <div class="text-muted small">
+        Showing {{ $data_user->firstItem() }} to {{ $data_user->lastItem() }} of {{ $data_user->total() }} entries
+    </div>
+    {{ $data_user->appends(request()->query())->links('pagination::bootstrap-5') }}
+</div>
 
-<nav aria-label="Page navigation">
-    <ul class="pagination">
-        <li class="page-item {{ $data_user->onFirstPage() ? 'disabled' : '' }}">
-            <a class="page-link" href="{{ $data_user->previousPageUrl() ? $data_user->previousPageUrl() . '&' . http_build_query(request()->except('page')) : '#' }}">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-
-        @for ($i = 1; $i <= $data_user->lastPage(); $i++)
-            <li class="page-item {{ $data_user->currentPage() == $i ? 'active' : '' }}">
-                <a class="page-link" href="{{ $data_user->url($i) . '&' . http_build_query(request()->except('page')) }}">
-                    {{ $i }}
-                </a>
-            </li>
-        @endfor
-
-        <li class="page-item {{ !$data_user->hasMorePages() ? 'disabled' : '' }}">
-            <a class="page-link" href="{{ $data_user->nextPageUrl() ? $data_user->nextPageUrl() . '&' . http_build_query(request()->except('page')) : '#' }}">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-    </ul>
-</nav>
-
-<div class="modal fade" id="modalTambahUser" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+<div class="modal fade" id="modalTambahUser" tabindex="-1" aria-labelledby="modalTambahLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg border-0">
             <form action="{{ url('user/data_user') }}" method="POST">
                 @csrf
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">Tambah User</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="modalTambahLabel">
+                        <i class="fa fa-user-plus me-2"></i>Tambah User Baru
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label">Username</label>
-                        <input type="text" class="form-control" name="name" placeholder="Masukkan username" required>
+                        <label class="form-label fw-bold">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa fa-user"></i></span>
+                            <input type="text" class="form-control" name="name" placeholder="Masukkan username" required>
+                            @error('name')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Ruangan</label>
-                        <select name="id_ruangan" class="form-control" id="id_ruangan">
-                            <option value=""><-- Tidak Ada --></option>
+                        <label class="form-label fw-bold">Ruangan</label>
+                        <select name="id_ruangan" class="form-select" id="id_ruangan">
+                            <option value="" selected>-- Pilih Ruangan (Opsional) --</option>
                             @foreach($data_ruangan as $ruangan)
-                            <option value="{{$ruangan->id}}">{{$ruangan->nama_ruangan}}</option>
+                                <option value="{{$ruangan->id}}">{{$ruangan->nama_ruangan}}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input type="text" class="form-control" name="password" placeholder="Masukkan password" required>
+                        <label class="form-label fw-bold">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                            <input type="password" class="form-control" name="password" placeholder="Maksimal 10 karakter" required>
+                            @error('password')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Role</label>
+                        <label class="form-label fw-bold">Role Access</label>
                         <select class="form-select" name="role" required>
-                            <option value="" disabled>Pilih Role</option>
+                            <option value="" disabled selected>Pilih Role...</option>
                             <option value="admin">Admin</option>
                             <option value="teknisi">Teknisi</option>
                             <option value="pengadu">Pengadu</option>
                         </select>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="fa fa-save me-1"></i> Simpan Data
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="modalEditUser" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+<div class="modal fade" id="modalEditUser" tabindex="-1" aria-labelledby="modalEditLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg border-0">
             <form id="formEditUser" method="POST">
                 @csrf
                 <div class="modal-header bg-warning">
-                    <h5 class="modal-title">Edit User</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title fw-bold" id="modalEditLabel">
+                        <i class="fa fa-edit me-2"></i>Edit Informasi User
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label">Username</label>
+                        <label class="form-label fw-bold">Username</label>
                         <input type="text" class="form-control" id="edit_name" name="name" required>
+                        @error('name')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
                     </div>
-                    {{-- <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" id="edit_email" name="email" required>
-                    </div> --}}
                     <div class="mb-3">
-                        <option value="">-- Tidak Ada --</option>
-                        <select name="id_ruangan" class="form-control" id="edit_id_ruangan">
-                            <option value=""><-- Tidak Ada --></option>
+                        <label class="form-label fw-bold">Ruangan</label>
+                        <select name="id_ruangan" class="form-select" id="edit_id_ruangan">
+                            <option value="">-- Tidak Ada --</option>
                             @foreach($data_ruangan as $ruangan)
-                            <option value="{{$ruangan->id}}">{{$ruangan->nama_ruangan}}</option>
+                                <option value="{{$ruangan->id}}">{{$ruangan->nama_ruangan}}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Password Baru <small class="text-muted">(kosongkan jika tidak diubah)</small></label>
-                        <input type="text" class="form-control" id="edit_password" name="password" placeholder="Password baru">
+                        <label class="form-label fw-bold">Password Baru</label>
+                        <input type="password" class="form-control" id="edit_password" name="password" placeholder="Kosongkan jika tidak ingin diubah">
+                        @error('password')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                        <div class="form-text text-muted small">
+                            <i class="fa fa-info-circle me-1"></i> Biarkan kosong jika tetap menggunakan password lama.
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Role</label>
+                        <label class="form-label fw-bold">Role Access</label>
                         <select class="form-select" id="edit_role" name="role" required>
-                            <option value="" disabled selected>Pilih Role</option>
                             <option value="admin">Admin</option>
                             <option value="teknisi">Teknisi</option>
                             <option value="pengadu">Pengadu</option>
                         </select>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-warning">Update</button>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-warning px-4 fw-bold">
+                        <i class="fa fa-sync me-1"></i> Update Data
+                    </button>
                 </div>
             </form>
         </div>
@@ -288,24 +239,39 @@
 </div>
 
 <div class="modal fade" id="modalHapusUser" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Hapus User</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-danger text-white justify-content-center">
+                <h5 class="modal-title">Konfirmasi Hapus</h5>
             </div>
-            <div class="modal-body text-center">
-                <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 2rem;"></i>
-                <p class="mt-2">Apakah Anda yakin ingin menghapus user <strong id="hapus_name"></strong>?</p>
+            <div class="modal-body text-center p-4">
+                <div class="mb-3">
+                    <i class="fa fa-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+                </div>
+                <p class="mb-0">Anda yakin ingin menghapus user:</p>
+                <h5 class="fw-bold mt-2" id="hapus_name"></h5>
+                <p class="text-muted small">Tindakan ini tidak dapat dibatalkan.</p>
             </div>
-            <div class="modal-footer justify-content-center">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <a id="btnHapusKonfirmasi" href="#" class="btn btn-danger">Ya, Hapus</a>
+            <div class="modal-footer border-0 justify-content-center pb-4">
+                <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Batal</button>
+                <a id="btnHapusKonfirmasi" href="#" class="btn btn-danger px-4 shadow-sm">
+                    <i class="fa fa-trash me-1"></i> Ya, Hapus
+                </a>
             </div>
         </div>
     </div>
 </div>
-
+@if ($errors->any())
+<script>
+    var tambahModal = new bootstrap.Modal(document.getElementById('modalTambahUser'));
+    tambahModal.show();
+</script>
+@endif
+@if(session('edit_error'))
+<script>
+    var editModal = new bootstrap.Modal(document.getElementById('modalEditUser'));
+    editModal.show();
+</script>
+@endif
 <script  src="{{ asset('js/data_user.js') }}"></script>
-
 @endsection

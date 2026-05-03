@@ -5,299 +5,268 @@
 @section('content')
 
 <style>
-    .th-lp th {
-        background-color: darkorange;
+    :root {
+        --primary-orange: #ff8c00;
+        --primary-dark: #e67e00;
+        --soft-orange: #fff5e6;
+        --border-color: #e0e4ea;
+        --text-muted: #6c757d;
+    }
+
+    .report-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .table thead {
+        background-color: var(--primary-orange);
         color: white;
     }
-    .modal-header-detail {
-        background-color: darkorange;
-        color: white;
-    }
-    .detail-label {
+
+    .table thead th {
         font-weight: 600;
-        color: #555;
-        width: 120px;
-        display: inline-block;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        border: none;
+        padding: 15px;
+    }
+
+    .modal-header-detail {
+        background: linear-gradient(45deg, var(--primary-orange), var(--primary-dark));
+        color: white;
+        border-bottom: none;
+    }
+
+    .detail-row {
+        display: flex;
+        padding: 12px 0;
+        border-bottom: 1px solid #f8f9fa;
+    }
+
+    .detail-label {
+        font-weight: 700;
+        color: #444;
+        width: 140px;
+        flex-shrink: 0;
+    }
+
+    .badge-selesai {
+        background-color: #d1fae5;
+        color: #065f46;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 600;
     }
 
     @media print {
         .no-print { display: none !important; }
-        .print-header { display: block !important; }
-        body { font-size: 12px; }
+        .print-only { display: block !important; }
+        .report-card { box-shadow: none; border: none; }
+        body { background: white; padding: 0; }
     }
-    .print-header { display: none; }
+    .print-only { display: none; }
 </style>
 
 @if(session('success'))
-    <div class="alert alert-success" role="alert">
-        {{ session('success') }}
+    <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
+        <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 @endif
 
-{{-- Form Filter --}}
-<form action="{{ url('/pengaduan/laporan_pengaduan') }}" method="GET" class="mb-3 no-print">
-    <div class="row g-2 align-items-end">
-        <div class="col-md-4">
-            <label class="form-label">Cari</label>
-            <input type="text" class="form-control" name="search"
-                placeholder="Nama pengadu, ruangan, lokasi..."
-                value="{{ request('search') }}"
-                id="inputSearch"
-                autocomplete="off">
-        </div>
-        <div class="col-md-3">
-            <label class="form-label">Tanggal</label>
-            <input type="date" class="form-control" name="tanggal"
-                value="{{ request('tanggal') }}">
-        </div>
-        <div class="col-md-3 d-flex gap-2">
-            <button type="submit" class="btn btn-primary w-100">
-                <i class="fas fa-search"></i> Cari
-            </button>
-            <a href="{{ url('/pengaduan/laporan_pengaduan') }}" class="btn btn-secondary w-100">
-                <i class="fas fa-times-circle"></i> Reset
-            </a>
-        </div>
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 no-print">
+    <div>
+        <h4 class="fw-bold mb-1">Daftar Laporan</h4>
+        <p class="text-muted small mb-0">Kelola dan ekspor data pengaduan yang telah selesai.</p>
     </div>
-</form>
-
-<div class="d-flex gap-2 mb-3 no-print">
-    <a href="{{ url('/pengaduan/cetak_pdf') }}?search={{ request('search') }}&tanggal={{ request('tanggal') }}" target="_blank" class="btn btn-danger">
-        <i class="fas fa-file-pdf"></i> Cetak PDF
-    </a>
-    <button onclick="eksporExcel()" class="btn btn-success">
-        <i class="fas fa-file-excel"></i> Export Excel
-    </button>
+    <div class="d-flex gap-2">
+        <a href="{{ url('/pengaduan/cetak_pdf') }}?search={{ request('search') }}&tanggal={{ request('tanggal') }}" 
+           target="_blank" class="btn btn-outline-danger shadow-sm">
+            <i class="fas fa-file-pdf me-2"></i> PDF
+        </a>
+        <button onclick="eksporExcel()" class="btn btn-success shadow-sm">
+            <i class="fas fa-file-excel me-2"></i> Excel
+        </button>
+    </div>
 </div>
 
-<div class="print-header text-center mb-3">
-    <h4 class="fw-bold">Laporan Pengaduan</h4>
-    <p class="mb-0">Dicetak pada: {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y H:i') }}</p>
-    @if(request('search'))
-        <p class="mb-0">Filter Pencarian: {{ request('search') }}</p>
-    @endif
-    @if(request('tanggal'))
-        <p class="mb-0">Filter Tanggal: {{ \Carbon\Carbon::parse(request('tanggal'))->locale('id')->translatedFormat('d F Y') }}</p>
-    @endif
+<div class="report-card no-print p-4">
+    <form action="{{ url('/pengaduan/laporan_pengaduan') }}" method="GET">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label fw-bold small text-muted">CARI INFORMASI</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                    <input type="text" class="form-control border-start-0 ps-0" name="search"
+                        placeholder="Nama pengadu, ruangan, lokasi..." value="{{ request('search') }}">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold small text-muted">FILTER TANGGAL</label>
+                <input type="date" class="form-control" name="tanggal" value="{{ request('tanggal') }}">
+            </div>
+            <div class="col-md-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary px-4">Filter Data</button>
+                <a href="{{ url('/pengaduan/laporan_pengaduan') }}" class="btn btn-light border">Reset</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+{{-- Print Header --}}
+<div class="print-only text-center mb-5">
+    <h2 class="fw-bold">LAPORAN DATA PENGADUAN</h2>
+    <p>Periode laporan: {{ request('tanggal') ? \Carbon\Carbon::parse(request('tanggal'))->format('d/m/Y') : 'Semua Data' }}</p>
     <hr>
 </div>
 
-<table class="table table-bordered table-hover" id="tabelLaporan">
-    <thead class="th-lp">
-        <tr>
-            <th class="text-center">No</th>
-            <th class="text-center">Tanggal</th>
-            <th class="text-center">Pengadu</th>
-            <th class="text-center">Ruangan</th>
-            <th class="text-center">Lokasi</th>
-            <th class="text-center">Status</th>
-            <th class="text-center no-print">Aksi</th>
-        </tr>
-    </thead>
-    <tbody>
-        @forelse($pengaduan as $index => $item)
-        <tr class="text-center align-middle">
-            <td>{{ $index + 1 }}</td>
-            <td>{{ \Carbon\Carbon::parse($item->tanggal)->locale('id')->translatedFormat('d F Y') }}</td>
-            <td>{{ $item->nama_pengadu }}</td>
-            <td>{{ $item->nama_ruangan }}</td>
-            <td>{{ $item->lokasi }}</td>
-            <td>
-                <span class="badge bg-success text-white">Selesai</span>
-            </td>
-            <td class="no-print">
-                <button
-                    class="btn btn-info btn-sm text-white"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalDetail"
-                    data-tanggal="{{ \Carbon\Carbon::parse($item->tanggal_tindakan)->locale('id')->translatedFormat('d F Y') }}"
-                    data-pengadu="{{ $item->nama_pengadu }}"
-                    data-ruangan="{{ $item->nama_ruangan }}"
-                    data-kondisi="{{ $item->kondisi }}"
-                    data-teknisi="{{ $item->teknisi }}"
-                >
-                    <i class="fa fa-eye"></i> Detail
-                </button>
-            </td>
-        </tr>
-        @empty
-        <tr>
-            <td colspan="7" class="text-center text-muted py-4">
-                Tidak ada data laporan pengaduan.
-            </td>
-        </tr>
-        @endforelse
-    </tbody>
-</table>
+<div class="report-card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" id="tabelLaporan">
+            <thead>
+                <tr>
+                    <th class="text-center" width="60">No</th>
+                    <th>Tanggal</th>
+                    <th>Nama Pengadu</th>
+                    <th>Informasi Ruangan</th>
+                    <th>Lokasi</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center no-print" width="120">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($pengaduan as $index => $item)
+                <tr>
+                    <td class="text-center fw-bold">{{ $index + 1 }}</td>
+                    <td>
+                        <div class="fw-bold">{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d M Y') }}</div>
+                        <small class="text-muted">{{ \Carbon\Carbon::parse($item->tanggal)->format('H:i') }} WIB</small>
+                    </td>
+                    <td>{{ $item->nama_pengadu }}</td>
+                    <td>
+                        <span class="d-block fw-bold text-primary">{{ $item->nama_ruangan }}</span>
+                        <small class="text-muted">{{ $item->kode_perangkat ?? '-' }}</small>
+                    </td>
+                    <td><i class="fas fa-map-marker-alt text-danger me-1 small"></i>{{ $item->lokasi }}</td>
+                    <td class="text-center">
+                        <span class="badge-selesai">Selesai</span>
+                    </td>
+                    <td class="text-center no-print">
+                        <button class="btn btn-sm btn-light border shadow-sm px-3"
+                            data-bs-toggle="modal" data-bs-target="#modalDetail"
+                            data-tanggal="{{ \Carbon\Carbon::parse($item->tanggal_tindakan)->translatedFormat('d F Y') }}"
+                            data-pengadu="{{ $item->nama_pengadu }}"
+                            data-ruangan="{{ $item->nama_ruangan }}"
+                            data-kondisi="{{ $item->kondisi }}"
+                            data-teknisi="{{ $item->teknisi }}">
+                            <i class="fa fa-eye me-1"></i> Detail
+                        </button>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="7" class="text-center py-5">
+                        <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" width="80" class="opacity-25 mb-3">
+                        <p class="text-muted fw-bold">Ups! Data tidak ditemukan.</p>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
 
+{{-- Modal Detail --}}
 <div class="modal fade" id="modalDetail" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content border-0 shadow">
             <div class="modal-header modal-header-detail">
-                <h5 class="modal-title">
-                    <i class="fas fa-clipboard-list me-2"></i> Detail Tindakan
+                <h5 class="modal-title fw-bold">
+                    <i class="fas fa-info-circle me-2"></i> Detail Penanganan
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <table class="table table-borderless mb-0">
-                    <tr>
-                        <td><span class="detail-label">Pengadu</span></td>
-                        <td>: <span id="detail-pengadu">-</span></td>
-                    </tr>
-                    <tr>
-                        <td><span class="detail-label">Ruangan</span></td>
-                        <td>: <span id="detail-ruangan">-</span></td>
-                    </tr>
-                    <tr>
-                        <td><span class="detail-label">Tanggal</span></td>
-                        <td>: <span id="detail-tanggal">-</span></td>
-                    </tr>
-                    <tr>
-                        <td><span class="detail-label">Kondisi</span></td>
-                        <td>: <span id="detail-kondisi">-</span></td>
-                    </tr>
-                    <tr>
-                        <td><span class="detail-label">Teknisi</span></td>
-                        <td>: <span id="detail-teknisi">-</span></td>
-                    </tr>
-                </table>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            <div class="modal-body p-4">
+                <div class="detail-row">
+                    <span class="detail-label">Pengadu</span>
+                    <span id="detail-pengadu"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Ruangan</span>
+                    <span id="detail-ruangan"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Tgl. Selesai</span>
+                    <span id="detail-tanggal" class="text-success fw-bold"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Tindakan</span>
+                    <span id="detail-kondisi" class="fst-italic text-muted"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Teknisi</span>
+                    <span class="badge bg-warning" id="detail-teknisi"></span>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
-
 <script>
-    document.getElementById('modalDetail').addEventListener('show.bs.modal', function (event) {
+    const modalDetail = document.getElementById('modalDetail');
+    modalDetail.addEventListener('show.bs.modal', function (event) {
         const btn = event.relatedTarget;
-        document.getElementById('detail-pengadu').textContent = btn.getAttribute('data-pengadu') || '-';
-        document.getElementById('detail-ruangan').textContent = btn.getAttribute('data-ruangan') || '-';
-        document.getElementById('detail-tanggal').textContent = btn.getAttribute('data-tanggal') || '-';
-        document.getElementById('detail-kondisi').textContent = btn.getAttribute('data-kondisi') || '-';
-        document.getElementById('detail-teknisi').textContent = btn.getAttribute('data-teknisi') || '-';
+        const fields = ['pengadu', 'ruangan', 'tanggal', 'kondisi', 'teknisi'];
+        
+        fields.forEach(field => {
+            document.getElementById(`detail-${field}`).textContent = btn.getAttribute(`data-${field}`) || '-';
+        });
     });
 
     function eksporExcel() {
         const headers = ['No', 'Tanggal', 'Pengadu', 'Ruangan', 'Lokasi', 'Status'];
-        const rows = [];
+        const dataRows = [];
 
         document.querySelectorAll('#tabelLaporan tbody tr').forEach(tr => {
             const cols = tr.querySelectorAll('td');
             if (cols.length > 1) {
-                rows.push([
+                dataRows.push([
                     cols[0].innerText.trim(),
-                    cols[1].innerText.trim(),
+                    cols[1].querySelector('.fw-bold').innerText.trim(),
                     cols[2].innerText.trim(),
-                    cols[3].innerText.trim(),
+                    cols[3].querySelector('.fw-bold').innerText.trim(),
                     cols[4].innerText.trim(),
-                    'Selesai',
+                    'SELESAI'
                 ]);
             }
         });
 
-        const styleHeader = {
-            fill: { fgColor: { rgb: 'FF8C00' } },
-            font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 11 },
-            alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
-            border: {
-                top:    { style: 'thin', color: { rgb: '000000' } },
-                bottom: { style: 'thin', color: { rgb: '000000' } },
-                left:   { style: 'thin', color: { rgb: '000000' } },
-                right:  { style: 'thin', color: { rgb: '000000' } },
-            }
-        };
-
-        const styleGanjil = {
-            fill: { fgColor: { rgb: 'FFFFFF' } },
-            font: { color: { rgb: '000000' }, sz: 10 },
-            alignment: { horizontal: 'center', vertical: 'center' },
-            border: {
-                top:    { style: 'thin', color: { rgb: 'CCCCCC' } },
-                bottom: { style: 'thin', color: { rgb: 'CCCCCC' } },
-                left:   { style: 'thin', color: { rgb: 'CCCCCC' } },
-                right:  { style: 'thin', color: { rgb: 'CCCCCC' } },
-            }
-        };
-
-        const styleGenap = {
-            fill: { fgColor: { rgb: 'FFE0B2' } },
-            font: { color: { rgb: '000000' }, sz: 10 },
-            alignment: { horizontal: 'center', vertical: 'center' },
-            border: {
-                top:    { style: 'thin', color: { rgb: 'CCCCCC' } },
-                bottom: { style: 'thin', color: { rgb: 'CCCCCC' } },
-                left:   { style: 'thin', color: { rgb: 'CCCCCC' } },
-                right:  { style: 'thin', color: { rgb: 'CCCCCC' } },
-            }
-        };
-
-        const styleSelesai = {
-            fill: { fgColor: { rgb: '198754' } },
-            font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 10 },
-            alignment: { horizontal: 'center', vertical: 'center' },
-            border: {
-                top:    { style: 'thin', color: { rgb: 'CCCCCC' } },
-                bottom: { style: 'thin', color: { rgb: 'CCCCCC' } },
-                left:   { style: 'thin', color: { rgb: 'CCCCCC' } },
-                right:  { style: 'thin', color: { rgb: 'CCCCCC' } },
-            }
-        };
-
-        const ws = {};
-
-        // Tulis header
-        headers.forEach((h, c) => {
-            const cellRef = XLSX.utils.encode_cell({ r: 0, c });
-            ws[cellRef] = { v: h, t: 's', s: styleHeader };
-        });
-
-        // Tulis data rows
-        rows.forEach((row, rowIdx) => {
-            const r = rowIdx + 1;
-            const isGenap = rowIdx % 2 !== 0;
-
-            row.forEach((val, c) => {
-                const cellRef = XLSX.utils.encode_cell({ r, c });
-
-                // Kolom Status pakai style hijau
-                if (c === 5) {
-                    ws[cellRef] = { v: val, t: 's', s: styleSelesai };
-                } else {
-                    ws[cellRef] = { v: val, t: 's', s: isGenap ? styleGenap : styleGanjil };
-                }
-            });
-        });
-
-        // Set range worksheet
-        ws['!ref'] = XLSX.utils.encode_range({
-            s: { r: 0, c: 0 },
-            e: { r: rows.length, c: headers.length - 1 }
-        });
-
-        // Lebar kolom
-        ws['!cols'] = [
-            { wch: 5  },  // No
-            { wch: 18 },  // Tanggal
-            { wch: 25 },  // Pengadu
-            { wch: 25 },  // Ruangan
-            { wch: 20 },  // Lokasi
-            { wch: 12 },  // Status
-        ];
-
-        // Tinggi baris header
-        ws['!rows'] = [{ hpt: 20 }];
-
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Laporan Pengaduan');
+        const ws = XLSX.utils.aoa_to_sheet([headers, ...dataRows]);
 
-        const today = new Date().toISOString().slice(0, 10);
-        XLSX.writeFile(wb, `Laporan_Pengaduan_${today}.xlsx`);
+        // Style the Header
+        const range = XLSX.utils.decode_range(ws['!ref']);
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+            const address = XLSX.utils.encode_cell({r: 0, c: C});
+            if (!ws[address]) continue;
+            ws[address].s = {
+                fill: { fgColor: { rgb: "FF8C00" } },
+                font: { bold: true, color: { rgb: "FFFFFF" } },
+                alignment: { horizontal: "center" },
+                border: { top: {style: "thin"}, bottom: {style: "thin"}, left: {style: "thin"}, right: {style: "thin"} }
+            };
+        }
+
+        ws['!cols'] = [{wch:5}, {wch:15}, {wch:25}, {wch:25}, {wch:20}, {wch:15}];
+        
+        XLSX.utils.book_append_sheet(wb, ws, "Laporan");
+        XLSX.writeFile(wb, `Laporan_Pengaduan_${new Date().toLocaleDateString('id-ID')}.xlsx`);
     }
 </script>
 

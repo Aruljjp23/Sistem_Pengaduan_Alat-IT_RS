@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardCtrl;
+use App\Http\Controllers\HomepageCtrl;
 use App\Http\Controllers\PengaduanCtrl;
 use App\Http\Controllers\PerangkatCtrl;
 use App\Http\Controllers\ProfileController;
@@ -32,6 +33,7 @@ Route::post('/register/save', [AuthController::class, 'register'])->name('regist
 Route::get('/logout',[AuthController::class, 'logout'])->name('logout');
 
 Route::get('/dashboard',[DashboardCtrl::class,'Dashboard']);
+Route::get('/homepage',[HomepageCtrl::class,'Homepage']);
 
 Route::get('/user/data_user',[UserCtrl::class,'data_user']);
 Route::post('/user/data_user', [UserCtrl::class, 'store']);

@@ -2,102 +2,186 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Laporan Pengaduan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan_Pengaduan_{{ now()->format('dmy') }}</title>
     <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+
         * {
+            box-sizing: border-box;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
-            color-adjust: exact !important;
         }
+
         body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-            padding: 30px;
-        }
-        h4 {
-            text-align: center;
-            margin-bottom: 4px;
-        }
-        p {
-            text-align: center;
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            font-size: 11px; 
+            color: #333;
+            line-height: 1.5;
             margin: 0;
+            padding: 0;
         }
-        hr {
-            margin: 10px 0;
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #444;
+            padding-bottom: 10px;
         }
+
+        .header h2 {
+            text-transform: uppercase;
+            margin: 0;
+            font-size: 18px;
+            color: #000;
+        }
+
+        .header p {
+            margin: 5px 0 0;
+            color: #666;
+            font-style: italic;
+        }
+
+        .meta-info {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .meta-info td {
+            border: none;
+            text-align: left;
+            padding: 2px 0;
+            font-size: 10px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            table-layout: fixed; 
         }
-        th, td {
+
+        th {
+            background-color: #f2f2f2 !important;
+            color: #333;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 10px;
+            border: 1px solid #999;
+            padding: 10px 5px;
+        }
+
+        td {
             border: 1px solid #ccc;
-            padding: 6px 10px;
-            text-align: center;
+            padding: 8px 6px;
+            word-wrap: break-word;
+            vertical-align: middle;
         }
-        thead th {
-            background-color: darkorange !important;
-            color: white !important;
-        }
+
+        .text-center { text-align: center; }
+        .text-bold { font-weight: bold; }
+
         tbody tr:nth-child(even) {
-            background-color: #f9f9f9 !important;
+            background-color: #fafafa !important;
         }
-        tbody tr:hover {
-            background-color: #fff3e0 !important;
-        }
-        .badge-selesai {
-            background-color: #198754 !important;
-            color: white !important;
-            padding: 3px 10px;
-            border-radius: 4px;
-            font-size: 11px;
+
+        .status-pill {
+            background-color: #e6f4ea !important;
+            color: #1e7e34 !important;
+            border: 1px solid #1e7e34;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: bold;
             display: inline-block;
+            text-transform: uppercase;
+        }
+        /* .footer-sign {
+            margin-top: 40px;
+            width: 100%;
+        }
+        
+        .sign-box {
+            float: right;
+            width: 200px;
+            text-align: center;
+        } */
+
+        @media print {
+            .no-print { display: none; }
         }
     </style>
 </head>
 <body onload="window.print()">
 
-    <h4>Laporan Pengaduan</h4>
-    <p>Dicetak pada: {{ \Carbon\Carbon::now('Asia/Jakarta')->locale('id')->translatedFormat('d F Y H:i') }}
-</p></p>
-    @if(request('search'))
-        <p>Filter Pencarian: {{ request('search') }}</p>
-    @endif
-    @if(request('tanggal'))
-        <p>Filter Tanggal: {{ \Carbon\Carbon::parse(request('tanggal'))->locale('id')->translatedFormat('d F Y') }}</p>
-    @endif
-    <hr>
+    <div class="header">
+        <h2>Laporan Data Pengaduan</h2>
+        <p>Sistem Pengaduan Masalah Perangkat IT</p>
+    </div>
+
+    <table class="meta-info">
+        <tr>
+            <td width="15%">Dicetak Oleh</td>
+            <td width="2%">:</td>
+            <td>{{Auth::user()->name}} ({{Auth::user()->role}})</td>
+            <td width="15%" style="text-align: right;">Waktu Cetak</td>
+            <td width="2%" style="text-align: center;">:</td>
+            <td width="20%">{{ now('Asia/Jakarta')->translatedFormat('d/m/Y H:i') }} WIB</td>
+        </tr>
+        @if(request('search') || request('tanggal'))
+        <tr>
+            <td>Filter Aktif</td>
+            <td>:</td>
+            <td colspan="4">
+                @if(request('search')) <strong>Pencarian:</strong> "{{ request('search') }}" @endif
+                @if(request('tanggal')) | <strong>Periode:</strong> {{ \Carbon\Carbon::parse(request('tanggal'))->translatedFormat('d F Y') }} @endif
+            </td>
+        </tr>
+        @endif
+    </table>
 
     <table>
-        <thead>
+        <thead class="thead">
             <tr>
-                <th>No</th>
-                <th>Tanggal</th>
-                <th>Pengadu</th>
-                <th>Ruangan</th>
-                <th>Lokasi</th>
-                <th>Status</th>
+                <th width="30">No</th>
+                <th width="100">Tanggal</th>
+                <th>Nama Pengadu</th>
+                <th>Unit/Ruangan</th>
+                <th>Lokasi Spesifik</th>
+                <th width="80">Status</th>
             </tr>
         </thead>
         <tbody>
             @forelse($pengaduan as $index => $item)
             <tr>
-                <td>{{ $index + 1 }}</td>
-                <td>{{ \Carbon\Carbon::parse($item->tanggal)->locale('id')->translatedFormat('d F Y') }}</td>
-                <td>{{ $item->nama_pengadu }}</td>
+                <td class="text-center">{{ $index + 1 }}</td>
+                <td class="text-center">{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d/m/Y') }}</td>
+                <td class="text-bold">{{ $item->nama_pengadu }}</td>
                 <td>{{ $item->nama_ruangan }}</td>
                 <td>{{ $item->lokasi }}</td>
-                <td><span class="badge-selesai">Selesai</span></td>
+                <td class="text-center">
+                    <span class="status-pill">Selesai</span>
+                </td>
             </tr>
             @empty
             <tr>
-                <td colspan="6" style="text-align:center; color:#999; padding:16px;">
-                    Tidak ada data laporan pengaduan.
+                <td colspan="6" class="text-center" style="padding: 30px; color: #999;">
+                    --- Tidak ada data untuk periode ini ---
                 </td>
             </tr>
             @endforelse
         </tbody>
     </table>
+
+    {{-- <div class="footer-sign">
+        <div class="sign-box">
+            <p>Madiun, {{ now()->translatedFormat('d F Y') }}</p>
+            <p style="margin-bottom: 60px;">Petugas Operasional,</p>
+            <p class="text-bold">( ____________________ )</p>
+        </div>
+    </div> --}}
 
 </body>
 </html>

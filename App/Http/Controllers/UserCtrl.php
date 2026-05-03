@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class UserCtrl extends Controller
 {
@@ -32,16 +33,31 @@ class UserCtrl extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'     => 'required|string|max:255',
-            'password' => 'required|min:6',
-            'role'     => 'required|in:admin,teknisi,pengadu',
+            'name' => [
+                'required',
+                'max:10',
+                'unique:users,name',
+                'regex:/^[A-Z][a-zA-Z0-9]*$/'
+            ],
+            'password' => 'required|max:10',
+            'role' => 'required|in:admin,teknisi,pengadu',
+        ], [
+            'name.required' => 'Username wajib diisi',
+            'name.max' => 'Username maksimal 10 karakter',
+            'name.unique' => 'Username sudah digunakan',
+            'name.regex' => 'Username harus diawali huruf besar dan hanya huruf/angka',
+            'password.required' => 'Password wajib diisi',
+            'password.max' => 'Password maksimal 10 karakter',
         ]);
 
+        if (filter_var($request->name, FILTER_VALIDATE_EMAIL)) {
+            return back()->withErrors(['name' => 'Username tidak boleh berupa email'])->withInput();
+        }
+
         User::create([
-            'name'     => $request->name,
-            'password' => bcrypt($request->input('password')),
-            'role'     => $request->role,
-            'id_user'  => $request->id_user,
+            'name' => $request->name,
+            'password' => bcrypt($request->password),
+            'role' => $request->role,
             'id_ruangan' => $request->id_ruangan ?: null,
         ]);
 
@@ -52,17 +68,41 @@ class UserCtrl extends Controller
     {
         $user = User::findOrFail($id);
 
-        $request->validate([
-            'name'     => 'required|string|max:255',
-            // 'email'    => 'required|email|unique:users,email,' . $id,
-            'password' => 'nullable|min:6',
-            'role'     => 'required|in:admin,teknisi,pengadu',
+        $validator = Validator::make($request->all(), [
+            'name' => [
+                'required',
+                'max:10',
+                'unique:users,name,' . $id,
+                'regex:/^[A-Z][a-zA-Z0-9]*$/'
+            ],
+            'password' => 'nullable|min:6|max:10',
+            'role' => 'required|in:admin,teknisi,pengadu',
+        ], [
+            'name.required' => 'Username wajib diisi',
+            'name.max' => 'Username maksimal 10 karakter',
+            'name.unique' => 'Username sudah digunakan',
+            'name.regex' => 'Username harus diawali huruf besar dan tanpa simbol',
+            'password.min' => 'Password minimal 6 karakter',
+            'password.max' => 'Password maksimal 10 karakter',
         ]);
 
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('edit_error', true); 
+        }
+
+        if (filter_var($request->name, FILTER_VALIDATE_EMAIL)) {
+            return back()
+                ->withErrors(['name' => 'Username tidak boleh berupa email'])
+                ->withInput()
+                ->with('edit_error', true);
+        }
+
         $data = [
-            'name'       => $request->name,
-            // 'email'      => $request->email,
-            'role'       => $request->role,
+            'name' => $request->name,
+            'role' => $request->role,
             'id_ruangan' => $request->id_ruangan ?: null,
         ];
 
