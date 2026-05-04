@@ -9,7 +9,7 @@
    padding:14px 22px; border-radius:10px;
    box-shadow:0 4px 20px rgba(0,0,0,0.2);
    display:flex; align-items:center; gap:10px;
-   font-size:15px; font-weight:500;
+   font-size:15px; font-weight:500; font-family: 'Tahoma', 'sans-serif';
    animation: slideIn 0.4s ease;">
    <i class="fas fa-check-circle" style="font-size:20px;"></i>
    <span>{{ session('pesan') }}</span>
