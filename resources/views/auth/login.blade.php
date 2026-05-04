@@ -5,7 +5,7 @@
       <title>Login</title>
       <link rel="stylesheet" href="{{ asset('css/login.css') }}">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
-      <meta http-equiv="refresh" content="60">
+      {{-- <meta http-equiv="refresh" content="60"> --}}
    </head>
    <body>
 
