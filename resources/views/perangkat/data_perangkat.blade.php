@@ -54,7 +54,17 @@
         }
     }
 
+    .swal2-popup {
+        border-radius: 16px !important;
+        font-family: inherit !important;
+    }
+    .swal2-confirm, .swal2-cancel {
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        padding: 10px 28px !important;
+    }
 </style>
+
 <br>
 
 <div class="container-fluid px-0">
@@ -66,11 +76,48 @@
     </div>
 
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fa fa-check-circle me-2"></i> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                position: 'top-end',
+                toast: true,
+                background: '#f0fdf4',
+                iconColor: '#16a34a',
+                customClass: {
+                    popup: 'border border-success shadow'
+                }
+            });
+        });
+    </script>
     @endif
+
+    {{-- @if ($errors->any())
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Validasi Gagal',
+                html: `<ul class="text-start text-danger mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>`,
+                confirmButtonColor: '#f59e0b',
+                confirmButtonText: 'Perbaiki',
+                customClass: { popup: 'shadow' }
+            }).then(() => {
+                var tambahModal = new bootstrap.Modal(document.getElementById('modalTambahperangkat'));
+                tambahModal.show();
+            });
+        });
+    </script>
+    @endif --}}
 
     <div class="row g-3 mb-4 align-items-center">
         <div class="col-md-5">
@@ -143,7 +190,8 @@
                             </button>
                             <button class="btn btn-outline-danger btn-sm btn-hapus"
                                 data-id="{{ $perangkat->id }}"
-                                data-ip_jaringan="{{ $perangkat->ip_jaringan }}">
+                                data-kategori_perangkat="{{ $perangkat->kategori_perangkat }}"
+                                data-url="{{ url('perangkat/data_perangkat/' . $perangkat->id . '/delete') }}">
                                 <i class="fa fa-trash"></i>
                             </button>
                         </div>
@@ -252,32 +300,9 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalHapusperangkat" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-body text-center p-4">
-                <div class="mb-3">
-                    <i class="fa fa-trash-alt text-danger fs-1"></i>
-                </div>
-                <h5 class="fw-bold">Hapus Perangkat?</h5>
-                <p class="text-muted small">Anda akan menghapus perangkat dengan IP:<br><strong id="hapus_ip_jaringan" class="text-dark"></strong></p>
-                
-                <div class="d-flex gap-2 mt-4">
-                    <button type="button" class="btn btn-light w-100" data-bs-dismiss="modal">Batal</button>
-                    <form id="formHapus" method="POST" class="w-100">
-                        @csrf
-                        <input type="hidden" name="id_ruangan" value="{{ $id_ruangan }}">
-                        <button type="submit" class="btn btn-danger w-100 shadow-sm">Ya, Hapus</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
-    const baseUrl = "{{ url('') }}";
-    const id_ruangan = "{{ $id_ruangan }}";
+    const baseUrl     = "{{ url('') }}";
+    const id_ruangan  = "{{ $id_ruangan }}";
 </script>
 <script src="{{ asset('js/data_perangkat.js') }}"></script>
 

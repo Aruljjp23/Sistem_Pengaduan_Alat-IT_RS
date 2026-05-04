@@ -1,39 +1,59 @@
 const baseUrl = "{{ url('') }}";
 
-document.querySelectorAll('.btn-edit').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-        const id    = this.dataset.id;
-        const name  = this.dataset.name;
-        // const email = this.dataset.email;
-        const role  = this.dataset.role;
-        const id_ruangan  = this.dataset.id_ruangan;
+document.addEventListener('DOMContentLoaded', function () {
 
-        document.getElementById('edit_name').value       = name;
-        document.getElementById('edit_role').value       = role;
-        document.getElementById('edit_id_ruangan').value = id_ruangan ?? '';
-        document.getElementById('edit_password').value   = '';
+    document.querySelectorAll('.btn-edit').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const id         = this.dataset.id;
+            const name       = this.dataset.name;
+            const role       = this.dataset.role;
+            const idRuangan  = this.dataset.id_ruangan;
 
-        const form = document.getElementById('formEditUser');
-        const baseUrl = window.location.origin;
-        form.action = baseUrl + '/user/data_user/' + id + '/update';
+            document.getElementById('formEditUser').action = '/user/data_user/' + id + '/update';
 
-        const modal = new bootstrap.Modal(document.getElementById('modalEditUser'));
-        modal.show();
+            document.getElementById('edit_name').value     = name;
+            document.getElementById('edit_role').value     = role;
+            document.getElementById('edit_id_ruangan').value = idRuangan ?? '';
+
+            document.getElementById('edit_password').value = '';
+
+            var editModal = new bootstrap.Modal(document.getElementById('modalEditUser'));
+            editModal.show();
+        });
     });
-});
 
-document.querySelectorAll('.btn-hapus').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-        const id   = this.dataset.id;
-        const name = this.dataset.name;
+    document.querySelectorAll('.btn-hapus').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const name = this.dataset.name;
+            const url  = this.dataset.url;
 
-        document.getElementById('hapus_name').textContent = name;
-        const baseUrl = window.location.origin;
-        document.getElementById('btnHapusKonfirmasi').href = baseUrl + '/user/data_user/' + id + '/delete';
-
-        const modal = new bootstrap.Modal(document.getElementById('modalHapusUser'));
-        modal.show();
+            Swal.fire({
+                title: 'Hapus User?',
+                html: `Anda yakin ingin menghapus user:<br><strong class="text-danger">${name}</strong>?<br><small class="text-muted">Tindakan ini tidak dapat dibatalkan.</small>`,
+                icon: 'warning',
+                iconColor: '#dc3545',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fa fa-trash me-1"></i> Ya, Hapus!<br>',
+                cancelButtonText: '<i class="fa fa-times me-1"></i> Batal',
+                reverseButtons: true,
+                focusCancel: true,
+                customClass: {
+                    popup: 'shadow',
+                    confirmButton: 'btn btn-danger px-4',
+                    cancelButton: 'btn btn-secondary px-4',
+                    actions: 'd-flex gap-3 justify-content-center'
+                },
+                buttonsStyling: false,
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+        });
     });
+
 });
 
 document.addEventListener('DOMContentLoaded', function () {

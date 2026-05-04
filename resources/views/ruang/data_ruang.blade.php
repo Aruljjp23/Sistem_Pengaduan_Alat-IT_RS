@@ -7,12 +7,67 @@
 <br>
 
 @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-        <i class="fa fa-check-circle me-2"></i> {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+            position: 'top-end',
+            toast: true,
+            background: '#f0fdf4',
+            iconColor: '#16a34a',
+            customClass: {
+                popup: 'border border-success shadow'
+            }
+        });
+    });
+</script>
 @endif
-
+ 
+{{-- @if(session('edit_error'))
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal Update!',
+            text: '{{ session('edit_error') }}',
+            confirmButtonColor: '#dc3545',
+            confirmButtonText: 'Tutup',
+            customClass: { popup: 'shadow' }
+        }).then(() => {
+            var editModal = new bootstrap.Modal(document.getElementById('modalEditruangan'));
+            editModal.show();
+        });
+    });
+</script>
+@endif --}}
+ 
+@if ($errors->any())
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Validasi Gagal',
+            html: `<ul class="text-start text-danger mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>`,
+            confirmButtonColor: '#f59e0b',
+            confirmButtonText: 'Perbaiki',
+            customClass: { popup: 'shadow' }
+        }).then(() => {
+            var tambahModal = new bootstrap.Modal(document.getElementById('modalTambahruangan'));
+            tambahModal.show();
+        });
+    });
+</script>
+@endif
+ 
 <div class="row mb-4 mt-3 align-items-end">
     <div class="col-md-5">
         <form id="formSearch" action="{{ url()->current() }}" method="GET">
@@ -32,7 +87,7 @@
         </button>
     </div>
 </div>
-
+ 
 <div class="table-responsive shadow-sm rounded">
     <table class="table table-bordered table-hover mb-0">
         <thead class="table-primary text-center">
@@ -72,7 +127,8 @@
                         </button>
                         <button class="btn btn-danger btn-sm btn-hapus"
                             data-id="{{ $ruangan->id }}"
-                            data-nama_ruangan="{{ $ruangan->nama_ruangan }}">
+                            data-nama_ruangan="{{ $ruangan->nama_ruangan }}"
+                            data-url="{{ url('ruang/data_ruang/' . $ruangan->id . '/delete') }}">
                             <i class="fa fa-trash"></i>
                         </button>
                     </div>
@@ -89,7 +145,7 @@
         </tbody>
     </table>
 </div>
-
+ 
 <div class="mt-4">
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center shadow-sm">
@@ -98,7 +154,7 @@
                     &laquo;
                 </a>
             </li>
-
+ 
             @for ($i = 1; $i <= $data_ruangan->lastPage(); $i++)
                 <li class="page-item {{ $data_ruangan->currentPage() == $i ? 'active' : '' }}">
                     <a class="page-link" href="{{ $data_ruangan->url($i) . '&' . http_build_query(request()->except('page')) }}">
@@ -115,7 +171,7 @@
                     </a>
                 </li>
             @endfor
-
+ 
             <li class="page-item {{ !$data_ruangan->hasMorePages() ? 'disabled' : '' }}">
                 <a class="page-link" href="{{ $data_ruangan->appends(request()->query())->nextPageUrl() ?? '#' }}">
                     &raquo;
@@ -124,7 +180,7 @@
         </ul>
     </nav>
 </div>
-
+ 
 <div class="modal fade" id="modalTambahruangan" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
@@ -157,7 +213,7 @@
         </div>
     </div>
 </div>
-
+ 
 <div class="modal fade" id="modalEditruangan" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
@@ -190,29 +246,11 @@
         </div>
     </div>
 </div>
-
-<div class="modal fade" id="modalHapusruangan" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-body text-center p-4">
-                <i class="fa fa-exclamation-circle text-danger mb-3" style="font-size: 3.5rem;"></i>
-                <h5 class="fw-bold">Hapus Ruangan?</h5>
-                <p class="text-muted small">Anda akan menghapus <strong id="hapus_nama_ruangan" class="text-dark"></strong>. Data yang terkait mungkin ikut terhapus.</p>
-                <div class="d-flex gap-2 justify-content-center mt-4">
-                    <button type="button" class="btn btn-light w-50" data-bs-dismiss="modal">Batal</button>
-                    <form id="formHapus" method="POST" class="w-50">
-                        @csrf
-                        <button type="submit" class="btn btn-danger w-100 shadow-sm">Ya, Hapus</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+ 
 <script>
     const baseUrl = "{{ url('/') }}";
-</script>   
-
+</script>
+ 
 <script src="{{ asset('/js/data_ruang.js') }}"></script>
-
+ 
 @endsection

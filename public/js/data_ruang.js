@@ -34,35 +34,54 @@ document.getElementById('modalTambahruangan').addEventListener('keydown', functi
     }
 });
 
-function bindButtons() {
-    document.querySelectorAll('.btn-edit').forEach(function(btn) {
-        btn.addEventListener('click', function() {
+document.addEventListener('DOMContentLoaded', function () {
+ 
+    document.querySelectorAll('.btn-edit').forEach(function (btn) {
+        btn.addEventListener('click', function () {
             const id           = this.dataset.id;
-            const nama_ruangan = this.dataset.nama_ruangan;
-            const lokasi       = this.dataset.lokasi;
-
-            document.getElementById('edit_ruangan').value = nama_ruangan;
-            document.getElementById('edit_lokasi').value  = lokasi;
-
+            const namaRuangan  = this.dataset.nama_ruangan;
+            const lantai       = this.dataset.lantai;
+ 
             document.getElementById('formEditruangan').action = baseUrl + '/ruang/data_ruang/' + id + '/update';
-
-            const modal = new bootstrap.Modal(document.getElementById('modalEditruangan'));
-            modal.show();
+ 
+            document.getElementById('edit_ruangan').value = namaRuangan;
+            document.getElementById('edit_lokasi').value  = lantai;
+ 
+            var editModal = new bootstrap.Modal(document.getElementById('modalEditruangan'));
+            editModal.show();
         });
     });
-
-    document.querySelectorAll('.btn-hapus').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            const id           = this.dataset.id;
-            const nama_ruangan = this.dataset.nama_ruangan;
-
-            document.getElementById('hapus_nama_ruangan').textContent = nama_ruangan;
-            document.getElementById('formHapus').action = baseUrl + '/ruang/data_ruang/' + id + '/delete';
-
-            const modal = new bootstrap.Modal(document.getElementById('modalHapusruangan'));
-            modal.show();
+ 
+    document.querySelectorAll('.btn-hapus').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const namaRuangan = this.dataset.nama_ruangan;
+            const url         = this.dataset.url;
+ 
+            Swal.fire({
+                title: 'Hapus Ruangan?',
+                html: `Anda yakin ingin menghapus ruangan:<br>
+                       <strong class="text-danger">${namaRuangan}</strong>?<br>
+                       <small class="text-muted">Data perangkat yang terkait mungkin ikut terhapus.</small>`,
+                icon: 'warning',
+                iconColor: '#dc3545',
+                showCancelButton: true,
+                confirmButtonText: '<i class="fa fa-trash me-1"></i> Ya, Hapus!',
+                cancelButtonText: '<i class="fa fa-times me-1"></i> Batal',
+                reverseButtons: true,
+                focusCancel: true,
+                customClass: {
+                    popup: 'shadow',
+                    confirmButton: 'btn btn-danger px-4',
+                    cancelButton: 'btn btn-secondary px-4',
+                    actions: 'd-flex gap-3 justify-content-center'
+                },
+                buttonsStyling: false,
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
         });
     });
-}
-
-bindButtons();
+ 
+});

@@ -101,7 +101,7 @@ class AuthController extends Controller
         DB::table('users')->insert([
             'name' => $request->name,
             'password' => bcrypt($request->password),
-            'role' => null,
+            'role' => 'pengadu',
             'created_at' => now(),
             'updated_at' => now()
         ]);

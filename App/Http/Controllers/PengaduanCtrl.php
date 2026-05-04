@@ -92,8 +92,7 @@ class PengaduanCtrl extends Controller
 
         DB::table('pengaduan')->where('id', $id)->delete();
 
-        return redirect('/pengaduan/data_pengaduan')
-            ->with('success', 'Pengaduan berhasil dihapus.');
+        return redirect('/pengaduan/data_pengaduan')->with('success', 'Pengaduan berhasil dihapus.');
     }
 
     public function form_pengaduan(Request $request, $id)
