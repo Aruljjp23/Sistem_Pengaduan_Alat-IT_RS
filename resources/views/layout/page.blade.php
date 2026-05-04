@@ -325,6 +325,10 @@
                 opacity: 0.6;
             }
 
+            h1{
+                font-family: 'Tahoma','sans-serif';
+            }
+
             @media (max-width: 991.98px) {
                 #layoutSidenav_nav {
                     width: 100%;

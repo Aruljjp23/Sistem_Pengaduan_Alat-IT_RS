@@ -177,6 +177,9 @@ i span{
   border-radius: 50%;
   animation: spin 0.9s linear infinite;
 }
+header{
+  font-family: 'Tahoma','sans-serif';
+}
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-text { color:#fff; font-size:16px; font-weight:600; letter-spacing:1px; }
 .notif {

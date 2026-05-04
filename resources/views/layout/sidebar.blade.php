@@ -45,7 +45,6 @@
                                 </nav>
                             </div>
 
-                            {{-- Ruangan --}}
                             <a class="nav-link collapsed" href="#"
                                 data-bs-toggle="collapse"
                                 data-bs-target="#pagesCollapseRuangan"

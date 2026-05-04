@@ -234,6 +234,9 @@ i span{
 }
 .btn-confirm:hover { background:#c0392b; }
 .btn-cancel:hover  { background:#ddd; }
+header{
+  font-family: 'Tahoma','sans-serif';
+}
 
 @media (max-width: 768px) {
 
