@@ -40,13 +40,16 @@ Pastikan sudah terinstall:
    
 3. **Pindahkan ke Folder Laragon**
    - Letakkan project ke folder :
+     
      C:\laragon\www\
      
 4. **Buat Database**
    - Jalankan Laragon → klik Start All
    - Buka :
+     
      http://localhost/phpmyadmin
    - Buat database :
+     
      sistem_pengaduan
      
 5. **Import Database**
@@ -55,9 +58,13 @@ Pastikan sudah terinstall:
 4. **Konfigurasi Database**
    - Buka file config.php atau .env
    - Sesuaikan :
+     
      DB_HOST=localhost
+     
      DB_USER=root
+     
      DB_PASS=
+     
      DB_NAME=sistem_pengaduan
 
 ## Tujuan Sistem
