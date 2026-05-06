@@ -36,6 +36,7 @@ Pastikan sudah terinstall:
 ## Cara Instalasi
 
 1. **Clone Repository**
+   
    git clone https://github.com/Aruljjp23/Sistem_Pengaduan_Alat-IT_RS.git
    
 3. **Pindahkan ke Folder Laragon**
