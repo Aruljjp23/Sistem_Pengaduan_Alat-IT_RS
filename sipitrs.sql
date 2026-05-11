@@ -77,26 +77,13 @@ CREATE TABLE IF NOT EXISTS `pengaduan` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table sistem_pengaduan.pengaduan: ~15 rows (approximately)
+-- Dumping data for table sistem_pengaduan.pengaduan: ~12 rows (approximately)
 DELETE FROM `pengaduan`;
 INSERT INTO `pengaduan` (`id`, `id_ruangan`, `id_perangkat`, `nama_pengadu`, `tanggal`, `deskripsi_masalah`, `created_at`, `updated_at`) VALUES
-	(1, 21, 121, 'Dioyin', '2026-04-14 13:53:00', 'Dek coba cek ini', NULL, NULL),
-	(2, 21, 122, 'Dioyin', '2026-04-14 13:53:00', 'Dek coba cek ini', NULL, NULL),
-	(3, 21, 123, 'Dioyin', '2026-04-14 13:53:00', 'Dek coba cek ini', NULL, NULL),
-	(4, 21, 121, 'Dioyin', '2026-04-14 14:05:00', 'Dek Tolong cek ini', NULL, NULL),
-	(5, 21, 123, 'Dioyin', '2026-04-14 14:05:00', 'Dek Tolong cek ini', NULL, NULL),
-	(6, 21, 121, 'Dioyin', '2026-04-14 14:06:00', 'Dek Tolong cek ini', NULL, NULL),
-	(7, 21, 123, 'Dioyin', '2026-04-14 14:06:00', 'Dek Tolong cek ini', NULL, NULL),
-	(8, 21, 121, 'Dioyin', '2026-04-14 14:12:00', 'Dek Tolong cek ini', NULL, NULL),
-	(9, 21, 123, 'Dioyin', '2026-04-14 14:12:00', 'Dek Tolong cek ini', NULL, NULL),
-	(10, 21, 121, 'Dioyin', '2026-04-14 14:19:00', 'Dek Tolong cek', NULL, NULL),
-	(11, 21, 122, 'Dioyin', '2026-04-14 14:19:00', 'Dek Tolong cek', NULL, NULL),
-	(12, 21, 123, 'Dioyin', '2026-04-14 14:19:00', 'Dek Tolong cek', NULL, NULL),
-	(13, 21, 121, 'Dioyin', '2026-04-14 15:05:00', 'dek tolong benarkan ini', NULL, NULL),
-	(14, 21, 122, 'Dioyin', '2026-04-14 15:05:00', 'dek tolong benarkan ini', NULL, NULL),
-	(15, 8, 129, 'Bagus S', '2026-04-21 09:57:00', 'Printer Error', NULL, NULL);
+	(1, 20, 107, 'Rawo', '2026-05-11 10:13:00', 'Rawo Adalah Makanan', NULL, NULL),
+	(2, 20, 108, 'Rawo', '2026-05-11 10:13:00', 'Rawo Adalah Makanan', NULL, NULL);
 
 -- Dumping structure for table sistem_pengaduan.perangkat
 CREATE TABLE IF NOT EXISTS `perangkat` (
@@ -547,7 +534,7 @@ INSERT INTO `ruangan` (`id`, `nama_ruangan`, `lokasi`, `created_at`, `updated_at
 	(11, 'POLI PARU', 'lantai 1', NULL, NULL),
 	(12, 'POLI UROLOGI / KULIT & KELAMIN', 'lantai 1', NULL, NULL),
 	(13, 'POLI KIA/UMUM', 'lantai 1', NULL, NULL),
-	(14, 'POLI BEDAH SYARAF', 'lantai 1', NULL, NULL),
+	(14, 'POLI BEDAH SYARAF', 'Lantai 1', NULL, NULL),
 	(15, 'POLI SYARAF', 'lantai 1', NULL, NULL),
 	(16, 'POLI JANTUNG', 'lantai 1', NULL, NULL),
 	(17, 'POLI DALAM TIMUR / DR.Sutowo', 'lantai 1', NULL, NULL),
@@ -589,22 +576,10 @@ CREATE TABLE IF NOT EXISTS `tindakan` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table sistem_pengaduan.tindakan: ~11 rows (approximately)
+-- Dumping data for table sistem_pengaduan.tindakan: ~0 rows (approximately)
 DELETE FROM `tindakan`;
-INSERT INTO `tindakan` (`id`, `id_pengaduan`, `id_ruangan`, `tanggal`, `kondisi`, `teknisi`, `status`, `created_at`, `updated_at`) VALUES
-	(1, 1, 21, '2026-04-17 10:28:00', 'siap', 'arul', 'Dalam Proses', '2026-04-16 20:29:07', '2026-04-16 20:29:07'),
-	(2, 1, 21, '2026-04-17 10:29:00', 'sudah diganti', 'arul', 'Selesai', '2026-04-16 20:29:41', '2026-04-16 20:29:41'),
-	(3, 2, 21, '2026-04-21 09:31:00', 'Baik', 'arul', 'Dalam Proses', '2026-04-20 19:31:39', '2026-04-20 19:31:39'),
-	(4, 3, 21, '2026-04-21 09:31:00', 'Selesai', 'arul', 'Selesai', '2026-04-20 19:32:00', '2026-04-20 19:32:00'),
-	(5, 13, 21, '2026-04-21 09:32:00', 'dd', 'arul', 'Selesai', '2026-04-20 19:32:49', '2026-04-20 19:32:49'),
-	(6, 2, 21, '2026-04-21 11:31:00', 'Siap Bos', 'arul', 'Dalam Proses', '2026-04-20 21:32:06', '2026-04-20 21:32:06'),
-	(7, 4, 21, '2026-04-21 11:31:00', 'Siap Bos', 'arul', 'Dalam Proses', '2026-04-20 21:32:06', '2026-04-20 21:32:06'),
-	(8, 2, 21, '2026-04-25 08:48:00', 'siap bos', 'arul', 'Dalam Proses', '2026-04-24 18:48:18', '2026-04-24 18:48:18'),
-	(9, 4, 21, '2026-04-25 08:48:00', 'siap bos', 'arul', 'Dalam Proses', '2026-04-24 18:48:18', '2026-04-24 18:48:18'),
-	(10, 2, 21, NULL, 'sudah selesai bos', 'arul', 'Selesai', '2026-04-24 18:56:38', '2026-04-24 18:56:38'),
-	(11, 4, 21, NULL, 'sudah selesai bos', 'arul', 'Selesai', '2026-04-24 18:56:38', '2026-04-24 18:56:38');
 
 -- Dumping structure for table sistem_pengaduan.users
 CREATE TABLE IF NOT EXISTS `users` (
@@ -617,13 +592,15 @@ CREATE TABLE IF NOT EXISTS `users` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table sistem_pengaduan.users: ~2 rows (approximately)
 DELETE FROM `users`;
 INSERT INTO `users` (`id`, `name`, `role`, `id_ruangan`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
 	(1, 'Aruljjp', 'admin', NULL, '$2y$12$4ufh8jrn9pMF8mTM4fVJJ.Q5.oO1kHyP1W/62qDThYlOyo.P7/n3u', NULL, '2026-05-02 06:03:05', '2026-05-02 06:03:05'),
-	(3, 'Adi', 'teknisi', NULL, '$2y$12$TwMxIHnxYGbkUusG7wuIuezBmBloyopzAK/qbQzdN9TbVFuhniWWa', NULL, '2026-05-02 21:46:45', '2026-05-02 21:46:45');
+	(3, 'Adi', 'teknisi', NULL, '$2y$12$TwMxIHnxYGbkUusG7wuIuezBmBloyopzAK/qbQzdN9TbVFuhniWWa', NULL, '2026-05-02 21:46:45', '2026-05-02 21:46:45'),
+	(6, 'Bagus', 'pengadu', 12, '$2y$12$lWD7C7k5iIVrb3TgfG8VxO9DEmUb2OMOXwHjLc7fQDbSmAxKBda2G', NULL, '2026-05-09 20:22:52', '2026-05-09 20:23:16'),
+	(7, 'Sumanto', 'pengadu', 20, '$2y$12$d.rmVyTlcL4RYipc/r8g7ur9VqDr6x6C6ppGmvDW6CLijrn9K4FDa', NULL, '2026-05-10 20:02:43', '2026-05-10 20:03:08');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
