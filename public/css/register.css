@@ -284,6 +284,36 @@ body, html {
 .btn-cancel { background: rgba(255,255,255,0.1); color: #fff; }
 .btn-cancel:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
 
+/* Styling untuk Header/Logo SIPITRS */
+.brand-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.brand-header .logo {
+  width: 100px; /* Sesuaikan ukuran logo kamu */
+  height: auto;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); /* Efek shadow ringan pada logo */
+}
+
+.brand-header h1 {
+  color: #fff;
+  font-size: 28px;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.brand-header p {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  line-height: 1.5;
+  font-family: 'Poppins', sans-serif;
+  padding: 0 10px;
+}
 /* Keyframes */
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }

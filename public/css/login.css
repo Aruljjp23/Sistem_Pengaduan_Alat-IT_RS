@@ -290,7 +290,7 @@ body, html {
 }
 
 .brand-header .logo {
-  width: 75px; /* Sesuaikan ukuran logo kamu */
+  width: 100px; /* Sesuaikan ukuran logo kamu */
   height: auto;
   margin-bottom: 12px;
   filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); /* Efek shadow ringan pada logo */
