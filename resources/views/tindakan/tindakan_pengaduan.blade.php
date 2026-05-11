@@ -53,7 +53,6 @@
                     <span>{{ $item->lokasi }}</span>
                 </div>
 
-                {{-- Perangkat jika ada --}}
                 @if($item->perangkat_list && $item->perangkat_list !== '-')
                 <div class="col-12">
                     <small class="text-muted d-block">Perangkat</small>

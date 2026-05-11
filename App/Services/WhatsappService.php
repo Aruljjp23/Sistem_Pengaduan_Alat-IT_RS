@@ -7,68 +7,36 @@ use Illuminate\Support\Facades\Log;
 
 class WhatsappService
 {
-    protected string $apiUrl = 'https://api.fonnte.com/send';
-
-    public function sendWithToken($token, $target, $message)
+    public function sendMessage($target, $message)
     {
-        $response = Http::withHeaders([
-            'Authorization' => $token
-        ])->asForm()->post($this->apiUrl, [
-            'target' => $target,
-            'message' => $message,
-        ]);
-
-        return $response->json();
-    }
-
-    public function getTokenByPengadu($nomor)
-    {
-        $tokens = [
-            config('services.fonnte.pengadu1'),
-            config('services.fonnte.pengadu2'),
-            config('services.fonnte.pengadu3'),
-        ];
-
-        $index = crc32($nomor) % count($tokens);
-
-        return $tokens[$index];
-    }
-
-    public function send($nomorPengadu, $target, $message)
-    {
-        $token = $this->getTokenByPengadu($nomorPengadu);
-
         try {
 
             $response = Http::withHeaders([
-                'Authorization' => $token
-            ])->asForm()->post($this->apiUrl, [
-                'target' => $target,
-                'message' => $message
+                'Authorization' => env('FONNTE_TOKEN')
+            ])->post('https://api.fonnte.com/send', [
+                'target'  => $target,
+                'message' => $message,
+                'countryCode' => '62',
             ]);
 
-            $result = $response->json();
-
-            Log::info("WA dikirim", [
-                'token' => $token,
+            Log::info('FONNTE SUCCESS', [
                 'target' => $target,
-                'result' => $result
+                'message' => $message,
+                'response' => $response->json()
             ]);
 
-            return $result;
+            return $response->json();
 
         } catch (\Exception $e) {
 
-            Log::error("WA gagal", [
-                'error' => $e->getMessage()
+            Log::error('FONNTE ERROR', [
+                'message' => $e->getMessage()
             ]);
 
-            return false;
+            return [
+                'status' => false,
+                'reason' => $e->getMessage()
+            ];
         }
-    }
-
-    public function sendPengadu($nomor, $message)
-    {
-        return $this->send($nomor, $nomor, $message);
     }
 }

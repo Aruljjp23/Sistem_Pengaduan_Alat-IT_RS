@@ -149,14 +149,13 @@ class PengaduanCtrl extends Controller
 
             $idRange = implode(', #', $idPengaduanList);
 
-            $pesan = rawurlencode(
-                "📢 PENGADUAN #{$idRange}\n\n".
-                "👤 {$request->nama_pengadu}\n".
-                "📍 {$namaRuangan} - {$lokasiRuangan}\n".
-                "📅 ".$tanggal->format('d/m/Y H:i')."\n\n".
-                "💻 Perangkat:\n{$daftarPerangkat}\n".
-                "📝 {$request->deskripsi_masalah}"
-            );
+            $pesan =
+            "📢 PENGADUAN #{$idRange}\n\n".
+            "👤 {$request->nama_pengadu}\n".
+            "📍 {$namaRuangan} - {$lokasiRuangan}\n".
+            "📅 ".$tanggal->format('d/m/Y H:i')."\n\n".
+            "💻 Perangkat:\n{$daftarPerangkat}\n".
+            "📝 {$request->deskripsi_masalah}";
 
         } else {
 
@@ -168,35 +167,38 @@ class PengaduanCtrl extends Controller
                 'tanggal'           => $tanggal->format('Y-m-d H:i:s'),
             ]);
 
-            $pesan = rawurlencode(
-                "📢 PENGADUAN #{$idPengaduan}\n\n".
-                "👤 {$request->nama_pengadu}\n".
-                "📍 {$namaRuangan} - {$lokasiRuangan}\n".
-                "📅 ".$tanggal->format('d/m/Y H:i')."\n\n".
-                "📝 {$request->deskripsi_masalah}"
-            );
+            $pesan =
+            "📢 PENGADUAN #{$idPengaduan}\n\n".
+            "👤 {$request->nama_pengadu}\n".
+            "📍 {$namaRuangan} - {$lokasiRuangan}\n".
+            "📅 ".$tanggal->format('d/m/Y H:i')."\n\n".
+            "📝 {$request->deskripsi_masalah}";
         }
 
-        $noAdmin   = env('WA_ADMIN');
-        $noTeknisi = env('WA_TEKNISI');
+        $groupWa = env('WA_GROUP');
+
+        $responseWa = $this->wa->sendMessage($groupWa, $pesan);
+
+        Log::info('HASIL WA', [
+            'response' => $responseWa
+        ]);
 
         if (!empty($idPerangkats)) {
+
             session([
                 'nama_pengadu'      => $request->nama_pengadu,
                 'id_pengaduan_baru' => $idPengaduanList,
             ]);
+
         } else {
+
             session([
                 'nama_pengadu'      => $request->nama_pengadu,
                 'id_pengaduan_baru' => [$idPengaduan],
             ]);
         }
 
-        return redirect()->route('wa.redirect', [
-            'pesan'   => $pesan,
-            'admin'   => $noAdmin,
-            'teknisi' => $noTeknisi,
-        ]);
+        return redirect('/tindakan/tindakan_pengaduan')->with('success', 'Pengaduan berhasil dikirim dan notifikasi WA terkirim.');
     }
 
     public function laporan_pengaduan(Request $request)

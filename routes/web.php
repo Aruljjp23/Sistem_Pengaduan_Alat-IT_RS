@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,13 +69,48 @@ Route::get('/api/perangkat/ruangan/{id}', function ($id) {
         ->get();
 });
 
-Route::get('/wa-redirect', function (Request $request) {
-    return view('pengaduan.wa_redirect', [
-        'pesan'   => $request->pesan,
-        'admin'   => $request->admin,
-        'teknisi' => $request->teknisi
+Route::get('/test-wa', function () {
+
+    $response = Http::withHeaders([
+        'Authorization' => env('FONNTE_TOKEN')
+    ])->post('https://api.fonnte.com/send', [
+        'target'  => env('WA_GROUP'),
+        'message' => 'TEST NOTIFIKASI WA GROUP 🔥'
     ]);
-})->middleware('auth')->name('wa.redirect');
+
+    dd([
+        'group' => env('WA_GROUP'),
+        'token' => env('FONNTE_TOKEN'),
+        'response' => $response->json()
+    ]);
+});
+
+Route::get('/group-list', function () {
+
+    $response = Http::withHeaders([
+        'Authorization' => env('FONNTE_TOKEN')
+    ])->get('https://api.fonnte.com/fetch-group');
+
+    dd($response->json());
+});
+
+// Route::get('/cek-group', function () {
+
+//     $response = Http::withHeaders([
+//         'Authorization' => env('FONNTE_TOKEN')
+//     ])->get('https://api.fonnte.com/fetch-group');
+
+//     dd($response->json());
+
+// });
+
+// Route::get('/wa-redirect', function (Request $request) {
+//     return view('pengaduan.wa_redirect', [
+//         'pesan'   => $request->pesan,
+//         'admin'   => $request->admin,
+//         'teknisi' => $request->teknisi
+//     ]);
+// })->middleware('auth')->name('wa.redirect');
 
 Route::get('/api/perangkat/kode/{kode}', function ($kode) {
 
