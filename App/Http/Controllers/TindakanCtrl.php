@@ -5,9 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Pagination\Paginator;
 
 class TindakanCtrl extends Controller
 {
+    public function boot(): void
+    {
+        Paginator::useBootstrapFive();
+    }
+
     public function data_tindakan(Request $request)
     {
         $search = $request->search;
@@ -47,7 +53,7 @@ class TindakanCtrl extends Controller
 
             'r.nama_ruangan',
 
-            'pr.kode_perangkat',
+            'pr.kode_inventaris',
             'pr.kategori_perangkat',
             'pr.merek',
 
@@ -114,95 +120,50 @@ class TindakanCtrl extends Controller
         return redirect('/tindakan/data_tindakan')->with('success', 'Tindakan berhasil disimpan.');
     }
 
-    public function tindakan_pengadu(Request $request)
+    public function tindakan_pengaduan(Request $request)
     {
-        $namaPengadu     = session('nama_pengadu');
-        $idPengaduanBaru = session('id_pengaduan_baru', []);
-
-        if (!$namaPengadu || empty($idPengaduanBaru)) {
-            abort(403, 'Sesi tidak valid.');
-        }
-
         $statusFilter = $request->query('status', 'semua');
+        
+        $user = Auth::user(); 
 
-        $tindakanTerbaru = DB::table('tindakan')
-            ->select('id_pengaduan', 'kondisi', 'teknisi', 'status', 'created_at')
-            ->whereIn('id', function ($sub) {
-                $sub->select(DB::raw('MAX(id)'))
-                    ->from('tindakan')
-                    ->groupBy('id_pengaduan');
-            });
-
-        $pengaduan = DB::table('pengaduan as p')->join('ruangan as r', 'r.id', '=', 'p.id_ruangan')->leftJoin('perangkat as pr', 'pr.id', '=', 'p.id_perangkat')->leftJoinSub($tindakanTerbaru, 'tl', 'tl.id_pengaduan', '=', 'p.id')->whereIn('p.id', $idPengaduanBaru)
-        ->groupBy(
-            'p.id_ruangan',
-            'r.nama_ruangan',
-            'r.lokasi',
-            'p.deskripsi_masalah',
-            'tl.kondisi',
-            'tl.teknisi',
-            'tl.created_at',
-            'tl.status',
-        )
-        ->select(
-            'p.id_ruangan',
-            'r.nama_ruangan',
-            'r.lokasi',
-            'p.deskripsi_masalah',
-            'tl.kondisi',
-            'tl.teknisi',
-            'tl.created_at',
-            DB::raw("COALESCE(tl.status, 'Pending') as status"),
-            DB::raw("GROUP_CONCAT(p.id ORDER BY p.id SEPARATOR ',') as id_pengaduan_list"),
-            DB::raw("GROUP_CONCAT(COALESCE(pr.kode_perangkat, '-') ORDER BY p.id SEPARATOR ', ') as perangkat_list"),
-        );
+        $tindakan = DB::table('tindakan')
+            ->leftJoin('pengaduan', 'tindakan.id_pengaduan', '=', 'pengaduan.id')
+            ->leftJoin('ruangan', 'tindakan.id_ruangan', '=', 'ruangan.id_ruangan')
+            ->where('pengaduan.id_ruangan', $user->id_ruangan)
+            ->where('pengaduan.nama_pengadu', $user->name)
+            
+            ->select(
+                'tindakan.*', 
+                'ruangan.nama_ruangan', 
+                'ruangan.lokasi',
+                'pengaduan.deskripsi_masalah',
+                DB::raw("CASE 
+                    WHEN tindakan.kode_inventaris IS NOT NULL AND tindakan.kode_inventaris != '-' 
+                    THEN CONCAT(tindakan.kode_inventaris, ' - ', tindakan.kategori_perangkat, ' (', tindakan.merek_perangkat, ')')
+                    ELSE '-' 
+                END as perangkat_list")
+            );
 
         if ($statusFilter !== 'semua') {
             $statusMap = [
-                'pending' => 'Pending',
-                'proses'  => 'Dalam Proses',
-                'selesai' => 'Selesai',
+                'menunggu'=> ['Menunggu', 'menunggu'],
+                'diterima'=> ['Diterima', 'diterima'],
+                'pending' => ['Pending', 'Dipending', 'pending'], 
+                'proses'  => ['Diproses', 'diproses'], 
+                'selesai' => ['Selesai', 'selesai']
             ];
-            $pengaduan->having(
-                DB::raw("COALESCE(tl.status, 'Pending')"),
-                $statusMap[$statusFilter] ?? $statusFilter
-            );
+
+            if (isset($statusMap[$statusFilter])) {
+                $tindakan->whereIn('tindakan.status', $statusMap[$statusFilter]);
+            }
         }
 
-        $tindakan = $pengaduan->orderByDesc('p.id_ruangan')->get();
+        $tindakans = $tindakan->orderByDesc('tindakan.updated_at')->get();
 
-        return view('tindakan.tindakan_pengaduan', compact('tindakan', 'statusFilter', 'namaPengadu'));
-    }
-
-    public function riwayat_tindakan(Request $request)
-    {
-        $tanggalMulai = $request->query('tanggal_mulai');
-        $tanggalAkhir = $request->query('tanggal_akhir');
-
-        $query = DB::table('tindakan as t')->join('pengaduan as p', 'p.id', '=', 't.id_pengaduan')->join('ruangan as r', 'r.id', '=', 't.id_ruangan')->leftJoin('users as u', 'u.id', '=', 't.teknisi') 
-        ->select(
-            't.id',
-            't.kondisi',
-            't.status',
-            't.created_at',
-            'p.nama_pengadu',
-            'p.deskripsi_masalah',
-            'r.nama_ruangan',
-            't.teknisi as nama_teknisi' 
-        )
-        ->orderByDesc('t.created_at');
-
-        if ($tanggalMulai) {
-            $query->whereDate('t.created_at', '>=', $tanggalMulai);
-        }
-        if ($tanggalAkhir) {
-            $query->whereDate('t.created_at', '<=', $tanggalAkhir);
-        }
-
-        $group = $query->get()->groupBy(function ($item) {
-            return \Carbon\Carbon::parse($item->created_at)->format('Y-m-d');
-        });
-
-        return view('tindakan.riwayat_tindakan', compact('group', 'tanggalMulai', 'tanggalAkhir'));
+        return view('tindakan.tindakan_pengaduan', [
+            'tindakans' => $tindakans,
+            'statusFilter' => $statusFilter,
+            'namaPengadu' => $user->name ?? 'Pengguna' 
+        ]);
     }
 }

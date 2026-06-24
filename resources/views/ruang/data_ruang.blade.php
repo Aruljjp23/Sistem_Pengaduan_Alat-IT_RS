@@ -1,10 +1,95 @@
 @extends('layout.page')
 
-@section('page_title', 'Data Ruangan')
+@section('page_title', 'Manajemen Ruangan')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/data_ruang.css') }}">
-<br>
+<style>
+    .room-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
+
+    .search-container {
+        display: flex;
+        align-items: stretch;
+        background-color: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        overflow: hidden; 
+        transition: all 0.3s ease;
+    }
+
+    .search-container:focus-within {
+        background-color: #fff;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    .search-container .form-control {
+        border: none !important; 
+        background: transparent;
+        height: 45px;
+        padding-left: 15px;
+        box-shadow: none !important;
+    }
+
+    .search-btn {
+        background-color: #3b82f6; 
+        color: white;
+        border: none;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+        cursor: pointer;
+    }
+
+    .search-btn:hover {
+        background-color: #2563eb;
+    }
+
+    .search-btn i {
+        font-size: 14px;
+    }
+
+    .table-modern { border-collapse: separate; border-spacing: 0 8px; }
+    .table-modern thead th {
+        background: transparent !important;
+        color: #64748b;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: none;
+    }
+    .table-modern tbody tr { background: #fff; transition: transform 0.2s; }
+    .table-modern tbody tr:hover { transform: scale(1.01); background: #f1f5f9 !important; }
+    .table-modern tbody td { padding: 15px; border: none; vertical-align: middle; }
+    .table-modern tbody td:first-child { border-radius: 12px 0 0 12px; }
+    .table-modern tbody td:last-child { border-radius: 0 12px 12px 0; }
+
+    .room-icon {
+        width: 40px; height: 40px;
+        border-radius: 10px;
+        background: #eff6ff;
+        color: #3b82f6;
+        display: flex; align-items: center; justify-content: center;
+    }
+
+    @media (max-width: 768px) {
+        .table-modern thead { display: none; }
+        .table-modern tbody tr { display: block; margin-bottom: 15px; border-radius: 15px !important; border: 1px solid #e2e8f0; }
+        .table-modern tbody td { 
+            display: flex; justify-content: space-between; align-items: center; 
+            text-align: right; border-bottom: 1px solid #f1f5f9; 
+        }
+        .table-modern tbody td::before { content: attr(data-label); font-weight: bold; color: #64748b; }
+        .room-icon { display: none; }
+    }
+</style>
 
 @if(session('success'))
 <script>
@@ -18,117 +103,77 @@
             showConfirmButton: false,
             position: 'top-end',
             toast: true,
-            background: '#f0fdf4',
-            iconColor: '#16a34a',
-            customClass: {
-                popup: 'border border-success shadow'
-            }
         });
     });
 </script>
 @endif
- 
-{{-- @if(session('edit_error'))
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        Swal.fire({
-            icon: 'error',
-            title: 'Gagal Update!',
-            text: '{{ session('edit_error') }}',
-            confirmButtonColor: '#dc3545',
-            confirmButtonText: 'Tutup',
-            customClass: { popup: 'shadow' }
-        }).then(() => {
-            var editModal = new bootstrap.Modal(document.getElementById('modalEditruangan'));
-            editModal.show();
-        });
-    });
-</script>
-@endif --}}
- 
-@if ($errors->any())
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Validasi Gagal',
-            html: `<ul class="text-start text-danger mb-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>`,
-            confirmButtonColor: '#f59e0b',
-            confirmButtonText: 'Perbaiki',
-            customClass: { popup: 'shadow' }
-        }).then(() => {
-            var tambahModal = new bootstrap.Modal(document.getElementById('modalTambahruangan'));
-            tambahModal.show();
-        });
-    });
-</script>
-@endif
- 
-<div class="row mb-4 mt-3 align-items-end">
-    <div class="col-md-5">
-        <form id="formSearch" action="{{ url()->current() }}" method="GET">
-            <div class="input-group shadow-sm">
-                <input id="search" type="text" class="form-control" 
-                    placeholder="Cari nama ruangan atau lokasi..." 
-                    name="search" value="{{ request('search') }}">
-                <button type="submit" class="btn btn-primary px-4">
-                    <i class="fa fa-search"></i>
-                </button>
-            </div>
-        </form>
-    </div>
-    <div class="col-md-7 text-md-end mt-3 mt-md-0">
-        <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#modalTambahruangan">
-            <i class="fa fa-plus-circle me-1"></i> Tambah Ruangan
-        </button>
+
+<div class="room-card mb-4 mt-3">
+    <div class="row g-3 align-items-center">
+        <div class="col-12 col-md-5">
+            <form id="formSearch" action="{{ url()->current() }}" method="GET">
+                <div class="search-container shadow-sm">
+                    <input id="search" 
+                        type="text" 
+                        class="form-control" 
+                        placeholder="Cari data..." 
+                        name="search" 
+                        value="{{ request('search') }}" 
+                        autocomplete="off">
+                    
+                    <button type="submit" class="search-btn">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="col-12 col-md-7 text-md-end">
+            <button class="btn btn-primary px-4 py-2 rounded-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalTambahruangan">
+                <i class="fa fa-plus-circle me-2"></i>Tambah Ruangan
+            </button>
+        </div>
     </div>
 </div>
- 
-<div class="table-responsive shadow-sm rounded">
-    <table class="table table-bordered table-hover mb-0">
-        <thead class="table-primary text-center">
-            <tr>
-                <th width="60">No</th>
-                <th>Nama Ruangan</th>
-                <th>Lokasi / Lantai</th>
+
+<div class="table-responsive" style="overflow: visible;">
+    <table class="table table-modern">
+        <thead>
+            <tr class="text-center">
+                <th width="70">No</th>
+                <th class="text-start">Nama Ruangan</th>
+                <th>Lokasi</th>
                 <th width="150">Aksi</th>
             </tr>
         </thead>
         <tbody id="ruanganTable">
-            <tr id="noRoomData" style="display: none;">
-                <td colspan="4" class="text-center text-muted">
-                    Data tidak ditemukan
-                </td>
-            </tr>
             @forelse ($data_ruangan as $index => $ruangan)
-            <tr id="row-{{ $ruangan->id }}" class="align-middle text-center">
-                <td>{{ $data_ruangan->firstItem() + $index }}</td>
-                <td class="text-start ps-4">
-                    <a href="{{ url('/perangkat/data_perangkat?id_ruangan=' . $ruangan->id) }}" class="fw-bold text-decoration-none">
-                        <i class="fa fa-door-open me-2 text-secondary"></i>{{ $ruangan->nama_ruangan }}
-                    </a>
+            <tr class="text-center shadow-sm">
+                <td data-label="No">{{ $data_ruangan->firstItem() + $index }}</td>
+                <td data-label="Ruangan" class="text-start">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="room-icon"><i class="fa fa-door-open"></i></div>
+                        <a href="{{ url('/perangkat/data_perangkat?id_ruangan=' . $ruangan->id_ruangan) }}" class="fw-bold text-dark text-decoration-none">
+                            {{ $ruangan->nama_ruangan }}
+                        </a>
+                    </div>
                 </td>
-                <td>
-                    <span class="badge bg-light text-dark border">
-                        <i class="fa fa-layer-group me-1"></i>{{ $ruangan->lokasi }}
+                <td data-label="Lokasi">
+                    <span class="badge bg-light text-primary border-primary border px-3 py-2 rounded-pill">
+                        <i class="fa fa-layer-group me-1"></i> {{ $ruangan->lokasi }}
                     </span>
                 </td>
-                <td>
-                    <div class="btn-group" role="group">
-                        <button class="btn btn-warning btn-sm btn-edit"
-                            data-id="{{ $ruangan->id }}"
+                <td data-label="Aksi">
+                    <div class="d-flex justify-content-center gap-2">
+                        <button class="btn btn-warning btn-sm btn-edit rounded-3 px-3 shadow-sm"
+                            data-id="{{ $ruangan->id_ruangan }}"
                             data-nama_ruangan="{{ $ruangan->nama_ruangan }}"
                             data-lantai="{{ $ruangan->lokasi }}">
                             <i class="fa fa-pencil"></i>
                         </button>
-                        <button class="btn btn-danger btn-sm btn-hapus"
-                            data-id="{{ $ruangan->id }}"
+                        <button class="btn btn-danger btn-sm btn-hapus rounded-3 px-3 shadow-sm"
+                            data-id="{{ $ruangan->id_ruangan }}"
                             data-nama_ruangan="{{ $ruangan->nama_ruangan }}"
-                            data-url="{{ url('ruang/data_ruang/' . $ruangan->id . '/delete') }}">
+                            data-url="{{ url('ruang/data_ruang/' . $ruangan->id_ruangan . '/delete') }}">
                             <i class="fa fa-trash"></i>
                         </button>
                     </div>
@@ -136,121 +181,82 @@
             </tr>
             @empty
             <tr>
-                <td colspan="4" class="text-center py-4 text-muted">
-                    <i class="fa fa-folder-open d-block mb-2" style="font-size: 2rem;"></i>
-                    Tidak ada data ruangan ditemukan
-                </td>
+                <td colspan="4" class="text-center py-5 text-muted">Data tidak ditemukan.</td>
             </tr>
             @endforelse
         </tbody>
     </table>
 </div>
- 
-<div class="mt-4">
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center shadow-sm">
-            <li class="page-item {{ $data_ruangan->onFirstPage() ? 'disabled' : '' }}">
-                <a class="page-link" href="{{ $data_ruangan->appends(request()->query())->previousPageUrl() ?? '#' }}">
-                    &laquo;
-                </a>
-            </li>
- 
-            @for ($i = 1; $i <= $data_ruangan->lastPage(); $i++)
-                <li class="page-item {{ $data_ruangan->currentPage() == $i ? 'active' : '' }}">
-                    <a class="page-link" href="{{ $data_ruangan->url($i) . '&' . http_build_query(request()->except('page')) }}">
-                        @php
-                            $search = request('search');
-                            $label = $i;
-                            if (!$search && isset($halamanLantai1)) {
-                                if ($i <= $halamanLantai1) $label = "Lantai 1 ($i)";
-                                elseif ($i <= ($halamanLantai1 + $halamanLantai2)) $label = "Lantai 2 (" . ($i - $halamanLantai1) . ")";
-                                else $label = "Lantai 3 (" . ($i - $halamanLantai1 - $halamanLantai2) . ")";
-                            }
-                        @endphp
-                        {{ $label }}
-                    </a>
-                </li>
-            @endfor
- 
-            <li class="page-item {{ !$data_ruangan->hasMorePages() ? 'disabled' : '' }}">
-                <a class="page-link" href="{{ $data_ruangan->appends(request()->query())->nextPageUrl() ?? '#' }}">
-                    &raquo;
-                </a>
-            </li>
-        </ul>
-    </nav>
+
+<div class="d-flex justify-content-center mt-4">
+    {{ $data_ruangan->appends(request()->query())->links('pagination::bootstrap-5') }}
 </div>
- 
+
 <div class="modal fade" id="modalTambahruangan" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
             <form action="{{ url('ruang/data_ruang') }}" method="POST">
                 @csrf
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title"><i class="fa fa-plus-circle me-2"></i>Tambah Ruangan</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Nama Ruangan</label>
-                        <input type="text" class="form-control" name="nama_ruangan" placeholder="Contoh: Ruang Farmasi" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Pilih Lokasi Lantai</label>
-                        <select class="form-select" name="lantai" required>
-                            <option value="" hidden>-- Pilih Lantai --</option>
-                            <option value="Lantai 1">Lantai 1</option>
-                            <option value="Lantai 2">Lantai 2</option>
-                            <option value="Lantai 3">Lantai 3</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary px-4">Simpan Ruangan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
- 
-<div class="modal fade" id="modalEditruangan" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <form id="formEditruangan" method="POST">
-                @csrf
-                <div class="modal-header bg-warning">
-                    <h5 class="modal-title fw-bold"><i class="fa fa-edit me-2"></i>Edit Ruangan</h5>
+                <div class="modal-header border-0 p-4 pb-0">
+                    <h5 class="fw-bold"><i class="fa fa-plus-circle me-2 text-primary"></i>Tambah Ruangan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Nama Ruangan</label>
-                        <input type="text" class="form-control" id="edit_ruangan" name="nama_ruangan" required>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control rounded-3" name="nama_ruangan" placeholder="Nama Ruangan" required>
+                        <label>Nama Ruangan</label>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Lokasi Lantai</label>
-                        <select class="form-select" name="lokasi" id="edit_lokasi" required>
-                            <option value="" hidden>-- Pilih Lantai --</option>
-                            <option value="Lantai 1">Lantai 1</option>
-                            <option value="Lantai 2">Lantai 2</option>
-                            <option value="Lantai 3">Lantai 3</option>
+                    <div class="form-floating mb-3">
+                        <select class="form-select rounded-3" name="lokasi" required>
+                            <option value="" hidden>Pilih Lantai</option>
+                            <option value="Lt. 1">Lantai 1</option>
+                            <option value="Lt. 2">Lantai 2</option>
+                            <option value="Lt. 3">Lantai 3</option>
                         </select>
+                        <label>Lokasi Lantai</label>
                     </div>
                 </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-warning px-4 fw-bold">Update Data</button>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary rounded-3 px-4">Simpan Ruangan</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
- 
-<script>
-    const baseUrl = "{{ url('/') }}";
-</script>
- 
+
+<div class="modal fade" id="modalEditruangan" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <form id="formEditruangan" method="POST">
+                @csrf
+                <div class="modal-header border-0 p-4 pb-0">
+                    <h5 class="fw-bold text-warning"><i class="fa fa-edit me-2"></i>Edit Ruangan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control rounded-3" id="edit_ruangan" name="nama_ruangan" required>
+                        <label>Nama Ruangan</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <select class="form-select rounded-3" name="lokasi" id="edit_lokasi" required>
+                            <option value="Lt. 1">Lantai 1</option>
+                            <option value="Lt. 2">Lantai 2</option>
+                            <option value="Lt. 3">Lantai 3</option>
+                        </select>
+                        <label>Lokasi Lantai</label>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-warning rounded-3 px-4 fw-bold">Update Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>const baseUrl = "{{ url('/') }}";</script>
 <script src="{{ asset('/js/data_ruang.js') }}"></script>
- 
 @endsection

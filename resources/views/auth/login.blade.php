@@ -3,7 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Modern UI</title>
+    <title>Login</title>
+    <link rel="icon" href="{{ asset('/image/logo-sipitrs.png') }}" type="image/png">
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
 </head>
@@ -34,7 +35,7 @@
             </div>
             @endif
 
-            <form method="post" action="{{ url('/login/proses') }}" id="login-form">
+            <form method="POST" action="{{ route('login.proses') }}" id="login-form">
                 @csrf
                 <div class="field">
                     <span class="fa fa-user"></span>

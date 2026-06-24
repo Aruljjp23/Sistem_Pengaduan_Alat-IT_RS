@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register | Modern UI</title>
+    <title>Register</title>
     <link rel="stylesheet" href="{{ asset('css/register.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
 </head>
@@ -56,6 +56,25 @@
                 <div class="field">
                     <span class="fa fa-user"></span>
                     <input type="text" name="name" id="input-name" value="{{ old('name') }}" placeholder="Username" autocomplete="off">
+                </div>
+
+                <div class="field space field-ruangan-container">
+                    <span class="fa fa-building"></span>
+                    
+                    <input type="text" 
+                        id="ruangan_search" 
+                        list="list-ruangan" 
+                        placeholder="Pilih / Ketik Ruangan Anda..." 
+                        autocomplete="off" 
+                        required>
+                    
+                    <datalist id="list-ruangan">
+                        @foreach($ruangan as $r)
+                            <option data-id="{{ $r->id_ruangan }}" value="{{ $r->nama_ruangan }}"></option>
+                        @endforeach
+                    </datalist>
+
+                    <input type="hidden" name="id_ruangan" id="id_ruangan_hidden" value="{{ old('id_ruangan') }}">
                 </div>
                 
                 <div class="field space">

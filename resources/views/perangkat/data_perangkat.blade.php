@@ -21,9 +21,9 @@
         padding: 0.4rem 0.6rem;
     }
 
-    .btn-outline-primary.active, 
-    .btn-outline-success.active, 
-    .btn-outline-warning.active, 
+    .btn-outline-primary.active,
+    .btn-outline-success.active,
+    .btn-outline-warning.active,
     .btn-outline-info.active,
     .btn-outline-dark.active {
         box-shadow: 0 3px 8px rgba(0,0,0,0.15);
@@ -40,15 +40,12 @@
             overflow-x: auto;
             white-space: nowrap;
         }
-        
         .filter-wrapper::-webkit-scrollbar {
             height: 3px;
         }
-
         .table thead th {
             font-size: 0.75rem;
         }
-
         .table tbody td {
             font-size: 0.8rem;
         }
@@ -63,7 +60,52 @@
         font-weight: 600 !important;
         padding: 10px 28px !important;
     }
+
+    tr.row-updated {
+        animation: highlightRow 3s ease forwards;
+    }
+    @keyframes highlightRow {
+        0%   { background-color: #fff3cd; }
+        80%  { background-color: #fff3cd; }
+        100% { background-color: transparent; }
+    }
+
+    .change-badge {
+        display: inline-block;
+        font-size: 0.7rem;
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        color: #856404;
+        border-radius: 4px;
+        padding: 1px 5px;
+        margin-left: 4px;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
 </style>
+
+@if(session('success') && is_array(session('success')))
+    <script>
+        window.updateResultData = @json(session('success'));
+    </script>
+@endif
+
+@if(session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: "{{ is_array(session('success')) ? 'Data perangkat berhasil diperbarui.' : session('success') }}",
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                position: 'top-end',
+                toast: true,
+            });
+        });
+    </script>
+@endif
 
 <br>
 
@@ -75,56 +117,12 @@
         <h5 class="mb-0">Ruangan: <span class="badge bg-primary fs-6">{{ $ruangan->nama_ruangan ?? '-' }}</span></h5>
     </div>
 
-    @if(session('success'))
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: '{{ session('success') }}',
-                timer: 3000,
-                timerProgressBar: true,
-                showConfirmButton: false,
-                position: 'top-end',
-                toast: true,
-                background: '#f0fdf4',
-                iconColor: '#16a34a',
-                customClass: {
-                    popup: 'border border-success shadow'
-                }
-            });
-        });
-    </script>
-    @endif
-
-    {{-- @if ($errors->any())
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Validasi Gagal',
-                html: `<ul class="text-start text-danger mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>`,
-                confirmButtonColor: '#f59e0b',
-                confirmButtonText: 'Perbaiki',
-                customClass: { popup: 'shadow' }
-            }).then(() => {
-                var tambahModal = new bootstrap.Modal(document.getElementById('modalTambahperangkat'));
-                tambahModal.show();
-            });
-        });
-    </script>
-    @endif --}}
-
     <div class="row g-3 mb-4 align-items-center">
         <div class="col-md-5">
             <form id="formSearch" class="input-group shadow-sm">
                 <input type="hidden" id="id_ruangan" value="{{ $id_ruangan }}">
-                <input id="search" type="text" class="form-control" 
-                    placeholder="Cari kode atau IP..." 
+                <input id="search" type="text" class="form-control"
+                    placeholder="Cari kode atau IP..."
                     name="search" value="{{ request()->get('search', '') }}">
                 <button type="button" class="btn btn-primary px-4" onclick="navigateWithParams()">
                     <i class="fa fa-search"></i>
@@ -141,12 +139,13 @@
     <div class="filter-wrapper mb-4 p-3 bg-light rounded shadow-sm">
         <p class="small text-muted fw-bold mb-2 text-uppercase">Filter Kategori:</p>
         <div class="d-flex flex-wrap gap-2">
-            <a href="{{ url('/perangkat/data_perangkat?id_ruangan='.$id_ruangan) }}" 
-                class="btn btn-sm btn-outline-dark {{ !$kategori ? 'active' : '' }}">Semua</a>
-            
+            <a href="{{ url('/perangkat/data_perangkat?id_ruangan='.$id_ruangan) }}"
+               class="btn btn-sm btn-outline-dark {{ empty($kategori) ? 'active' : '' }}">
+                Semua
+            </a>
             @foreach(['Laptop' => 'primary', 'Printer' => 'success', 'PC' => 'warning', 'Handphone' => 'info'] as $kat => $color)
-                <a href="{{ url('/perangkat/data_perangkat?id_ruangan='.$id_ruangan.'&kategori='.strtoupper($kat)) }}" 
-                    class="btn btn-sm btn-outline-{{ $color }} {{ strtoupper($kategori) == strtoupper($kat) ? 'active' : '' }}">
+                <a href="{{ url('/perangkat/data_perangkat?id_ruangan='.$id_ruangan.'&kategori='.strtoupper($kat)) }}"
+                   class="btn btn-sm btn-outline-{{ $color }} {{ strtoupper($kategori ?? '') == strtoupper($kat) ? 'active' : '' }}">
                     {{ $kat }}
                 </a>
             @endforeach
@@ -167,31 +166,42 @@
             </thead>
             <tbody>
                 @forelse ($data_perangkat as $index => $perangkat)
-                <tr class="text-center">
+                <tr class="text-center" data-id="{{ $perangkat->id_perangkat }}">
                     <td>{{ $data_perangkat->firstItem() + $index }}</td>
-                    <td class="fw-bold">{{ $perangkat->kode_perangkat }}</td>
-                    <td><code>{{ $perangkat->ip_jaringan }}</code></td>
-                    <td>{{ $perangkat->merek }}</td>
-                    <td>
-                        <span class="badge bg-secondary-subtle text-secondary border">{{ $perangkat->kategori_perangkat }}</span>
+
+                    <td class="fw-bold" data-col="kode_inventaris">
+                        {{ $perangkat->kode_inventaris }}
                     </td>
+
+                    <td data-col="alamat_ip">
+                        <code>{{ $perangkat->alamat_ip }}</code>
+                    </td>
+
+                    <td data-col="merek">
+                        {{ $perangkat->merek }}
+                    </td>
+
+                    <td data-col="kategori_perangkat">
+                        <span class="badge bg-secondary-subtle text-secondary border">
+                            {{ $perangkat->kategori_perangkat }}
+                        </span>
+                    </td>
+
                     <td>
                         <div class="btn-group">
-                            <a href="{{ url('/perangkat/qr_png/'.$perangkat->id) }}" class="btn btn-outline-success btn-sm" title="Download QR">
-                                <i class="fa fa-qrcode"></i>
-                            </a>
-                            <button class="btn btn-outline-warning btn-sm btn-edit" 
-                                data-id="{{ $perangkat->id }}"
-                                data-kode_perangkat="{{ $perangkat->kode_perangkat }}"
-                                data-ip_jaringan="{{ $perangkat->ip_jaringan }}"
+                            <button class="btn btn-outline-warning btn-sm btn-edit"
+                                data-id_perangkat="{{ $perangkat->id_perangkat }}"
+                                data-kode_inventaris="{{ $perangkat->kode_inventaris }}"
+                                data-alamat_ip="{{ $perangkat->alamat_ip }}"
                                 data-merek="{{ $perangkat->merek }}"
-                                data-kategori_perangkat="{{ $perangkat->kategori_perangkat }}">
+                                data-id_kategori="{{ $perangkat->id_kategori_perangkat }}"
+                                data-nama_kategori="{{ $perangkat->kategori_perangkat }}">
                                 <i class="fa fa-pencil"></i>
                             </button>
                             <button class="btn btn-outline-danger btn-sm btn-hapus"
-                                data-id="{{ $perangkat->id }}"
+                                data-id_perangkat="{{ $perangkat->id_perangkat }}"
                                 data-kategori_perangkat="{{ $perangkat->kategori_perangkat }}"
-                                data-url="{{ url('perangkat/data_perangkat/' . $perangkat->id . '/delete') }}">
+                                data-url="{{ url('perangkat/data_perangkat/' . $perangkat->id_perangkat . '/delete') }}">
                                 <i class="fa fa-trash"></i>
                             </button>
                         </div>
@@ -212,9 +222,9 @@
     <div class="mt-4 d-flex justify-content-center">
         {{ $data_perangkat->appends(request()->except('page'))->links('pagination::bootstrap-5') }}
     </div>
-    
 </div>
 
+{{-- Modal Tambah --}}
 <div class="modal fade" id="modalTambahperangkat" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
@@ -226,12 +236,12 @@
                 </div>
                 <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Nomer Register</label>
-                        <input type="text" class="form-control" name="kode_perangkat" placeholder="Contoh: REG-102938" required>
+                        <label class="form-label fw-bold">Kode Inventaris</label>
+                        <input type="text" class="form-control" name="kode_inventaris" placeholder="Contoh: REG-102938" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">IP Jaringan</label>
-                        <input type="text" class="form-control" name="ip_jaringan" placeholder="192.168.1.xx" required>
+                        <label class="form-label fw-bold">Alamat IP Jaringan</label>
+                        <input type="text" class="form-control" name="alamat_ip" placeholder="192.168.1.xx" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Merek</label>
@@ -239,12 +249,11 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Kategori Perangkat</label>
-                        <select class="form-select" name="kategori_perangkat" required>
+                        <select class="form-select" name="id_kategori" required>
                             <option value="" hidden>-- Pilih Kategori --</option>
-                            <option value="LAPTOP">Laptop</option>
-                            <option value="PRINTER">Printer</option>
-                            <option value="PC">PC</option>
-                            <option value="HANDPHONE">Handphone</option>
+                            @foreach($kategori_perangkat as $kat)
+                                <option value="{{ $kat->id_kategori }}">{{ $kat->nama_kategori }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -264,17 +273,19 @@
             <form id="formEditperangkat" method="POST">
                 @csrf
                 <div class="modal-header bg-warning">
-                    <h5 class="modal-title fw-bold"><i class="fa fa-edit me-2"></i>Edit Data Perangkat</h5>
+                    <h5 class="modal-title fw-bold">
+                        <i class="fa fa-edit me-2"></i>Edit Data Perangkat
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Nomer Register</label>
-                        <input type="text" class="form-control" id="edit_kode_perangkat" name="kode_perangkat" required>
+                        <label class="form-label fw-bold">Kode Inventaris</label>
+                        <input type="text" class="form-control" id="edit_kode_inventaris" name="kode_inventaris" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">IP Jaringan</label>
-                        <input type="text" class="form-control" id="edit_perangkat" name="ip_jaringan" required>
+                        <input type="text" class="form-control" id="edit_alamat_ip" name="alamat_ip" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Merek</label>
@@ -282,11 +293,10 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Kategori Perangkat</label>
-                        <select class="form-select" id="edit_kategori_perangkat" name="kategori_perangkat" required>
-                            <option value="LAPTOP">Laptop</option>
-                            <option value="PRINTER">Printer</option>
-                            <option value="PC">PC</option>
-                            <option value="HANDPHONE">Handphone</option>
+                        <select class="form-select" id="edit_id_kategori" name="id_kategori" required>
+                            @foreach($kategori_perangkat as $kat)
+                                <option value="{{ $kat->id_kategori }}">{{ $kat->nama_kategori }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -301,8 +311,7 @@
 </div>
 
 <script>
-    const baseUrl     = "{{ url('') }}";
-    const id_ruangan  = "{{ $id_ruangan }}";
+    const BASE_URL = "{{ url('/') }}";
 </script>
 <script src="{{ asset('js/data_perangkat.js') }}"></script>
 

@@ -17,15 +17,31 @@ class RuanganCtrl extends Controller
 
 
         if ($search) {
+
+            $keyword = strtolower(trim($search));
+
             $data_ruangan = DB::table('ruangan')
-            ->where(function($q) use ($search) {
-                $q->where('nama_ruangan', 'LIKE', '%' . $search . '%')
-                ->orWhere('lokasi', 'LIKE', '%' . $search . '%');
-            })->orderBy('nama_ruangan', 'asc')->paginate($perPage);
+                ->where(function ($q) use ($keyword) {
+
+                    $q->whereRaw('LOWER(nama_ruangan) LIKE ?', ["%{$keyword}%"]);
+
+                    if (in_array($keyword, ['lt 1', 'lt. 1', 'lantai 1'])) {
+                        $q->orWhere('lokasi', 'Lt. 1');
+                    } elseif (in_array($keyword, ['lt 2', 'lt. 2', 'lantai 2'])) {
+                        $q->orWhere('lokasi', 'Lt. 2');
+                    } elseif (in_array($keyword, ['lt 3', 'lt. 3', 'lantai 3'])) {
+                        $q->orWhere('lokasi', 'Lt. 3');
+                    } else {
+                        $q->orWhereRaw('LOWER(lokasi) LIKE ?', ["%{$keyword}%"]);
+                    }
+
+                })
+                ->orderBy('nama_ruangan', 'asc')
+                ->paginate($perPage);
         } else {
-            $totalLantai1 = DB::table('ruangan')->where('lokasi', 'lantai 1')->count();
-            $totalLantai2 = DB::table('ruangan')->where('lokasi', 'lantai 2')->count();
-            $totalLantai3 = DB::table('ruangan')->where('lokasi', 'lantai 3')->count();
+            $totalLantai1 = DB::table('ruangan')->where('lokasi', 'Lt. 1')->count();
+            $totalLantai2 = DB::table('ruangan')->where('lokasi', 'Lt. 2')->count();
+            $totalLantai3 = DB::table('ruangan')->where('lokasi', 'Lt. 3')->count();
 
         
             $halamanLantai1 = ceil($totalLantai1 / $perPage);
@@ -33,13 +49,13 @@ class RuanganCtrl extends Controller
             $halamanLantai3 = ceil($totalLantai3 / $perPage);
 
             if ($page <= $halamanLantai1) {
-                $lantai = 'lantai 1';
+                $lantai = 'Lt. 1';
                 $currentLantaiPage = $page;
             } elseif ($page <= $halamanLantai1 + $halamanLantai2) {
-                $lantai = 'lantai 2';
+                $lantai = 'Lt. 2';
                 $currentLantaiPage = $page - $halamanLantai1;
             } else {
-                $lantai = 'lantai 3';
+                $lantai = 'Lt. 3';
                 $currentLantaiPage = $page - $halamanLantai1 - $halamanLantai2;
             }
 
@@ -48,15 +64,15 @@ class RuanganCtrl extends Controller
             $items = DB::table('ruangan')->where('lokasi', $lantai)->orderBy('nama_ruangan', 'asc')->forPage($currentLantaiPage, $perPage)->get();
 
             $offsetLantai1 = 0;
-            $offsetLantai2 = DB::table('ruangan')->where('lokasi', 'lantai 1')->count();
-            $offsetLantai3 = DB::table('ruangan')->where('lokasi', 'lantai 1')->orWhere('lokasi', 'lantai 2')->count();
+            $offsetLantai2 = DB::table('ruangan')->where('lokasi', 'Lt. 1')->count();
+            $offsetLantai3 = DB::table('ruangan')->where('lokasi', 'Lt. 1')->orWhere('lokasi', 'Lt. 2')->count();
 
-            if ($lantai == 'lantai 1') {
+            if ($lantai == 'Lt. 1') {
                 $offset = 0;
-            } elseif ($lantai == 'lantai 2') {
-                $offset = DB::table('ruangan')->where('lokasi', 'lantai 1')->count();
-            } elseif ($lantai == 'lantai 3') {
-                $offset = DB::table('ruangan')->whereIn('lokasi', ['lantai 1', 'lantai 2'])->count();
+            } elseif ($lantai == 'Lt. 2') {
+                $offset = DB::table('ruangan')->where('lokasi', 'Lt. 1')->count();
+            } elseif ($lantai == 'Lt. 3') {
+                $offset = DB::table('ruangan')->whereIn('lokasi', ['Lt. 1', 'Lt. 2'])->count();
             }
             $data_ruangan = new \Illuminate\Pagination\LengthAwarePaginator(
                 $items,
@@ -93,7 +109,7 @@ class RuanganCtrl extends Controller
 
     public function update(Request $request, $id)
     {
-        DB::table('ruangan')->where('id','=',$id)->update([
+        DB::table('ruangan')->where('id_ruangan','=',$id)->update([
             'nama_ruangan'=>$request->nama_ruangan,
             'lokasi'=>$request->lokasi,
         ]);
@@ -103,7 +119,7 @@ class RuanganCtrl extends Controller
 
     public function destroy($id)
     {
-        DB::table('ruangan')->where('id', '=', $id)->delete();
+        DB::table('ruangan')->where('id_ruangan', '=', $id)->delete();
         return redirect('ruang/data_ruang')->with('success', 'Data Ruangan berhasil dihapus.');
     }
 }

@@ -1,139 +1,81 @@
+@php
+    $user = Auth::user();
+@endphp
+
 <div id="layoutSidenav_nav">
-    <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion" style="background-color: #0d934a; border-right: 2px solid #096e37;">
+    <nav class="sb-sidenav accordion sb-sidenav-custom" id="sidenavAccordion">
         <div class="sb-sidenav-menu">
-            <div class="nav">
+            <div class="nav px-2 mt-3">
 
-                @if(Auth::user()->role == "admin")
+                @if($user->role == 'admin')
 
-                    <a class="nav-link" href="{{ url('dashboard') }}" style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                        <div class="sb-nav-link-icon"><i class="fas fa-chart-line" style="color: #ffffff;"></i></div>
+                    <div class="menu-label">Utama</div>
+                    <a class="nav-link modern-link" href="{{ url('dashboard') }}">
+                        <div class="sb-nav-link-icon"><i class="fas fa-grip-vertical"></i></div>
                         Dashboard
                     </a>
 
-                    <a class="nav-link collapsed" href="#"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapsePages"
-                        aria-expanded="false"
-                        aria-controls="collapsePages"
-                        style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                        <div class="sb-nav-link-icon"><i class="fas fa-database" style="color: #ffffff;"></i></div>
+                    <div class="menu-label">Manajemen</div>
+                    <a class="nav-link modern-link collapsed" href="#"
+                       data-bs-toggle="collapse" data-bs-target="#collapsePages">
+                        <div class="sb-nav-link-icon"><i class="fas fa-server"></i></div>
                         Data Master
-                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down" style="color: ##ffffff;"></i></div>
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
-
-                    <div class="collapse" id="collapsePages"
-                        aria-labelledby="headingTwo"
-                        data-bs-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-
-                            <a class="nav-link collapsed" href="#"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#pagesCollapseAuth"
-                                aria-expanded="false"
-                                aria-controls="pagesCollapseAuth"
-                                style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                                <div class="sb-nav-link-icon"><i class="fas fa-users" style="color: #ffffff;"></i></div>
-                                User
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down" style="color: #ffffff;"></i></div>
+                    <div class="collapse" id="collapsePages" data-bs-parent="#sidenavAccordion">
+                        <nav class="sb-sidenav-menu-nested nav custom-sub-menu">
+                            <a class="nav-link sub-link" href="{{ url('/user/data_user') }}">
+                                <i class="fas fa-minus me-2 opacity-25"></i> Data User
                             </a>
-                            <div class="collapse" id="pagesCollapseAuth"
-                                data-bs-parent="#sidenavAccordionPages">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="{{ url('/user/data_user') }}" style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                                        <i class="fas fa-circle nav-icon-sm me-1" style="color: #ffffff;"></i> Data User
-                                    </a>
-                                </nav>
-                            </div>
-
-                            <a class="nav-link collapsed" href="#"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#pagesCollapseRuangan"
-                                aria-expanded="false"
-                                aria-controls="pagesCollapseRuangan"
-                                style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                                <div class="sb-nav-link-icon"><i class="far fa-hospital" style="color: #ffffff;"></i></div>
-                                Ruangan
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down" style="color: #ffffff;"></i></div>
+                            <a class="nav-link sub-link" href="{{ url('/ruang/data_ruang') }}">
+                                <i class="fas fa-minus me-2 opacity-25"></i> Data Ruangan
                             </a>
-                            <div class="collapse" id="pagesCollapseRuangan"
-                                data-bs-parent="#sidenavAccordionPages">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="{{ url('/ruang/data_ruang') }}" style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                                        <i class="fas fa-circle nav-icon-sm me-1" style="color: #ffffff;"></i> Data Ruangan
-                                    </a>
-                                </nav>
-                            </div>
-
+                            <a class="nav-link sub-link" href="{{ url('/kategori_perangkat/data_kategori') }}">
+                                <i class="fas fa-minus me-2 opacity-25"></i> Data Kategori
+                            </a>
                         </nav>
                     </div>
 
-                    <div class="sb-sidenav-menu-heading" style="color: #ffffff !important;">Pengaduan</div>
-                    <a class="nav-link" href="{{ url('/tindakan/data_tindakan') }}" style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                        <div class="sb-nav-link-icon"><i class="fas fa-exclamation-triangle" style="color: #ffffff;"></i></div>
-                        Data Pengaduan
-                    </a>
-
-                    <div class="sb-sidenav-menu-heading" style="color: #ffffff !important;">Tindakan Pengaduan</div>
-                     <a class="nav-link" href="{{ url('/pengaduan/data_pengaduan') }}" style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                        <div class="sb-nav-link-icon"><i class="fas fa-comments" style="color: #ffffff;"></i></div>
-                        Edit Pengaduan
-                    </a>
-                    <a class="nav-link" href="{{ url('/tindakan/riwayat_tindakan') }}" style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                        <div class="sb-nav-link-icon"><i class="fas fa-history" style="color: #ffffff;"></i></div>
+                    <div class="menu-label">Pengaduan</div>
+                    <a class="nav-link modern-link" href="{{ url('/pengaduan/riwayat_pengaduan') }}">
+                        <div class="sb-nav-link-icon"><i class="fas fa-clock-rotate-left"></i></div>
                         Riwayat Pengaduan
                     </a>
-                    <a class="nav-link" href="{{ url('/pengaduan/laporan_pengaduan') }}" style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                        <div class="sb-nav-link-icon"><i class="fas fa-book" style="color: #ffffff;"></i></div>
-                        Laporan Pengaduan
+                    <a class="nav-link modern-link" href="{{ url('/pengaduan/laporan_pengaduan') }}">
+                        <div class="sb-nav-link-icon"><i class="fas fa-file-invoice"></i></div>
+                        Laporan
                     </a>
 
-                @elseif(Auth::user()->role == "teknisi")
+                @elseif($user->role == 'teknisi')
 
-                    <a class="nav-link" href="{{ url('homepage') }}" style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                        <div class="sb-nav-link-icon"><i class="fas fa-chart-line" style="color: #ffffff;"></i></div>
+                    <a class="nav-link modern-link" href="{{ url('homepage') }}">
+                        <div class="sb-nav-link-icon"><i class="fas fa-house"></i></div>
                         Homepage
                     </a>
-
-                    <div class="sb-sidenav-menu-heading" style="color: #ffffff !important;">Pengaduan</div>
-                    <a class="nav-link" href="{{ url('/tindakan/data_tindakan') }}" style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                        <div class="sb-nav-link-icon"><i class="fas fa-exclamation-triangle" style="color: #ffffff;"></i></div>
-                        Data Pengaduan
+                    <div class="menu-label">Tugas</div>
+                    <a class="nav-link modern-link" href="{{ url('/tindakan/data_tindakan') }}">
+                        <div class="sb-nav-link-icon"><i class="fas fa-triangle-exclamation"></i></div>
+                        Daftar Pengaduan
+                    </a>
+                    <a class="nav-link modern-link" href="{{ url('/pengaduan/riwayat_pengaduan') }}">
+                        <div class="sb-nav-link-icon"><i class="fas fa-history"></i></div>
+                        Riwayat Kerja
                     </a>
 
-                    <div class="sb-sidenav-menu-heading" style="color: #ffffff !important;">Tindakan Pengaduan</div>
-                     <a class="nav-link" href="{{ url('/pengaduan/data_pengaduan') }}" style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                        <div class="sb-nav-link-icon"><i class="fas fa-comments" style="color: #ffffff;"></i></div>
-                        Edit Pengaduan
-                    </a>
-                    <a class="nav-link" href="{{ url('/tindakan/riwayat_tindakan') }}" style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                        <div class="sb-nav-link-icon"><i class="fas fa-history" style="color: #ffffff;"></i></div>
-                        Riwayat Pengaduan
-                    </a>
-
-                @elseif(Auth::user()->role == "pengadu")
+                @elseif($user->role == 'pengadu')
 
                     @php
-                        $user_ruang = DB::table('ruangan')->where('id', Auth::user()->id_ruangan)->first();
+                        $user_ruang = DB::table('ruangan')->where('id_ruangan', $user->id_ruangan)->first();
                     @endphp
-
-                    <a class="nav-link collapsed" href="#"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapsePages1"
-                        aria-expanded="false"
-                        aria-controls="collapsePages1"
-                        style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                        <div class="sb-nav-link-icon"><i class="fas fa-comments" style="color: #ffffff;"></i></div>
-                        Pengaduan
-                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down" style="color: #ffffff;"></i></div>
+                    <div class="menu-label">Layanan</div>
+                    <a class="nav-link modern-link" href="{{ url('/pengaduan/form_pengaduan/' . $user_ruang->id_ruangan) }}">
+                        <div class="sb-nav-link-icon"><i class="far fa-building"></i></div>
+                        {{ $user_ruang->nama_ruangan }}
                     </a>
-                    <div class="collapse" id="collapsePages1"
-                        data-bs-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" href="{{ url('/pengaduan/form_pengaduan/' . $user_ruang->id) }}" style="color: #ffffff !important; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                                <i class="fas fa-circle nav-icon-sm me-1" style="color: #ffffff;"></i> {{ $user_ruang->nama_ruangan }}
-                            </a>
-                        </nav>
-                    </div>
+                    <a class="nav-link modern-link" href="{{ url('/tindakan/tindakan_pengaduan') }}">
+                        <div class="sb-nav-link-icon"><i class="fas fa-paper-plane"></i></div>
+                        Tindakan Pengaduan
+                    </a>
 
                 @endif
 

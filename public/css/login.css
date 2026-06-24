@@ -13,7 +13,6 @@ body, html {
   background-color: #121212;
 }
 
-/* Modern Layout dengan Flexbox */
 .bg-img {
   background: url('../image/rs_darmayu.jpg') no-repeat center center;
   background-size: cover;
@@ -25,7 +24,6 @@ body, html {
   padding: 20px;
 }
 
-/* Overlay yang lebih smooth */
 .bg-img::after {
   content: '';
   position: absolute;
@@ -34,7 +32,6 @@ body, html {
   z-index: 1;
 }
 
-/* Glassmorphism Card */
 .content {
   position: relative;
   z-index: 2;
@@ -116,7 +113,6 @@ body, html {
   margin-top: 20px;
 }
 
-/* Tombol Show Password Modern */
 .show {
   position: absolute;
   right: 15px;
@@ -136,7 +132,6 @@ body, html {
   display: block;
 }
 
-/* Modern Submit Button */
 .field input[type="submit"] {
   background: linear-gradient(135deg, #3498db, #2980b9);
   color: white;
@@ -182,7 +177,6 @@ body, html {
   text-shadow: 0 0 10px rgba(52, 152, 219, 0.6);
 }
 
-/* Notifikasi Modern */
 .notif {
   padding: 12px 16px;
   border-radius: 10px;
@@ -207,7 +201,6 @@ body, html {
   color: #55efc4; 
 }
 
-/* Modern Loading Overlay */
 #loading-overlay {
   display: none;
   position: fixed;
@@ -239,7 +232,6 @@ body, html {
   animation: pulse 1.5s infinite;
 }
 
-/* Modal Modern */
 #modal-back {
   display: none;
   position: fixed;
@@ -283,17 +275,17 @@ body, html {
 .btn-confirm:hover { background: #c0392b; transform: translateY(-2px); }
 .btn-cancel { background: rgba(255,255,255,0.1); color: #fff; }
 .btn-cancel:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
-/* Styling untuk Header/Logo SIPITRS */
+
 .brand-header {
   margin-bottom: 30px;
   text-align: center;
 }
 
 .brand-header .logo {
-  width: 100px; /* Sesuaikan ukuran logo kamu */
+  width: 100px; 
   height: auto;
   margin-bottom: 12px;
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); /* Efek shadow ringan pada logo */
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
 }
 
 .brand-header h1 {
@@ -314,13 +306,11 @@ body, html {
   padding: 0 10px;
 }
 
-/* Keyframes */
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes popIn { to { transform: scale(1); } }
 
-/* Responsiveness */
 @media (max-width: 480px) {
   .content { padding: 40px 25px; border-radius: 20px; }
   header { font-size: 28px !important; }

@@ -84,3 +84,27 @@ document.addEventListener('DOMContentLoaded', () => {
        });
    }
 });
+
+document.getElementById('ruangan_search').addEventListener('input', function() {
+    var input = this.value;
+    var options = document.querySelectorAll('#list-ruangan option');
+    var hiddenInput = document.getElementById('id_ruangan_hidden');
+    
+    hiddenInput.value = ""; 
+    
+    for (var i = 0; i < options.length; i++) {
+        if (options[i].value === input) {
+            hiddenInput.value = options[i].getAttribute('data-id');
+            break;
+        }
+    }
+});
+
+document.getElementById('register-form').addEventListener('submit', function(e) {
+    var hiddenInput = document.getElementById('id_ruangan_hidden');
+    if (hiddenInput.value === "") {
+        e.preventDefault();
+        alert("Silakan pilih ruangan yang valid dari list yang tersedia!");
+        document.getElementById('ruangan_search').focus();
+    }
+});

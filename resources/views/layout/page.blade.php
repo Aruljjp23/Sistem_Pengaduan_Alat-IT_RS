@@ -1,468 +1,265 @@
 <!DOCTYPE html>
-<html lang="en" id="html-root">
-    <head>
-        <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        {{-- <meta http-equiv="refresh" content="60"> --}}
-        <title>Dashboard</title>
+<html lang="id" id="html-root">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>SIPITRS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        <style>
-            :root {
-                --bg-body:      #f8f9fa;
-                --bg-navbar:    #212529;
-                --bg-sidebar:   #212529;
-                --bg-content:   #ffffff;
-                --bg-footer:    #f8f9fa;
-                --text-primary: #212529;
-                --text-muted:   #6c757d;
-                --border-color: #dee2e6;
-                --card-bg:      #ffffff;
-                --input-bg:     #ffffff;
-                --input-border: #ced4da;
-                --link-color:   #0d6efd;
-                --shadow:       0 2px 8px rgba(0,0,0,.08);
-            }
+    <style>
+        :root {
+            --brand-primary: #0d934a;
+            --brand-dark: #096e37;
+            --brand-soft: rgba(13, 147, 74, 0.1);
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-light: #e2e8f0;
+            --radius-xl: 16px;
+            --radius-lg: 12px;
+            --shadow-subtle: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
 
-            html.dark-mode {
-                --bg-body:      #121212;
-                --bg-navbar:    #1e1e2e;
-                --bg-sidebar:   #161622;
-                --bg-content:   #1e1e2e;
-                --bg-footer:    #1a1a2a;
-                --text-primary: #e2e8f0;
-                --text-muted:   #94a3b8;
-                --border-color: #2d2d3f;
-                --card-bg:      #252535;
-                --input-bg:     #2a2a3d;
-                --input-border: #3d3d55;
-                --link-color:   #7dd3fc;
-                --shadow:       0 2px 12px rgba(0,0,0,.4);
-            }
+        html.dark-mode {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-light: #334155;
+        }
 
-            body {
-                background-color: var(--bg-body) !important;
-                color: var(--text-primary) !important;
-                transition: background-color .3s ease, color .3s ease;
-            }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: all 0.3s ease;
+        }
 
-            .sb-topnav {
-                background-color: var(--bg-navbar) !important;
-                transition: background-color .3s ease;
-            }
+        .sb-topnav.navbar {
+            background-color: var(--brand-primary) !important;
+            height: 70px;
+            padding: 0;
+            border-bottom: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
 
-            .sb-topnav {
-                background-color: #0d934a !important;
-            }
+        .brand-text {
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            font-size: 1.25rem;
+            color: #fff !important;
+        }
 
-            #sidenavAccordion,
-            .sb-sidenav,
-            .sb-sidenav-menu,
-            .sb-sidenav.accordion {
-                background-color: #0d934a !important;
-            }
+        .btn-theme-toggle {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            color: #fff;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
 
-            .sb-sidenav-menu .nav-link {
-                color: rgba(255, 255, 255, 0.85) !important;
-            }
+        .btn-theme-toggle:hover {
+            background: rgba(255,255,255,0.25);
+            color: #fff;
+        }
 
-            .sb-sidenav-menu .nav-link:hover {
-                color: #ffffff !important;
-                background-color: rgba(255, 255, 255, 0.12) !important;
-            }
+        .profile-name { font-weight: 700; font-size: 0.85rem; line-height: 1.2; color: #fff; }
+        .profile-role { font-size: 0.65rem; color: rgba(255,255,255,0.8); font-weight: 600; letter-spacing: 0.5px; }
 
-            .sb-sidenav-menu-heading {
-                color: rgba(255, 255, 255, 0.5) !important;
-            }
+        .sb-sidenav-custom {
+            background-color: var(--brand-primary) !important;
+            border-right: none;
+        }
 
-            .sb-sidenav-footer {
-                background-color: #0d934a !important;
-            }
+        .menu-label {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            padding: 1.5rem 1rem 0.5rem;
+        }
 
-            nav.sb-topnav.navbar {
-                background-color: #0d934a !important;
-            }
+        .modern-link {
+            border-radius: 12px !important;
+            margin: 2px 8px;
+            padding: 10px 15px !important;
+            color: rgba(255,255,255,0.8) !important;
+            font-size: 0.88rem;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
 
-            #sidenavAccordion .collapse,
-            #sidenavAccordion .collapsing {
-                background-color: #0d934a !important;
-            }
+        .modern-link:hover, .modern-link.active {
+            background-color: rgba(255,255,255,0.15) !important;
+            color: #fff !important;
+            transform: translateX(4px);
+        }
 
-            #layoutSidenav_nav,
-            .sb-sidenav {
-                background-color: var(--bg-sidebar) !important;
-                transition: background-color .3s ease;
-            }
+        .sb-nav-link-icon {
+            width: 30px;
+            font-size: 1.1rem;
+            color: #fff;
+            opacity: 0.7;
+        }
 
-            #layoutSidenav_content > main {
-                background-color: var(--bg-content) !important;
-                transition: background-color .3s ease;
-            }
+        .custom-sub-menu {
+            background: rgba(0,0,0,0.1) !important;
+            margin: 4px 15px !important;
+            border-radius: 10px;
+        }
 
-            footer.py-4 {
-                background-color: var(--bg-footer) !important;
-                border-top: 1px solid var(--border-color);
-                transition: background-color .3s ease;
-            }
-            footer .text-muted { color: var(--text-muted) !important; }
-            footer a           { color: var(--link-color) !important; }
+        .sub-link {
+            font-size: 0.8rem !important;
+            padding: 8px 15px !important;
+            color: rgba(255,255,255,0.7) !important;
+        }
 
-            .card {
-                background-color: var(--card-bg) !important;
-                border-color: var(--border-color) !important;
-                box-shadow: var(--shadow);
-                transition: background-color .3s ease;
-            }
+        .sub-link:hover { color: #fff !important; }
 
-            .table             { color: var(--text-primary) !important; }
-            .table thead th,
-            .table td          { border-color: var(--border-color) !important; }
+        @media (max-width: 991.98px) {
+            .sb-topnav.navbar { height: 65px; }
+            .sb-sidenav-toggled #layoutSidenav_nav { width: 260px; box-shadow: 20px 0 50px rgba(0,0,0,0.2); }
+            .modern-link { padding: 12px 15px !important; }
+        }
 
-            .dropdown-menu {
-                background-color: var(--card-bg) !important;
-                border-color: var(--border-color) !important;
-            }
-            .dropdown-item {
-                color: var(--text-primary) !important;
-            }
-            .dropdown-item:hover {
-                background-color: var(--bg-body) !important;
-            }
-            .dropdown-item.text-danger { color: #ef4444 !important; }
+        .card {
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-subtle);
+        }
 
-            .form-control,
-            .form-select {
-                background-color: var(--input-bg) !important;
-                border-color: var(--input-border) !important;
-                color: var(--text-primary) !important;
-            }
+        #layoutSidenav_content { background-color: var(--bg-body); }
 
-            h1, h2, h3, h4, h5, h6 {
-                color: var(--text-primary) !important;
-            }
+        #refresh-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(15, 23, 42, 0.85);
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+        #refresh-toast.show { opacity: 1; }
+        #refresh-toast .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse-dot 1s infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.5; transform: scale(0.7); }
+        }
+    </style>
+    @include('layout.header')
+</head>
 
-            .border-bottom {
-                border-color: var(--border-color) !important;
-            }
+<body class="sb-nav-fixed">
+    <script>
+        (function () {
+            const saved = localStorage.getItem("theme");
+            if (saved === 'dark') document.getElementById('html-root').classList.add('dark-mode');
+        })();
+    </script>
 
-            p, span, label, li, td, th, dt, dd, small, strong, b, em {
-                color: var(--text-primary) !important;
-            }
+    @include('layout.navbar')
 
-            .text-muted {
-                color: var(--text-muted) !important;
-            }
-
-            .breadcrumb-item,
-            .breadcrumb-item a,
-            .breadcrumb-item.active {
-                color: var(--text-muted) !important;
-            }
-
-            .badge.bg-secondary {
-                background-color: var(--border-color) !important;
-                color: var(--text-primary) !important;
-            }
-
-            .alert {
-                background-color: var(--card-bg) !important;
-                border-color: var(--border-color) !important;
-                color: var(--text-primary) !important;
-            }
-
-            .list-group-item {
-                background-color: var(--card-bg) !important;
-                border-color: var(--border-color) !important;
-                color: var(--text-primary) !important;
-            }
-
-            .modal-content {
-                background-color: var(--card-bg) !important;
-                border-color: var(--border-color) !important;
-                color: var(--text-primary) !important;
-            }
-            .modal-header,
-            .modal-footer {
-                border-color: var(--border-color) !important;
-            }
-
-            .nav-tabs .nav-link {
-                color: var(--text-muted) !important;
-            }
-            .nav-tabs .nav-link.active {
-                background-color: var(--card-bg) !important;
-                border-color: var(--border-color) !important;
-                color: var(--text-primary) !important;
-            }
-            .tab-content {
-                background-color: var(--card-bg) !important;
-                color: var(--text-primary) !important;
-            }
-
-            .select2-container--default .select2-selection--single,
-            .select2-container--default .select2-selection--multiple {
-                background-color: var(--input-bg) !important;
-                border-color: var(--input-border) !important;
-                color: var(--text-primary) !important;
-            }
-            .select2-results__option {
-                background-color: var(--card-bg) !important;
-                color: var(--text-primary) !important;
-            }
-
-            .table-striped > tbody > tr:nth-of-type(odd) > * {
-                background-color: rgba(128,128,128,0.06) !important;
-                color: var(--text-primary) !important;
-            }
-            .table-hover > tbody > tr:hover > * {
-                background-color: rgba(128,128,128,0.1) !important;
-                color: var(--text-primary) !important;
-            }
-
-            ::placeholder {
-                color: var(--text-muted) !important;
-                opacity: 1;
-            }
-
-            html.dark-mode ::-webkit-scrollbar {
-                width: 8px;
-            }
-            html.dark-mode ::-webkit-scrollbar-track {
-                background: var(--bg-body);
-            }
-            html.dark-mode ::-webkit-scrollbar-thumb {
-                background: var(--border-color);
-                border-radius: 4px;
-            }
-
-            .sb-topnav .navbar-brand,
-            .sb-topnav .nav-link,
-            .sb-topnav .navbar-text,
-            .sb-topnav button.btn-link,
-            .sb-topnav button.btn-link i,
-            .sb-topnav .fw-semibold,
-            .sb-topnav span {
-                color: #ffffff !important;
-            }
-            .sb-topnav .text-muted {
-                color: rgba(255,255,255,0.6) !important;
-            }
-
-            html.dark-mode .table thead,
-            html.dark-mode .table thead tr,
-            html.dark-mode .table thead th,
-            html.dark-mode .table > thead > tr > th {
-                background-color: #2a2a3d !important;
-                color: #e2e8f0 !important;
-                border-color: #3d3d55 !important;
-            }
-
-            html:not(.dark-mode) .table thead th {
-                color: #212529 !important;
-            }
-
-            html.dark-mode .pagination .page-link {
-                background-color: #2a2a3d !important;
-                border-color: #3d3d55 !important;
-                color: #7dd3fc !important;
-            }
-            html.dark-mode .pagination .page-link:hover {
-                background-color: #3d3d55 !important;
-                color: #ffffff !important;
-            }
-            html.dark-mode .pagination .page-item.active .page-link {
-                background-color: #0d6efd !important;
-                border-color: #0d6efd !important;
-                color: #ffffff !important;
-            }
-            html.dark-mode .pagination .page-item.disabled .page-link {
-                background-color: #1e1e2e !important;
-                border-color: #2d2d3f !important;
-                color: #4a5568 !important;
-            }
-
-            .sb-topnav {
-                background-color: var(--bg-navbar) !important;
-                transition: background-color .3s ease;
-            }
-
-            .sb-topnav .dropdown-menu {
-                background-color: var(--card-bg) !important;
-                border-color: var(--border-color) !important;
-            }
-
-            .sb-topnav .dropdown-item {
-                color: var(--text-primary) !important;
-                transition: background .2s ease;
-            }
-
-            .sb-topnav .dropdown-item:hover {
-                background-color: var(--bg-body) !important;
-                color: var(--text-primary) !important;
-            }
-
-            .sb-topnav .dropdown-item.text-danger,
-            .sb-topnav .dropdown-item.d-flex.text-danger {
-                color: #ef4444 !important;
-            }
-
-            .sb-topnav .dropdown-item.text-danger:hover {
-                background-color: rgba(239, 68, 68, 0.1) !important;
-                color: #ef4444 !important;
-            }
-
-            #layoutSidenav_nav {
-                width: 225px;
-                min-width: 225px;
-                transition: width 0.25s ease, min-width 0.25s ease;
-            }
-
-            .nav-icon-sm {
-                font-size: 0.45rem;
-                vertical-align: middle;
-                opacity: 0.6;
-            }
-
-            h1{
-                font-family: 'Tahoma','sans-serif';
-            }
-
-            @media (max-width: 991.98px) {
-                #layoutSidenav_nav {
-                    width: 100%;
-                    min-width: unset;
-                }
-
-                .sb-sidenav-menu-heading {
-                    font-size: 0.65rem;
-                    padding: 0.75rem 1rem 0.25rem;
-                    letter-spacing: 0.08em;
-                }
-
-                .sb-sidenav .nav-link {
-                    padding: 0.65rem 1rem;
-                    font-size: 0.875rem;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
-
-                .sb-nav-link-icon {
-                    width: 1.5rem;
-                    font-size: 0.85rem;
-                    flex-shrink: 0;
-                }
-
-                .sb-sidenav-menu-nested .nav-link {
-                    padding: 0.5rem 0.75rem 0.5rem 2.5rem;
-                    font-size: 0.82rem;
-                }
-
-                .sb-sidenav-collapse-arrow {
-                    margin-left: auto;
-                    flex-shrink: 0;
-                }
-            }
-
-            @media (max-width: 575.98px) {
-                .sb-sidenav .nav-link {
-                    font-size: 0.85rem;
-                    padding: 0.6rem 0.85rem;
-                }
-
-                .sb-sidenav-menu-nested .nav-link {
-                    font-size: 0.8rem;
-                    padding: 0.45rem 0.65rem 0.45rem 2.25rem;
-                }
-
-                .sb-sidenav-menu-heading {
-                    font-size: 0.6rem;
-                }
-            }
-
-        </style>
-
-        @include('layout.header')
-    </head>
-
-    <body class="sb-nav-fixed">
-
-        <script>
-            (function () {
-                const STORAGE_KEY = 'theme-preference';
-                const saved       = localStorage.getItem(STORAGE_KEY);
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (saved === 'dark' || (!saved && prefersDark)) {
-                    document.getElementById('html-root').classList.add('dark-mode');
-                }
-            })();
-        </script>
-
-        @include('layout.navbar')
-
-        <div id="layoutSidenav">
-            @include('layout.sidebar')
-            <div id="layoutSidenav_content">
-                <main>
-                    <div class="container-fluid px-4">
-                        <h1 class="mb-4 mt-4">@yield("page_title")</h1>
-                        @yield("content")
+    <div id="layoutSidenav">
+        @include('layout.sidebar')
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between mb-2 mt-4">
+                        <h1 class="h3 fw-bold text-dark">@yield("page_title")</h1>
                     </div>
-                </main>
-                <footer class="py-4 bg-light mt-auto">
-                    <div class="container-fluid px-4">
-                        <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Your Website 2023</div>
-                            <div>
-                                <a href="#">Privacy Policy</a>
-                                &middot;
-                                <a href="#">Terms &amp; Conditions</a>
-                            </div>
-                        </div>
+                    @yield("content")
+                </div>
+            </main>
+            <footer class="py-4 mt-auto border-top">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small text-muted">
+                        <div>&copy; 2026 SIPITRS RSUD. All Rights Reserved.</div>
                     </div>
-                </footer>
-            </div>
+                </div>
+            </footer>
         </div>
+    </div>
 
-        @include('layout.footer')
+    <div id="refresh-toast">
+        <span class="dot"></span>
+        <span id="refresh-label">Refresh otomatis dalam <b id="refresh-countdown">30:00</b></span>
+    </div>
 
-        <script>
-            (function () {
-                const html        = document.getElementById('html-root');
-                const btn         = document.getElementById('darkModeToggle');
-                const icon        = btn.querySelector('.toggle-icon');
-                const label       = btn.querySelector('.toggle-label');
-                const STORAGE_KEY = 'theme-preference';
+    @include('layout.footer')
 
-                function applyTheme(dark) {
-                    if (dark) {
-                        html.classList.add('dark-mode');
-                        icon.textContent     = '☀️';
-                        label.textContent    = 'Mode Pagi';
-                        icon.style.transform = 'rotate(20deg)';
-                        btn.style.background = 'rgba(255,255,255,0.15)';
-                    } else {
-                        html.classList.remove('dark-mode');
-                        icon.textContent     = '🌙';
-                        label.textContent    = 'Mode Malam';
-                        icon.style.transform = 'rotate(0deg)';
-                        btn.style.background = 'rgba(255,255,255,0.08)';
-                    }
+    <script>
+        const themeBtn   = document.getElementById("darkModeToggle");
+        const rootHtml   = document.documentElement;
+        const themeIcon  = themeBtn.querySelector(".toggle-icon");
+        const themeLabel = themeBtn.querySelector(".toggle-label");
+
+        themeBtn.addEventListener("click", function() {
+            rootHtml.classList.toggle("dark-mode");
+            const isDark = rootHtml.classList.contains("dark-mode");
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+            themeIcon.textContent  = isDark ? "☀️" : "🌙";
+            themeLabel.textContent = isDark ? "Mode Terang" : "Mode Malam";
+        });
+
+        if (localStorage.getItem("theme") === "dark") {
+            themeIcon.textContent  = "☀️";
+            themeLabel.textContent = "Mode Terang";
+        }
+
+        (function () {
+            const TOTAL_SECONDS  = 30 * 60;     
+            const WARN_SECONDS   = 60;           
+            const countdownEl    = document.getElementById('refresh-countdown');
+            const toast          = document.getElementById('refresh-toast');
+
+            let remaining = TOTAL_SECONDS;
+
+            function fmt(s) {
+                const m = String(Math.floor(s / 60)).padStart(2, '0');
+                const sec = String(s % 60).padStart(2, '0');
+                return `${m}:${sec}`;
+            }
+
+            const timer = setInterval(function () {
+                remaining--;
+
+                if (remaining <= 0) {
+                    clearInterval(timer);
+                    window.location.reload();
+                    return;
                 }
 
-                const isDark = html.classList.contains('dark-mode');
-                applyTheme(isDark);
-
-                btn.addEventListener('click', function () {
-                    const nowDark = html.classList.toggle('dark-mode');
-                    localStorage.setItem(STORAGE_KEY, nowDark ? 'dark' : 'light');
-                    applyTheme(nowDark);
-                });
-            })();
-        </script>
-
-    </body>
+                if (remaining <= WARN_SECONDS) {
+                    countdownEl.textContent = fmt(remaining);
+                    toast.classList.add('show');
+                }
+            }, 1000);
+        })();
+    </script>
+</body>
 </html>

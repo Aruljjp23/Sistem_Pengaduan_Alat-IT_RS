@@ -14,7 +14,7 @@ class UserCtrl extends Controller
         $search = $request->input('search');
 
         $data_user = DB::table('users')
-            ->leftJoin('ruangan', 'users.id_ruangan', '=', 'ruangan.id')
+            ->leftJoin('ruangan', 'users.id_ruangan', '=', 'ruangan.id_ruangan')
             ->select('users.*', 'ruangan.nama_ruangan')
             ->when($search, function($query, $search) {
                 $query->where(function($q) use ($search) {

@@ -1,87 +1,89 @@
 document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('click', function (e) {
+        const editBtn = e.target.closest('.btn-edit');
+        const hapusBtn = e.target.closest('.btn-hapus');
 
-    const input = document.getElementById('search');
-    if (!input) return;
+        if (editBtn) {
+            const id = editBtn.dataset.id;
+            const namaRuangan = editBtn.dataset.nama_ruangan;
+            const lantai = editBtn.dataset.lantai;
 
-    input.addEventListener('keyup', function () {
-        let keyword = this.value.toLowerCase();
-        let rows = document.querySelectorAll('#ruanganTable tr');
-
-        rows.forEach(function(row) {
-
-            if (row.id === 'noRoomData') return;
-
-            let nama = row.children[1]?.innerText.toLowerCase() || '';
-            let lokasi = row.children[2]?.innerText.toLowerCase() || '';
-
-            if (nama.includes(keyword) || lokasi.includes(keyword)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-
-        });
-
-        document.getElementById('noRoomData').style.display = found ? 'none' : '';
-    });
-
-});
-
-document.getElementById('modalTambahruangan').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        document.querySelector('#modalTambahruangan button[type="submit"]').click();
-    }
-});
-
-document.addEventListener('DOMContentLoaded', function () {
- 
-    document.querySelectorAll('.btn-edit').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            const id           = this.dataset.id;
-            const namaRuangan  = this.dataset.nama_ruangan;
-            const lantai       = this.dataset.lantai;
- 
             document.getElementById('formEditruangan').action = baseUrl + '/ruang/data_ruang/' + id + '/update';
- 
             document.getElementById('edit_ruangan').value = namaRuangan;
-            document.getElementById('edit_lokasi').value  = lantai;
- 
-            var editModal = new bootstrap.Modal(document.getElementById('modalEditruangan'));
-            editModal.show();
-        });
-    });
- 
-    document.querySelectorAll('.btn-hapus').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            const namaRuangan = this.dataset.nama_ruangan;
-            const url         = this.dataset.url;
- 
+            document.getElementById('edit_lokasi').value = lantai;
+
+            new bootstrap.Modal(document.getElementById('modalEditruangan')).show();
+        }
+
+        if (hapusBtn) {
+            const namaRuangan = hapusBtn.dataset.nama_ruangan;
+            const url = hapusBtn.dataset.url;
+
             Swal.fire({
                 title: 'Hapus Ruangan?',
-                html: `Anda yakin ingin menghapus ruangan:<br>
-                       <strong class="text-danger">${namaRuangan}</strong>?<br>
-                       <small class="text-muted">Data perangkat yang terkait mungkin ikut terhapus.</small>`,
+                html: `Hapus ruangan: <strong class="text-danger">${namaRuangan}</strong>?`,
                 icon: 'warning',
-                iconColor: '#dc3545',
                 showCancelButton: true,
-                confirmButtonText: '<i class="fa fa-trash me-1"></i> Ya, Hapus!',
-                cancelButtonText: '<i class="fa fa-times me-1"></i> Batal',
+                confirmButtonColor: '#dc3545',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
                 reverseButtons: true,
-                focusCancel: true,
-                customClass: {
-                    popup: 'shadow',
-                    confirmButton: 'btn btn-danger px-4',
-                    cancelButton: 'btn btn-secondary px-4',
-                    actions: 'd-flex gap-3 justify-content-center'
-                },
                 buttonsStyling: false,
-            }).then(function (result) {
-                if (result.isConfirmed) {
+                customClass: { confirmButton: 'btn btn-danger px-4 mx-2', cancelButton: 'btn btn-secondary px-4 mx-2' }
+            }).then((result) => { if (result.isConfirmed) window.location.href = url; });
+        }
+    });
+
+    const searchInput = document.getElementById('search');
+
+    if (searchInput) {
+
+        let timeout = null;
+
+        searchInput.addEventListener('input', function () {
+
+            clearTimeout(timeout);
+
+            timeout = setTimeout(() => {
+
+                const keyword = searchInput.value.trim();
+
+                let url = baseUrl + '/ruang/data_ruang';
+
+                if (keyword) {
+                    url += '?search=' + encodeURIComponent(keyword);
+                }
+
+                if (window.location.href !== url) {
                     window.location.href = url;
                 }
-            });
+
+            }, 800);
+
         });
-    });
- 
+
+    }
+
+    function cariRuangan() {
+
+        const keyword = document.getElementById('search').value.trim();
+
+        let url = baseUrl + '/ruang/data_ruang';
+
+        if (keyword !== '') {
+            url += '?search=' + encodeURIComponent(keyword);
+        }
+
+        window.location.href = url;
+    }
+
+    const modalTambah = document.getElementById('modalTambahruangan');
+    if (modalTambah) {
+        modalTambah.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && e.target.tagName !== 'SELECT' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                this.querySelector('button[type="submit"]').click();
+            }
+        });
+    }
 });

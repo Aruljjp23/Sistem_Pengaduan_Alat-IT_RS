@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-   // 1. Toggle Show/Hide Password
    const passFields = document.querySelectorAll('.pass-key');
    const showBtns = document.querySelectorAll('.show');
 
@@ -14,12 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
            } else {
                field.type = 'password';
                btn.textContent = 'SHOW';
-               btn.style.color = 'rgba(255, 255, 255, 0.6)'; // Sesuai dengan warna UI baru
+               btn.style.color = 'rgba(255, 255, 255, 0.6)'; 
            }
        });
    });
 
-   // 2. Loading Overlay Setup
    const forms = document.querySelectorAll('form');
    const loadingOverlay = document.getElementById('loading-overlay');
 
@@ -34,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
        });
    });
 
-   // 3. Auto-Hide Notifications
    const notif = document.getElementById('notif-box');
    if (notif) {
        setTimeout(() => {
@@ -45,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
        }, 4000);
    }
 
-   // 4. Modal Logic untuk halaman Register
    const linkLogin = document.getElementById('link-login');
    const modalBack = document.getElementById('modal-back');
    const btnCancel = document.getElementById('btn-cancel');

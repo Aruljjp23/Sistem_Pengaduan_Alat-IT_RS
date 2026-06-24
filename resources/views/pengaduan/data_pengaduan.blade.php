@@ -1,148 +1,122 @@
 @extends('layout.page')
-
 @section('page_title', 'Data Pengaduan')
 
 @section('content')
 
 <style>
-    .content-wrapper { background-color: #f4f7fa; }
+    .content-wrapper { background-color: #f8fafc; }
     
     .badge-status { 
         display: inline-flex; align-items: center; gap: 6px;
-        font-size: 0.75rem; font-weight: 700; padding: 6px 12px; border-radius: 50px;
+        font-size: 0.7rem; font-weight: 700; padding: 5px 12px; border-radius: 8px;
+        text-transform: uppercase;
     }
-    .badge-status.selesai      { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; } 
-    .badge-status.dalam-proses { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; } 
-    .badge-status.pending      { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; } 
+    .badge-status.selesai { background: #ecfdf5; color: #059669; border: 1px solid #10b98133; } 
+    .badge-status.dalam-proses { background: #eff6ff; color: #2563eb; border: 1px solid #3b82f633; } 
+    .badge-status.pending { background: #fffbeb; color: #d97706; border: 1px solid #f59e0b33; } 
 
     .table-container {
-        background: white; border-radius: 15px; border: 1px solid #e2e8f0;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); overflow: hidden;
+        background: white; border-radius: 16px; border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;
     }
-    .table-modern thead { background-color: #0cdbff; }
+    .table-modern thead { background-color: #00ff6e; }
     .table-modern thead th {
-        color: #ffffff; font-weight: 500; font-size: 0.75rem;
-        text-transform: uppercase; letter-spacing: 0.05em; padding: 15px; border: none;
+        color: #000000; font-weight: 600; font-size: 0.75rem;
+        text-transform: uppercase; letter-spacing: 0.025em; padding: 16px; border: none;
     }
-    .table-modern tbody td { padding: 15px; vertical-align: middle; color: #475569; border-bottom: 1px solid #f1f5f9; }
+    .table-modern tbody td { padding: 16px; vertical-align: middle; color: #334155; border-bottom: 1px solid #f1f5f9; }
 
     .btn-action {
-        width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;
-        border-radius: 8px; transition: all 0.2s; border: 1px solid transparent;
+        width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center;
+        border-radius: 10px; transition: all 0.2s; border: none;
     }
-    
     .btn-view { background: #f1f5f9; color: #475569; }
-    .btn-view:hover { background: #475569; color: white; }
+    .btn-view:hover { background: #334155; color: white; }
     .btn-edit { background: #fff7ed; color: #ea580c; }
     .btn-edit:hover { background: #ea580c; color: white; }
     .btn-delete { background: #fef2f2; color: #dc2626; }
     .btn-delete:hover { background: #dc2626; color: white; }
 
-    .filter-card { background: white; border-radius: 15px; border: 1px solid #e2e8f0; padding: 20px; margin-bottom: 20px; }
-    .custom-input {
-        margin: 5px 0 10px 0 !important;
-        height: 42px;
-        border-radius: 10px !important;
+    .x-small {
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .custom-input, .custom-textarea {
+        border: 1.5px solid #e2e8f0 !important;
+        transition: all 0.3s ease-in-out;
         font-size: 14px;
-        border: 1px solid #e2e8f0 !important;
+    }
+
+    .custom-input:focus, .custom-textarea:focus {
+        border-color: #f6ad55 !important; 
+        background-color: #fffaf0;
     }
 
     .custom-textarea {
-        margin-top: 5px !important;
-        border-radius: 10px !important;
-        font-size: 14px;
-        min-height: 100px;
-        border: 1px solid #e2e8f0 !important;
-    }
-
-    .swal2-popup {
-        border-radius: 16px !important;
-        padding: 20px !important;
+        resize: none;
     }
 
     .detail-card {
-        background: #ffffff;
-        border-radius: 12px;
-        padding: 15px;
-        border: 1px solid #e2e8f0;
+        transition: transform 0.2s;
     }
 
-    .detail-card-title {
-        font-size: 13px;
-        font-weight: 700;
-        margin-bottom: 10px;
-        color: #334155;
-        display: flex;
-        align-items: center;
+    .bg-success-subtle {
+        background-color: #f0fdf4 !important;
     }
 
-    .detail-row {
-        display: flex;
-        justify-content: space-between;
-        font-size: 13px;
-        margin-bottom: 5px;
-        color: #475569;
+    .bg-warning-subtle {
+        background-color: #fffbeb !important;
     }
 
-    .detail-row span:first-child {
+    .input-group-text {
         color: #94a3b8;
+        background-color: #f8fafc;
     }
 
-    .modal-content {
-        animation: fadeInUp 0.3s ease;
+    @media (max-width: 768px) {
+        .table-modern thead { display: none; }
+        .table-modern tbody tr {
+            display: block; padding: 15px; margin-bottom: 12px;
+            background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+        }
+        .table-modern tbody td {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 0; border: none; width: 100%; text-align: right;
+        }
+        .table-modern tbody td::before {
+            content: attr(data-label); font-weight: 600; color: #64748b;
+            font-size: 0.8rem; text-align: left;
+        }
+        .table-modern tbody td:last-child { justify-content: center; margin-top: 10px; border-top: 1px dashed #e2e8f0; padding-top: 15px; }
     }
 
-
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .filter-card { background: white; border-radius: 16px; border: 1px solid #e2e8f0; padding: 20px; margin-bottom: 20px; }
+    .custom-search {
+        background: #f8fafc !important; border: 1px solid #e2e8f0 !important;
+        border-radius: 12px !important; height: 45px;
     }
 </style>
 
-@if(session('success'))
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: '{{ session('success') }}',
-            timer: 3000,
-            timerProgressBar: true,
-            showConfirmButton: false,
-            position: 'top-end',
-            toast: true,
-            background: '#f0fdf4',
-            iconColor: '#16a34a',
-            customClass: {
-                popup: 'border border-success shadow'
-            }
-        });
-    });
-</script>
-@endif
-
 <div class="filter-card shadow-sm">
-    <div class="row g-3">
+    <div class="row g-3 align-items-end">
         <div class="col-md-5">
-            <label class="form-label small fw-bold text-muted">PENCARIAN</label>
+            <label class="form-label small fw-bold text-secondary">CARI PENGADUAN</label>
             <div class="input-group">
-                <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                <input type="text" id="inputSearch" class="form-control border-start-0 ps-0" placeholder="Nama pengadu atau ruangan..." value="{{ request('search') }}">
+                <span class="input-group-text bg-light border-end-0 custom-search"><i class="fas fa-search text-muted"></i></span>
+                <input type="text" id="inputSearch" class="form-control border-start-0 ps-0 custom-search" 
+                       placeholder="Ketik nama atau ruangan..." value="{{ request('search') }}">
             </div>
         </div>
         <div class="col-md-3">
-            <label class="form-label small fw-bold text-muted">TANGGAL</label>
-            <input type="date" name="tanggal" class="form-control" value="{{ request('tanggal') }}">
+            <label class="form-label small fw-bold text-secondary">FILTER TANGGAL</label>
+            <input type="date" name="tanggal" class="form-control custom-search" value="{{ request('tanggal') }}">
         </div>
-        <div class="col-md-4 d-flex align-items-end gap-2">
-            <a href="{{ url('/pengaduan/data_pengaduan') }}" class="btn btn-outline-secondary w-100 fw-bold">
-                <i class="fas fa-sync me-1"></i> Reset
+        <div class="col-md-4">
+            <a href="{{ url('/pengaduan/data_pengaduan') }}" class="btn btn-light border w-100 fw-bold custom-search d-flex align-items-center justify-content-center gap-2">
+                <i class="fas fa-sync-alt"></i> Reset Filter
             </a>
         </div>
     </div>
@@ -153,7 +127,7 @@
         <table class="table table-modern mb-0">
             <thead>
                 <tr>
-                    <th class="text-center" width="50">No</th>
+                    <th class="text-center" width="60">No</th>
                     <th>Informasi Pengadu</th>
                     <th>Detail Lokasi</th>
                     <th class="text-center">Status</th>
@@ -169,61 +143,62 @@
                             default        => 'pending',
                         };
                         $statusIcon = match($pengaduan->status_tindakan) {
-                            'Selesai'      => 'fa-check-circle',
-                            'Dalam Proses' => 'fa-repeat',
-                            default        => 'fa-history',
+                            'Selesai'      => 'fa-check-double',
+                            'Dalam Proses' => 'fa-spinner fa-spin-pulse',
+                            default        => 'fa-clock',
                         };
                     @endphp
                     <tr>
-                        <td class="text-center text-muted small">{{ $data_pengaduan->firstItem() + $index }}</td>
-                        <td>
+                        <td class="text-center text-muted small" data-label="No">{{ $data_pengaduan->firstItem() + $index }}</td>
+                        <td data-label="Pengadu">
                             <div class="fw-bold text-dark">{{ $pengaduan->nama_pengadu }}</div>
-                            <small class="text-muted"><i class="fas fa-calendar me-1"></i>{{ \Carbon\Carbon::parse($pengaduan->tanggal)->format('d/m/Y') }}</small>
+                            <small class="text-muted"><i class="far fa-calendar-alt me-1"></i> {{ \Carbon\Carbon::parse($pengaduan->tanggal)->format('d M Y') }}</small>
                         </td>
-                        <td>
+                        <td data-label="Lokasi">
                             <div class="fw-bold text-primary">{{ $pengaduan->ruangan }}</div>
-                            <small class="text-muted"><i class="fa fa-layer-group me-1"></i>{{ $pengaduan->nama_lokasi }}</small>
+                            <div class="small text-secondary">{{ $pengaduan->nama_lokasi }}</div>
                         </td>
-                        <td class="text-center">
+                        <td class="text-center" data-label="Status">
                             <span class="badge-status {{ $statusClass }}">
                                 <i class="fas {{ $statusIcon }}"></i> {{ $pengaduan->status_tindakan }}
                             </span>
                         </td>
                         <td class="text-center">
-                            <div class="d-flex justify-content-center gap-1">
+                            <div class="d-flex justify-content-center gap-2">
                                 <button class="btn-action btn-view btn-detail" 
-                                    data-id="{{ $pengaduan->id }}"
-                                    data-tanggal="{{ $pengaduan->tanggal }}"
                                     data-nama_pengadu="{{ $pengaduan->nama_pengadu }}"
+                                    data-tanggal="{{ $pengaduan->tanggal }}"
                                     data-ruangan="{{ $pengaduan->ruangan }}"
                                     data-lokasi="{{ $pengaduan->nama_lokasi }}"
                                     data-deskripsi="{{ $pengaduan->deskripsi_masalah }}"
                                     data-status="{{ $pengaduan->status_tindakan }}"
                                     data-teknisi="{{ $pengaduan->nama_teknisi }}"
-                                    data-kondisi="{{ $pengaduan->kondisi }}"
-                                    title="Detail">
+                                    data-kondisi="{{ $pengaduan->kondisi }}">
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 <button class="btn-action btn-edit btn-edit-action" 
                                     data-id="{{ $pengaduan->id }}"
                                     data-nama_pengadu="{{ $pengaduan->nama_pengadu }}"
-                                    data-deskripsi_masalah="{{ $pengaduan->deskripsi_masalah }}"
                                     data-tanggal="{{ $pengaduan->tanggal }}"
-                                    title="Edit">
-                                    <i class="fas fa-pencil-square"></i>
+                                    data-deskripsi_masalah="{{ $pengaduan->deskripsi_masalah }}">
+                                    <i class="fas fa-edit"></i>
                                 </button>
                                 <button class="btn-action btn-delete btn-hapus" 
                                     data-id="{{ $pengaduan->id }}"
-                                    data-nama_pengadu="{{ $pengaduan->nama_pengadu }}"
-                                    title="Hapus">
-                                    <i class="fas fa-trash"></i>
+                                    data-nama_pengadu="{{ $pengaduan->nama_pengadu }}">
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="text-center py-5 text-muted">Data tidak ditemukan.</td>
+                        <td colspan="5" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="fas fa-folder-open fa-3x mb-3 opacity-20"></i>
+                                <p>Belum ada data pengaduan saat ini.</p>
+                            </div>
+                        </td>
                     </tr>
                 @endforelse
             </tbody>
@@ -231,113 +206,127 @@
     </div>
 </div>
 
+<div class="mt-4 d-flex justify-content-center">
+    {{ $data_pengaduan->links('pagination::bootstrap-5') }}
+</div>
+
 <div class="modal fade" id="modalDetailPengaduan" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold">
-                    <i class="fas fa-info-circle text-primary me-2"></i>
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header bg-light border-0 py-3 px-4">
+                <h5 class="modal-title d-flex align-items-center fw-bold text-dark">
+                    <span class="bg-primary text-white rounded-3 p-2 me-3 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                        <i class="fas fa-info-circle"></i>
+                    </span>
                     Detail Pengaduan
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <div class="modal-body px-4 pb-4">
-
+            <div class="modal-body p-4">
                 <div class="text-center mb-4">
                     <div id="detail_status_badge"></div>
                 </div>
 
-                <div class="detail-card mb-3">
-                    <div class="detail-card-title">
-                        <i class="fas fa-user me-2"></i>Informasi Pelapor
+                <div class="detail-card mb-3 p-3 border rounded-3 bg-white">
+                    <div class="detail-card-title text-secondary small text-uppercase fw-bold mb-3 d-flex align-items-center">
+                        <i class="fas fa-user-circle me-2 text-primary"></i> Pelapor
                     </div>
-
-                    <div class="detail-row">
-                        <span>Nama</span>
-                        <strong id="detail_nama_pengadu"></strong>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted small">Nama Lengkap</span>
+                        <span class="fw-bold text-dark" id="detail_nama_pengadu"></span>
                     </div>
-
-                    <div class="detail-row">
-                        <span>Tanggal</span>
-                        <span id="detail_tanggal"></span>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted small">Waktu Laporan</span>
+                        <span class="text-dark small" id="detail_tanggal"></span>
                     </div>
                 </div>
 
-                <div class="detail-card mb-3">
-                    <div class="detail-card-title">
-                        <i class="fas fa-map-marker-alt me-2"></i>Lokasi
+                <div class="detail-card mb-3 p-3 border rounded-3 bg-white">
+                    <div class="detail-card-title text-secondary small text-uppercase fw-bold mb-2 d-flex align-items-center">
+                        <i class="fas fa-map-marker-alt me-2 text-danger"></i> Lokasi
                     </div>
-
-                    <div class="fw-bold text-primary mb-1" id="detail_ruangan"></div>
-                    <div class="text-muted small" id="detail_lokasi"></div>
-                </div>
-
-                <div class="detail-card border-danger-subtle bg-danger-subtle mb-3">
-                    <div class="detail-card-title text-danger">
-                        <i class="fas fa-exclamation-circle me-2"></i>Masalah
-                    </div>
-
-                    <p class="mb-0 small text-dark" id="detail_deskripsi"></p>
-                </div>
-
-                <div id="section_tindakan" class="detail-card border-primary-subtle bg-primary-subtle" style="display:none;">
-                    <div class="detail-card-title text-primary">
-                        <i class="fas fa-tools me-2"></i>Tindakan Teknisi
-                    </div>
-
-                    <div class="mb-2">
-                        <small class="text-muted">Teknisi</small>
-                        <div class="fw-bold" id="detail_teknisi"></div>
-                    </div>
-
-                    <div>
-                        <small class="text-muted">Kondisi / Catatan</small>
-                        <div class="p-2 bg-white rounded shadow-sm small" id="detail_kondisi"></div>
+                    <div class="p-2 rounded-3 bg-light">
+                        <div class="fw-bold text-primary" id="detail_ruangan"></div>
+                        <div class="text-muted small" id="detail_lokasi"></div>
                     </div>
                 </div>
 
+                <div class="detail-card mb-3 p-3 border-start border-4 border-warning rounded-3 bg-white shadow-sm">
+                    <div class="detail-card-title text-warning small text-uppercase fw-bold mb-2">
+                        Deskripsi Masalah
+                    </div>
+                    <p class="mb-0 text-dark small lh-base" id="detail_deskripsi"></p>
+                </div>
+
+                <div id="section_tindakan" style="display:none;">
+                    <div class="detail-card p-3 border-start border-4 border-success rounded-3 bg-success-subtle">
+                        <div class="detail-card-title text-success small text-uppercase fw-bold mb-3 d-flex align-items-center">
+                            <i class="fas fa-check-shield me-2"></i> Hasil Tindakan
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-muted x-small d-block mb-1">Teknisi Bertugas</label>
+                            <div class="fw-bold text-dark" id="detail_teknisi"></div>
+                        </div>
+                        <div>
+                            <label class="text-muted x-small d-block mb-1">Catatan Perbaikan</label>
+                            <div class="p-2 bg-white rounded-2 border text-dark small" id="detail_kondisi"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
+            <div class="modal-footer border-0 pt-0 px-4 pb-4">
+                <button type="button" class="btn btn-light w-100 rounded-3 fw-bold" data-bs-dismiss="modal">Tutup</button>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="modal fade" id="modalEditPengaduan" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
+        <div class="modal-content border-0 shadow-lg rounded-4">
             <form id="formEditPengaduan" method="POST">
                 @csrf
-                <div class="modal-header bg-warning">
-                    <h5 class="modal-title fw-bold">
-                        <i class="fa fa-edit me-2"></i>Edit Pengaduan
+                <div class="modal-header border-0 py-3 px-4 bg-warning-subtle rounded-top-4">
+                    <h5 class="modal-title fw-bold text-warning-emphasis d-flex align-items-center">
+                        <span class="bg-warning text-white rounded-3 p-2 me-3 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                            <i class="fa fa-edit"></i>
+                        </span>
+                        Perbarui Data
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body p-4">
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-secondary">NAMA PENGADU</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-user"></i></span>
+                            <input type="text" class="form-control border-start-0 ps-0 custom-input shadow-none" id="edit_nama" name="nama_pengadu" placeholder="Masukkan nama pelapor" required>
+                        </div>
+                    </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Nama Pengadu</label>
-                        <input type="text" class="form-control" id="edit_nama" name="nama_pengadu" required>
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-secondary">TANGGAL LAPORAN</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-calendar-day"></i></span>
+                            <input type="date" class="form-control border-start-0 ps-0 custom-input shadow-none" id="edit_tanggal" name="tanggal" required>
+                        </div>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Tanggal</label>
-                        <input type="date" class="form-control" id="edit_tanggal" name="tanggal" required>
+                        <label class="form-label small fw-bold text-secondary">DESKRIPSI MASALAH</label>
+                        <textarea class="form-control custom-textarea shadow-none border-2" id="edit_deskripsi" name="deskripsi_masalah" rows="4" placeholder="Jelaskan detail kendala..." required></textarea>
                     </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Deskripsi Masalah</label>
-                        <textarea class="form-control" id="edit_deskripsi" name="deskripsi_masalah" rows="3" required></textarea>
-                    </div>
-
                 </div>
 
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-warning px-4 fw-bold">Update Data</button>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <div class="d-flex w-100 gap-2">
+                        <button type="button" class="btn btn-light fw-bold px-4 py-2 flex-grow-1 border" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-warning text-white fw-bold px-4 py-2 flex-grow-1 shadow-sm">
+                            <i class="fas fa-save me-1"></i> Simpan Perubahan
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>

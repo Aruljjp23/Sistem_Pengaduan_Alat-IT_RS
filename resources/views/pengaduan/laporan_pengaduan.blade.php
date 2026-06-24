@@ -5,268 +5,380 @@
 @section('content')
 
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
     :root {
-        --primary-orange: #ff8c00;
-        --primary-dark: #e67e00;
-        --soft-orange: #fff5e6;
-        --border-color: #e0e4ea;
-        --text-muted: #6c757d;
+        --brand-primary: #0d934a;
+        --brand-dark: #096e37;
+        --brand-success: #10b981;
+        --brand-info: #0ea5e9;
+        --surface-color: #ffffff;
+        --bg-soft: #f8fafc;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --border-soft: #e2e8f0;
+        --radius: 12px;
+        --shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
     }
 
-    .report-card {
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        border: 1px solid var(--border-color);
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-soft); color: var(--text-main); }
+
+    .report-container {
+        background: var(--surface-color);
+        border-radius: var(--radius);
+        border: 1px solid var(--border-soft);
+        box-shadow: var(--shadow-subtle);
         overflow: hidden;
-        margin-bottom: 2rem;
     }
 
-    .table thead {
-        background-color: var(--primary-orange);
-        color: white;
+    .modern-table { margin-bottom: 0; }
+    .modern-table thead {
+        background-color: var(--brand-primary);
+        border-bottom: 2px solid var(--border-soft);
     }
-
-    .table thead th {
+    .modern-table thead th {
+        color: white !important;
         font-weight: 600;
         text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 0.5px;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        padding: 16px;
         border: none;
-        padding: 15px;
+    }
+    .modern-table tbody tr { transition: all 0.2s; border-bottom: 1px solid var(--border-soft); }
+    .modern-table tbody tr:hover { background-color: #f8fafc; }
+    .modern-table td { padding: 16px; vertical-align: middle; }
+
+    .filter-panel {
+        background: var(--surface-color);
+        border-radius: var(--radius);
+        border: 1px solid var(--border-soft);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
     }
 
-    .modal-header-detail {
-        background: linear-gradient(45deg, var(--primary-orange), var(--primary-dark));
+    .form-control-custom {
+        border: 1.5px solid var(--border-soft);
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+    }
+    .form-control-custom:focus {
+        border-color: var(--brand-primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        outline: none;
+    }
+
+    .btn-brand {
+        background: var(--brand-primary);
         color: white;
-        border-bottom: none;
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        padding: 0.6rem 1.25rem;
+        transition: all 0.2s;
     }
+    .btn-brand:hover { background: var(--brand-dark); color: white; }
 
-    .detail-row {
+    .btn-outline-custom {
+        border: 1.5px solid var(--border-soft);
+        background: white;
+        color: var(--text-main);
+        border-radius: 8px;
+        padding: 0.6rem 1.25rem;
+    }
+    .btn-outline-custom:hover { background: #f1f5f9; border-color: var(--text-muted); }
+
+    .custom-pagination {
         display: flex;
-        padding: 12px 0;
-        border-bottom: 1px solid #f8f9fa;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 15px;
     }
 
-    .detail-label {
-        font-weight: 700;
-        color: #444;
-        width: 140px;
-        flex-shrink: 0;
-    }
-
-    .badge-selesai {
-        background-color: #d1fae5;
-        color: #065f46;
+    .page-btn {
         padding: 6px 12px;
-        border-radius: 20px;
-        font-weight: 600;
+        border-radius: 8px;
+        border: 1px solid var(--border-soft);
+        text-decoration: none;
+        color: var(--text-main);
+        font-size: 0.85rem;
+        transition: 0.2s;
+        background: white;
     }
+
+    .page-btn:hover { background: #f1f5f9; }
+
+    .page-btn.active {
+        background: var(--brand-primary);
+        color: white;
+        border-color: var(--brand-primary);
+    }
+
+    /* Styling tombol detail */
+    .btn-detail {
+        background: var(--brand-info);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+        transition: 0.2s;
+    }
+    .btn-detail:hover { background: #0284c7; color: white; transform: translateY(-1px); }
 
     @media print {
         .no-print { display: none !important; }
-        .print-only { display: block !important; }
-        .report-card { box-shadow: none; border: none; }
-        body { background: white; padding: 0; }
+        .report-container { border: none; box-shadow: none; }
     }
-    .print-only { display: none; }
+
+    @media (max-width: 768px) {
+        .filter-panel .row > div { margin-bottom: 10px; }
+    }
 </style>
 
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
-        <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-@endif
-
 <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 no-print">
-    <div>
-        <h4 class="fw-bold mb-1">Daftar Laporan</h4>
-        <p class="text-muted small mb-0">Kelola dan ekspor data pengaduan yang telah selesai.</p>
-    </div>
     <div class="d-flex gap-2">
-        <a href="{{ url('/pengaduan/cetak_pdf') }}?search={{ request('search') }}&tanggal={{ request('tanggal') }}" 
-           target="_blank" class="btn btn-outline-danger shadow-sm">
+        <a href="{{ url('/pengaduan/cetak_pdf') }}?search={{ request('search') }}&created_at={{ request('created_at') }}" 
+           target="_blank" class="btn btn-outline-danger shadow-sm px-3">
             <i class="fas fa-file-pdf me-2"></i> PDF
         </a>
-        <button onclick="eksporExcel()" class="btn btn-success shadow-sm">
+        
+        <a href="{{ url('/pengaduan/export_excel') }}?search={{ request('search') }}&created_at={{ request('created_at') }}" 
+           class="btn btn-success shadow-sm px-3">
             <i class="fas fa-file-excel me-2"></i> Excel
-        </button>
+        </a>
     </div>
 </div>
 
-<div class="report-card no-print p-4">
-    <form action="{{ url('/pengaduan/laporan_pengaduan') }}" method="GET">
-        <div class="row g-3 align-items-end">
+<div class="filter-panel no-print">
+    <form id="formSearch" action="{{ url('/pengaduan/laporan_pengaduan') }}" method="GET">
+        <div class="row g-3">
             <div class="col-md-5">
-                <label class="form-label fw-bold small text-muted">CARI INFORMASI</label>
+                <label class="form-label fw-semibold small text-muted">KATA KUNCI</label>
                 <div class="input-group">
-                    <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                    <input type="text" class="form-control border-start-0 ps-0" name="search"
-                        placeholder="Nama pengadu, ruangan, lokasi..." value="{{ request('search') }}">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-search"></i></span>
+                    <input type="text" id="search" class="form-control form-control-custom border-start-0 ps-0" name="search" placeholder="Nama, ruangan, deskripsi, tindakan..." value="{{ request('search') }}">
                 </div>
             </div>
             <div class="col-md-3">
-                <label class="form-label fw-bold small text-muted">FILTER TANGGAL</label>
-                <input type="date" class="form-control" name="tanggal" value="{{ request('tanggal') }}">
+                <label class="form-label fw-semibold small text-muted">FILTRASI BULANAN</label>
+                <input type="month" id="created_at" class="form-control form-control-custom" name="created_at" value="{{ request('created_at') }}">
             </div>
-            <div class="col-md-4 d-flex gap-2">
-                <button type="submit" class="btn btn-primary px-4">Filter Data</button>
-                <a href="{{ url('/pengaduan/laporan_pengaduan') }}" class="btn btn-light border">Reset</a>
+            <div class="col-md-4 d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-brand flex-grow-1">Terapkan Filter</button>
+                <a href="{{ url('/pengaduan/laporan_pengaduan') }}" class="btn btn-outline-custom text-nowrap">Reset</a>
             </div>
         </div>
     </form>
 </div>
 
-{{-- Print Header --}}
-<div class="print-only text-center mb-5">
-    <h2 class="fw-bold">LAPORAN DATA PENGADUAN</h2>
-    <p>Periode laporan: {{ request('tanggal') ? \Carbon\Carbon::parse(request('tanggal'))->format('d/m/Y') : 'Semua Data' }}</p>
-    <hr>
-</div>
-
-<div class="report-card shadow-sm">
+<div class="report-container">
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0" id="tabelLaporan">
+        <table class="table modern-table align-middle" id="tabelLaporan">
             <thead>
                 <tr>
                     <th class="text-center" width="60">No</th>
-                    <th>Tanggal</th>
-                    <th>Nama Pengadu</th>
-                    <th>Informasi Ruangan</th>
-                    <th>Lokasi</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center no-print" width="120">Aksi</th>
+                    <th width="150">Waktu</th>
+                    <th width="150">Pelapor</th>
+                    <th width="200">Ruangan & Perangkat</th>
+                    <th width="200">Masalah</th>
+                    <th class="text-center">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($pengaduan as $index => $item)
                 <tr>
-                    <td class="text-center fw-bold">{{ $index + 1 }}</td>
+                    <td class="text-center text-muted fw-medium">{{ $pengaduan->firstItem() + $index }}</td>
                     <td>
-                        <div class="fw-bold">{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d M Y') }}</div>
-                        <small class="text-muted">{{ \Carbon\Carbon::parse($item->tanggal)->format('H:i') }} WIB</small>
+                        <div class="fw-semibold">{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('d M Y') }}</div>
+                        <div class="text-muted small">{{ \Carbon\Carbon::parse($item->created_at)->format('H:i') }} WIB</div>
                     </td>
-                    <td>{{ $item->nama_pengadu }}</td>
                     <td>
-                        <span class="d-block fw-bold text-primary">{{ $item->nama_ruangan }}</span>
-                        <small class="text-muted">{{ $item->kode_perangkat ?? '-' }}</small>
+                        <div class="fw-semibold">{{ $item->nama_pengadu }}</div>
                     </td>
-                    <td><i class="fas fa-map-marker-alt text-danger me-1 small"></i>{{ $item->lokasi }}</td>
+                    <td>
+                        <div class="fw-bold text-dark">{{ $item->nama_ruangan }}</div>
+                        <div class="text-primary small fw-medium" style="font-size: 0.75rem;">
+                            {{ $item->kode_inventaris ? $item->kode_inventaris . ' - ' : '' }}{{ $item->kategori_perangkat ?? 'Fasilitas Umum' }}
+                        </div>
+                    </td>
+                    <td class="text-secondary small">
+                        {{ $item->deskripsi_masalah }}
+                    </td>
                     <td class="text-center">
-                        <span class="badge-selesai">Selesai</span>
-                    </td>
-                    <td class="text-center no-print">
-                        <button class="btn btn-sm btn-light border shadow-sm px-3"
-                            data-bs-toggle="modal" data-bs-target="#modalDetail"
-                            data-tanggal="{{ \Carbon\Carbon::parse($item->tanggal_tindakan)->translatedFormat('d F Y') }}"
-                            data-pengadu="{{ $item->nama_pengadu }}"
-                            data-ruangan="{{ $item->nama_ruangan }}"
-                            data-kondisi="{{ $item->kondisi }}"
-                            data-teknisi="{{ $item->teknisi }}">
-                            <i class="fa fa-eye me-1"></i> Detail
+                        <button type="button" class="btn-detail" data-bs-toggle="modal" data-bs-target="#detailModal{{ $item->pengaduan_id }}">
+                            <i class="fas fa-info-circle me-1"></i> Detail
                         </button>
+                        <span class="d-none text-excel-tindakan">{{ $item->deskripsi_tindakan }}</span>
                     </td>
                 </tr>
+
+                <div class="modal fade" id="detailModal{{ $item->pengaduan_id }}" tabindex="-1" aria-labelledby="detailModalLabel{{ $item->pengaduan_id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow">
+                            <div class="modal-header bg-success text-white">
+                                <h5 class="modal-title fs-6 fw-bold" id="detailModalLabel{{ $item->pengaduan_id }}">
+                                    <i class="fas fa-clipboard-check me-2"></i> Detail Tindakan
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <div class="mb-3">
+                                    <label class="text-muted small fw-bold mb-1">Status Pengerjaan</label>
+                                    <div><span class="badge bg-success">Selesai</span></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="text-muted small fw-bold mb-1">Dikerjakan Oleh (Teknisi)</label>
+                                    <div class="fw-semibold text-dark"><i class="fas fa-user-cog text-muted me-2"></i>{{ $item->teknisi }}</div>
+                                </div>
+                                <div class="mb-0">
+                                    <label class="text-muted small fw-bold mb-1">Deskripsi Tindakan / Solusi</label>
+                                    <div class="p-3 bg-light rounded text-secondary" style="font-size: 0.9rem; white-space: pre-line;">
+                                        {{ $item->deskripsi_tindakan ?? 'Tidak ada deskripsi yang dilampirkan.' }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer border-0 bg-light">
+                                <button type="button" class="btn btn-secondary shadow-sm" data-bs-dismiss="modal">Tutup</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 @empty
                 <tr>
                     <td colspan="7" class="text-center py-5">
-                        <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" width="80" class="opacity-25 mb-3">
-                        <p class="text-muted fw-bold">Ups! Data tidak ditemukan.</p>
+                        <div class="py-4">
+                            <i class="fas fa-folder-open fa-3x text-light mb-3"></i>
+                            <h5 class="text-muted fw-normal">Data tidak ditemukan dalam database</h5>
+                        </div>
                     </td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
-</div>
-
-{{-- Modal Detail --}}
-<div class="modal fade" id="modalDetail" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header modal-header-detail">
-                <h5 class="modal-title fw-bold">
-                    <i class="fas fa-info-circle me-2"></i> Detail Penanganan
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4">
-                <div class="detail-row">
-                    <span class="detail-label">Pengadu</span>
-                    <span id="detail-pengadu"></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Ruangan</span>
-                    <span id="detail-ruangan"></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Tgl. Selesai</span>
-                    <span id="detail-tanggal" class="text-success fw-bold"></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Tindakan</span>
-                    <span id="detail-kondisi" class="fst-italic text-muted"></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Teknisi</span>
-                    <span class="badge bg-warning" id="detail-teknisi"></span>
-                </div>
-            </div>
+    @if ($pengaduan->lastPage() > 1)
+        <div class="custom-pagination d-flex justify-content-center gap-2 py-3 no-print">
+            @for ($i = 1; $i <= $pengaduan->lastPage(); $i++)
+                <a href="{{ $pengaduan->appends(request()->query())->url($i) }}"
+                class="page-btn {{ $pengaduan->currentPage() == $i ? 'active' : '' }}">
+                    {{ $i }}
+                </a>
+            @endfor
         </div>
-    </div>
+    @endif
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 <script>
-    const modalDetail = document.getElementById('modalDetail');
-    modalDetail.addEventListener('show.bs.modal', function (event) {
-        const btn = event.relatedTarget;
-        const fields = ['pengadu', 'ruangan', 'tanggal', 'kondisi', 'teknisi'];
-        
-        fields.forEach(field => {
-            document.getElementById(`detail-${field}`).textContent = btn.getAttribute(`data-${field}`) || '-';
-        });
+    document.addEventListener('DOMContentLoaded', function () {
+        const formSearch = document.getElementById('formSearch');
+        const searchInput = document.getElementById('search');
+        const monthInput = document.getElementById('created_at');
+        let timeout;
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    formSearch.submit();
+                }, 800); 
+            });
+        }
+
+        if (monthInput) {
+            monthInput.addEventListener('change', function () {
+                formSearch.submit();
+            });
+        }
     });
 
     function eksporExcel() {
-        const headers = ['No', 'Tanggal', 'Pengadu', 'Ruangan', 'Lokasi', 'Status'];
+        const headers = [['NO', 'TANGGAL & WAKTU', 'NAMA PENGADU', 'UNIT / RUANGAN', 'KATEGORI PERANGKAT', 'DESKRIPSI MASALAH', 'TEKNISI', 'TINDAKAN / SOLUSI']];
         const dataRows = [];
 
-        document.querySelectorAll('#tabelLaporan tbody tr').forEach(tr => {
+        document.querySelectorAll('#tabelLaporan tbody tr').forEach((tr, index) => {
             const cols = tr.querySelectorAll('td');
-            if (cols.length > 1) {
+            if (cols.length > 1) { 
+                const created_atText = cols[1].querySelectorAll('div')[0].innerText.trim();
+                const jamText = cols[1].querySelectorAll('div')[1].innerText.trim();
+                const waktuLengkap = `${created_atText} (${jamText})`;
+
+                const ruanganText = cols[3].querySelectorAll('div')[0].innerText.trim();
+                const perangkatText = cols[3].querySelectorAll('div')[1].innerText.trim();
+
+                const tindakanText = cols[6].querySelector('.text-excel-tindakan').innerText.trim();
+
                 dataRows.push([
-                    cols[0].innerText.trim(),
-                    cols[1].querySelector('.fw-bold').innerText.trim(),
+                    index + 1,
+                    waktuLengkap,
                     cols[2].innerText.trim(),
-                    cols[3].querySelector('.fw-bold').innerText.trim(),
+                    ruanganText,
+                    perangkatText,
                     cols[4].innerText.trim(),
-                    'SELESAI'
+                    cols[5].innerText.trim(),
+                    tindakanText 
                 ]);
             }
         });
 
-        const wb = XLSX.utils.book_new();
-        const ws = XLSX.utils.aoa_to_sheet([headers, ...dataRows]);
+        if (dataRows.length === 0) {
+            alert('Tidak ada data yang bisa diekspor ke Excel!');
+            return;
+        }
 
-        // Style the Header
-        const range = XLSX.utils.decode_range(ws['!ref']);
-        for (let C = range.s.c; C <= range.e.c; ++C) {
-            const address = XLSX.utils.encode_cell({r: 0, c: C});
-            if (!ws[address]) continue;
-            ws[address].s = {
-                fill: { fgColor: { rgb: "FF8C00" } },
-                font: { bold: true, color: { rgb: "FFFFFF" } },
-                alignment: { horizontal: "center" },
-                border: { top: {style: "thin"}, bottom: {style: "thin"}, left: {style: "thin"}, right: {style: "thin"} }
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet([...headers, ...dataRows]);
+
+        const headerRange = XLSX.utils.decode_range(ws['!ref']);
+        for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
+            const cellAddress = XLSX.utils.encode_cell({r: 0, c: C});
+            if (!ws[cellAddress]) continue;
+            ws[cellAddress].s = {
+                fill: { fgColor: { rgb: "0D934A" } },
+                font: { bold: true, color: { rgb: "FFFFFF" }, sz: 11, name: "Segoe UI" },
+                alignment: { horizontal: "center", vertical: "center", wrapText: true },
+                border: {
+                    bottom: { style: "medium", color: { rgb: "096E37" } },
+                    right: { style: "thin", color: { rgb: "10B981" } }
+                }
             };
         }
 
-        ws['!cols'] = [{wch:5}, {wch:15}, {wch:25}, {wch:25}, {wch:20}, {wch:15}];
+        for (let R = 1; R <= headerRange.e.r; ++R) {
+            for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
+                const cellAddress = XLSX.utils.encode_cell({r: R, c: C});
+                if (!ws[cellAddress]) continue;
+                
+                const alignmentStyle = (C === 0 || C === 1) ? "center" : "left";
+                
+                ws[cellAddress].s = {
+                    font: { sz: 10, name: "Segoe UI" },
+                    alignment: { horizontal: alignmentStyle, vertical: "center", wrapText: true },
+                    border: {
+                        bottom: { style: "thin", color: { rgb: "E2E8F0" } },
+                        right: { style: "thin", color: { rgb: "E2E8F0" } }
+                    }
+                };
+            }
+        }
+
+        ws['!cols'] = [
+            { wch: 6 },  
+            { wch: 22 }, 
+            { wch: 20 }, 
+            { wch: 22 }, 
+            { wch: 28 }, 
+            { wch: 30 }, 
+            { wch: 18 }, 
+            { wch: 35 }  
+        ];
         
-        XLSX.utils.book_append_sheet(wb, ws, "Laporan");
-        XLSX.writeFile(wb, `Laporan_Pengaduan_${new Date().toLocaleDateString('id-ID')}.xlsx`);
+        XLSX.utils.book_append_sheet(wb, ws, "Arsip Pengaduan Selesai");
+        XLSX.writeFile(wb, `Laporan_Pengaduan_Selesai_${new Date().toISOString().split('T')[0]}.xlsx`);
     }
 </script>
 

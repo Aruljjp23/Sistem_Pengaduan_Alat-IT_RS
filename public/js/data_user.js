@@ -1,84 +1,69 @@
-const baseUrl = "{{ url('') }}";
-
 document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('click', function (e) {
+        const editBtn = e.target.closest('.btn-edit');
+        const hapusBtn = e.target.closest('.btn-hapus');
 
-    document.querySelectorAll('.btn-edit').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            const id         = this.dataset.id;
-            const name       = this.dataset.name;
-            const role       = this.dataset.role;
-            const idRuangan  = this.dataset.id_ruangan;
+        if (editBtn) {
+            const id = editBtn.dataset.id;
+            const name = editBtn.dataset.name;
+            const role = editBtn.dataset.role;
+            const idRuangan = editBtn.dataset.id_ruangan;
 
             document.getElementById('formEditUser').action = '/user/data_user/' + id + '/update';
+            document.getElementById('edit_name').value = name;
+            document.getElementById('edit_role').value = role;
 
-            document.getElementById('edit_name').value     = name;
-            document.getElementById('edit_role').value     = role;
-            document.getElementById('edit_id_ruangan').value = idRuangan ?? '';
+            const inputRuangan = document.getElementById('edit_id_ruangan');
+            if (inputRuangan) inputRuangan.value = idRuangan || '';
 
-            document.getElementById('edit_password').value = '';
+            const passField = document.getElementById('edit_password');
+            if (passField) passField.value = '';
 
-            var editModal = new bootstrap.Modal(document.getElementById('modalEditUser'));
-            editModal.show();
-        });
-    });
+            new bootstrap.Modal(document.getElementById('modalEditUser')).show();
+        }
 
-    document.querySelectorAll('.btn-hapus').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            const name = this.dataset.name;
-            const url  = this.dataset.url;
+        if (hapusBtn) {
+            const name = hapusBtn.dataset.name;
+            const url = hapusBtn.dataset.url;
 
             Swal.fire({
                 title: 'Hapus User?',
-                html: `Anda yakin ingin menghapus user:<br><strong class="text-danger">${name}</strong>?<br><small class="text-muted">Tindakan ini tidak dapat dibatalkan.</small>`,
+                html: `Anda yakin ingin menghapus user:<br><strong class="text-danger">${name}</strong>?`,
                 icon: 'warning',
-                iconColor: '#dc3545',
                 showCancelButton: true,
                 confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: '<i class="fa fa-trash me-1"></i> Ya, Hapus!<br>',
-                cancelButtonText: '<i class="fa fa-times me-1"></i> Batal',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
                 reverseButtons: true,
-                focusCancel: true,
-                customClass: {
-                    popup: 'shadow',
-                    confirmButton: 'btn btn-danger px-4',
-                    cancelButton: 'btn btn-secondary px-4',
-                    actions: 'd-flex gap-3 justify-content-center'
-                },
                 buttonsStyling: false,
-            }).then(function (result) {
-                if (result.isConfirmed) {
-                    window.location.href = url;
-                }
-            });
-        });
+                customClass: { confirmButton: 'btn btn-danger px-4 mx-2', cancelButton: 'btn btn-secondary px-4 mx-2' }
+            }).then((result) => { if (result.isConfirmed) window.location.href = url; });
+        }
     });
 
-});
+    const searchInput = document.getElementById('search');
+    const formSearch = document.getElementById('formSearch');
 
-document.addEventListener('DOMContentLoaded', function () {
+    if (!searchInput || !formSearch) return;
 
-    const searchInput = document.getElementById('searchInput');
+    let timeout;
 
-    if (!searchInput) return;
+    searchInput.addEventListener('input', function () {
 
-    searchInput.addEventListener('keyup', function () {
-        let keyword = this.value.toLowerCase();
-        let rows = document.querySelectorAll('#userTable tr');
+        clearTimeout(timeout);
 
-        rows.forEach(function(row) {
-            if (row.id === 'noUserData') return; 
-            let name = row.children[1]?.innerText.toLowerCase() || '';
-            let role = row.children[2]?.innerText.toLowerCase() || '';
+        timeout = setTimeout(() => {
 
-            if (name.includes(keyword) || role.includes(keyword)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
+            const keyword = this.value.trim();
+
+            if (keyword === '') {
+                window.location.href = window.location.pathname;
+                return;
             }
-        });
 
-        document.getElementById('noUserData').style.display = found ? 'none' : '';
+            formSearch.submit();
+
+        }, 800);
+
     });
-
 });

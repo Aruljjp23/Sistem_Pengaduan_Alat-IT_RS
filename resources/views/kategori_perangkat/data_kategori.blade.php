@@ -1,6 +1,6 @@
 @extends('layout.page')
 
-@section('page_title', 'Manajemen Pengguna')
+@section('page_title', 'Kategori Perangkat')
 
 @section('content')
 <style>
@@ -30,7 +30,7 @@
     }
 
     .search-container .form-control {
-        border: none !important; 
+        border: none !important;
         background: transparent;
         height: 45px;
         padding-left: 15px;
@@ -49,13 +49,8 @@
         cursor: pointer;
     }
 
-    .search-btn:hover {
-        background-color: #2563eb;
-    }
-
-    .search-btn i {
-        font-size: 14px;
-    }
+    .search-btn:hover { background-color: #2563eb; }
+    .search-btn i { font-size: 14px; }
 
     .table-modern {
         border-collapse: separate;
@@ -63,8 +58,6 @@
     }
     .table-modern thead th {
         background-color: #3b82f6 !important;
-        /* background: transparent !important; */
-        /* color: var(--text-muted); */
         color: white;
         font-weight: 700;
         text-transform: uppercase;
@@ -88,9 +81,9 @@
         font-size: 0.9rem;
     }
     .table-modern tbody td:first-child { border-radius: 12px 0 0 12px; }
-    .table-modern tbody td:last-child { border-radius: 0 12px 12px 0; }
+    .table-modern tbody td:last-child  { border-radius: 0 12px 12px 0; }
 
-    .user-avatar {
+    .kat-avatar {
         width: 38px;
         height: 38px;
         border-radius: 10px;
@@ -99,8 +92,10 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 700;
+        font-size: 1.1rem;
+        flex-shrink: 0;
     }
+
     .badge-pill {
         padding: 6px 12px;
         border-radius: 8px;
@@ -132,7 +127,7 @@
             text-align: left;
             color: var(--text-muted);
         }
-        .user-avatar { display: none; }
+        .kat-avatar { display: none; }
     }
 </style>
 
@@ -153,94 +148,80 @@
 </script>
 @endif
 
+{{-- Toolbar --}}
 <div class="user-card mb-4">
     <div class="row g-3 align-items-center">
         <div class="col-12 col-md-6">
             <form id="formSearch" action="{{ url()->current() }}" method="GET">
-                <div class="search-container shadow-sm">
-                    <input id="search" 
-                        type="text" 
-                        class="form-control" 
-                        placeholder="Cari data..." 
-                        name="search" 
-                        value="{{ request('search') }}" 
+                <div class="input-group">
+                    <input
+                        type="text"
+                        id="search"
+                        name="search"
+                        class="form-control"
+                        placeholder="Cari kategori..."
+                        value="{{ request('search') }}"
                         autocomplete="off">
-                    
-                    <button type="submit" class="search-btn">
+
+                    <button type="submit" class="btn btn-primary">
                         <i class="fa fa-search"></i>
                     </button>
                 </div>
             </form>
         </div>
         <div class="col-12 col-md-6 text-md-end">
-            <button class="btn btn-primary px-4 py-2 shadow-sm" style="border-radius: 10px;" data-bs-toggle="modal" data-bs-target="#modalTambahUser">
-                <i class="fa fa-plus-circle me-2"></i>Tambah User
+            <button class="btn btn-primary px-4 py-2 shadow-sm" style="border-radius: 10px;"
+                data-bs-toggle="modal" data-bs-target="#modalTambahKategori">
+                <i class="fa fa-plus-circle me-2"></i>Tambah Kategori
             </button>
         </div>
     </div>
 </div>
 
+{{-- Tabel --}}
 <div class="table-responsive" style="overflow: visible;">
     <table class="table table-modern">
         <thead>
             <tr class="text-center">
                 <th width="80">No</th>
-                <th class="text-start">Informasi Pengguna</th>
-                <th>Role</th>
+                <th class="text-center">Nama Kategori</th>
                 <th width="150">Aksi</th>
             </tr>
         </thead>
-        <tbody id="userTable">
-            @forelse ($data_user as $index => $user)
+        <tbody id="kategoriTable">
+            @forelse ($data_kategori as $index => $item)
             <tr class="text-center">
-                <td data-label="No">{{ $data_user->firstItem() + $index }}</td>
-                
-                <td data-label="User" class="text-start">
+                <td data-label="No">{{ $data_kategori->firstItem() + $index }}</td>
+
+                <td data-label="Kategori" class="text-center">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="user-avatar shadow-sm" style="width: 35px; height: 35px; flex-shrink: 0;">
-                            {{ strtoupper(substr($user->name, 0, 1)) }}
-                        </div>
                         <div class="fw-bold text-dark" style="font-size: 0.95rem; line-height: 1;">
-                            {{ $user->name }}
+                            {{ $item->nama_kategori }}
                         </div>
                     </div>
-                </td>
-
-                <td data-label="Role">
-                    @php
-                        $badgeStyle = [
-                            'admin'    => 'bg-info text-dark',
-                            'teknisi'  => 'bg-success text-white',
-                            'pengadu'  => 'bg-secondary text-white'
-                        ][$user->role] ?? 'bg-dark text-white';
-                    @endphp
-                    <span class="badge badge-pill {{ $badgeStyle }} text-capitalize">
-                        {{ $user->role }}
-                    </span>
                 </td>
 
                 <td data-label="Aksi">
                     <div class="d-flex justify-content-center gap-2">
                         <button class="btn btn-warning btn-sm btn-edit rounded-3 shadow-sm px-3"
-                            data-id="{{ $user->id }}"
-                            data-name="{{ $user->name }}"
-                            data-role="{{ $user->role }}"
-                            data-id_ruangan="{{ $user->id_ruangan }}">
+                            data-id="{{ $item->id_kategori }}"
+                            data-nama="{{ $item->nama_kategori }}">
                             <i class="fa-solid fa-pencil"></i>
                         </button>
                         <button class="btn btn-danger btn-sm btn-hapus rounded-3 shadow-sm px-3"
-                            data-id="{{ $user->id }}"
-                            data-name="{{ $user->name }}"
-                            data-url="{{ url('user/data_user/' . $user->id . '/delete') }}">
+                            data-id="{{ $item->id_kategori }}"
+                            data-nama="{{ $item->nama_kategori }}"
+                            data-url="{{ url('kategori/data_kategori/' . $item->id_kategori . '/delete') }}">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
                 </td>
             </tr>
             @empty
-            <tr id="noUserData" style="display:none;">
-                <td colspan="4" class="text-center text-muted">
-                    Data tidak ditemukan
+            <tr>
+                <td colspan="3" class="text-center py-5 text-muted">
+                    <i class="fa fa-box-open d-block mb-2 fs-2"></i>
+                    Belum ada kategori perangkat.
                 </td>
             </tr>
             @endforelse
@@ -248,54 +229,38 @@
     </table>
 </div>
 
+{{-- Pagination --}}
 <div class="user-card mt-3">
     <div class="row align-items-center">
         <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
             <span class="small text-muted fw-500">
-                Menampilkan <b>{{ $data_user->firstItem() }}</b> - <b>{{ $data_user->lastItem() }}</b> dari <b>{{ $data_user->total() }}</b> user
+                Menampilkan <b>{{ $data_kategori->firstItem() }}</b> –
+                <b>{{ $data_kategori->lastItem() }}</b> dari
+                <b>{{ $data_kategori->total() }}</b> kategori
             </span>
         </div>
         <div class="col-md-6 d-flex justify-content-center justify-content-md-end">
-            {{ $data_user->appends(request()->query())->links('pagination::bootstrap-5') }}
+            {{ $data_kategori->appends(request()->query())->links('pagination::bootstrap-5') }}
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="modalTambahUser" tabindex="-1" aria-hidden="true">
+{{-- Modal Tambah --}}
+<div class="modal fade" id="modalTambahKategori" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-            <form action="{{ url('user/data_user') }}" method="POST">
+            <form action="{{ url('kategori/data_kategori') }}" method="POST">
                 @csrf
                 <div class="modal-header border-0 p-4 pb-0">
-                    <h5 class="fw-bold">Tambah Pengguna</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="fw-bold">Tambah Kategori</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control rounded-3" name="name" id="floatName" placeholder="Username" required>
-                        <label for="floatName">Username</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <select name="id_ruangan" class="form-select rounded-3" id="floatRuang">
-                            <option value="">-- Pilih Ruangan --</option>
-                            @foreach($data_ruangan as $ruangan)
-                                <option value="{{ $ruangan->id_ruangan }}">{{ $ruangan->nama_ruangan }}</option>
-                            @endforeach
-                        </select>
-                        <label for="floatRuang">Ruangan (Opsional)</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="password" class="form-control rounded-3" name="password" id="floatPass" placeholder="Password" required>
-                        <label for="floatPass">Password</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <select class="form-select rounded-3" name="role" required>
-                            <option value="" disabled selected>Pilih Role...</option>
-                            <option value="admin">Admin</option>
-                            <option value="teknisi">Teknisi</option>
-                            <option value="pengadu">Pengadu</option>
-                        </select>
-                        <label>Hak Akses (Role)</label>
+                        <input type="text" class="form-control rounded-3"
+                            name="nama_kategori" id="floatNama"
+                            placeholder="Nama Kategori" required>
+                        <label for="floatNama">Nama Kategori</label>
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
@@ -307,40 +272,22 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalEditUser" tabindex="-1" aria-hidden="true">
+{{-- Modal Edit --}}
+<div class="modal fade" id="modalEditKategori" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-            <form id="formEditUser" method="POST">
+            <form id="formEditKategori" method="POST">
                 @csrf
                 <div class="modal-header border-0 p-4 pb-0">
-                    <h5 class="fw-bold text-warning">Edit Pengguna</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="fw-bold text-warning">Edit Kategori</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control rounded-3" id="edit_name" name="name" placeholder="Name" required>
-                        <label>Username</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <select name="id_ruangan" class="form-select rounded-3" id="edit_id_ruangan">
-                            <option value="">-- Tidak Ada --</option>
-                            @foreach($data_ruangan as $ruangan)
-                                <option value="{{ $ruangan->id_ruangan }}">{{ $ruangan->nama_ruangan }}</option>
-                            @endforeach
-                        </select>
-                        <label>Ruangan</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="password" class="form-control rounded-3" name="password" placeholder="Password">
-                        <label>Password Baru (Opsional)</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <select class="form-select rounded-3" id="edit_role" name="role" required>
-                            <option value="admin">Admin</option>
-                            <option value="teknisi">Teknisi</option>
-                            <option value="pengadu">Pengadu</option>
-                        </select>
-                        <label>Hak Akses</label>
+                        <input type="text" class="form-control rounded-3"
+                            id="edit_nama_kategori" name="nama_kategori"
+                            placeholder="Nama Kategori" required>
+                        <label>Nama Kategori</label>
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
@@ -352,5 +299,5 @@
     </div>
 </div>
 
-<script src="{{ asset('js/data_user.js') }}"></script>
+<script src="{{ asset('js/data_kategori.js') }}"></script>
 @endsection

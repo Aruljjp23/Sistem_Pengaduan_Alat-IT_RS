@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -15,62 +17,48 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'name' => [
-                'required',
-                'max:10',
-                'regex:/^[A-Z][a-zA-Z0-9]*$/'
-            ],
-            'password' => 'required|max:10'
-        ], [
-            'name.required' => 'Username wajib diisi',
-            'name.max' => 'Username maksimal 10 karakter',
-            'name.regex' => 'Username harus diawali huruf besar dan tanpa simbol',
-            'password.required' => 'Password wajib diisi',
-            'password.max' => 'Password maksimal 10 karakter'
+            'name' => 'required',
+            'password' => 'required',
         ]);
 
-        if (filter_var($request->name, FILTER_VALIDATE_EMAIL)) {
-            return back()->withErrors(['name' => 'Username tidak boleh berupa email']);
-        }
-
-        $user = DB::table('users')->where('name', $request->name)->first();
+        $user = User::where('name', $request->name)->first();
 
         if (!$user) {
-            return back()->with('error', 'Login gagal, username tidak ditemukan');
+            return back()->with('error', 'Username tidak ditemukan');
         }
 
-        if (Auth::attempt($request->only('name', 'password'))) {
+        if (!Hash::check($request->password, $user->password)) {
+            return back()->with('error', 'Password salah');
+        }
 
-            $role = Auth::user()->role;
+        Auth::login($user);
+        $request->session()->regenerate(); 
 
-            if (!$role) {
-                Auth::logout();
-                return back()->with('error', 'Akun belum memiliki role, hubungi admin');
-            }
+        switch ($user->role) {
 
-            switch ($role) {
-                case 'admin':
-                    return redirect('dashboard')->with('pesan', 'Login sebagai Admin berhasil');
+            case 'admin':
+                return redirect('dashboard')
+                    ->with('pesan', 'Login sebagai Admin berhasil');
 
-                case 'teknisi':
-                    return redirect('homepage')->with('pesan', 'Login sebagai Teknisi berhasil');
-
-                case 'pengadu':
-                    $id_ruangan = Auth::user()->id_ruangan;
-                    return redirect('/pengaduan/form_pengaduan/' . $id_ruangan)
-                        ->with('pesan', 'Login sebagai Pengadu berhasil');
-
-                default:
+            case 'pengadu':
+                if (!$user->id_ruangan) {
                     Auth::logout();
-                    return back()->with('error', 'Role tidak dikenali');
-            }
-        }
+                    return back()->with('error', 'Akun pengadu belum memiliki ruangan');
+                }
 
-        return back()->with('error', 'Login gagal, password salah');
+                return redirect('/pengaduan/form_pengaduan/' . $user->id_ruangan)
+                    ->with('pesan', 'Login sebagai Pengadu berhasil');
+
+            default:
+                Auth::logout();
+                abort(403, 'Role tidak valid');
+        }
     }
 
     public function form_register(){
-        return view('auth/register');
+        $ruangan = DB::table('ruangan')->get(); 
+    
+        return view('auth/register', compact('ruangan'));
     }
 
     public function register(Request $request)
@@ -82,7 +70,8 @@ class AuthController extends Controller
                 'unique:users,name',
                 'regex:/^[A-Z][a-zA-Z0-9]*$/'
             ],
-            'password' => 'required|max:10'
+            'password' => 'required|max:10',
+            'id_ruangan' => 'required|exists:ruangan,id_ruangan'
         ], [
             'name.required' => 'Username wajib diisi',
             'name.max' => 'Username maksimal 20 karakter',
@@ -100,6 +89,7 @@ class AuthController extends Controller
 
         DB::table('users')->insert([
             'name' => $request->name,
+            'id_ruangan'=> $request->id_ruangan,
             'password' => bcrypt($request->password),
             'role' => 'pengadu',
             'created_at' => now(),

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\PengaduanCtrl;
+use App\Http\Controllers\ApiCtrl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +19,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/perangkat/cari',       [PengaduanCtrl::class, 'apiCariManual']);
+Route::get('/perangkat/kode/{kode}', [PengaduanCtrl::class, 'apiCariByKode']);
+
+Route::post('/update-tindakan', [ApiCtrl::class, 'updateTindakan']);
+Route::post('/perangkat/store',   [ApiCtrl::class, 'storePerangkat']);
+Route::post('/perangkat/update',  [ApiCtrl::class, 'updatePerangkat']);
+Route::post('/perangkat/delete',  [ApiCtrl::class, 'destroyPerangkat']);
+Route::post('/perangkat/move',    [ApiCtrl::class, 'movePerangkat']);
