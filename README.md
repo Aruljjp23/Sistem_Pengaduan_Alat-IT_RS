@@ -59,14 +59,16 @@ Pastikan sudah terinstall:
 4. **Konfigurasi Database**
    - Buka file config.php atau .env
    - Sesuaikan :
+  
+     DB_CONNECTION=mysql
      
-     DB_HOST=localhost
+     DB_HOST=127.0.0.1
      
-     DB_USER=root
+     DB_USERNAME=root
      
-     DB_PASS=
+     DB_PASSWORD=
      
-     DB_NAME=sistem_pengaduan
+     DB_DATABASE=sistem_pengaduan
 
 ## Tujuan Sistem
 - Mempermudah pelaporan kerusakan alat IT
