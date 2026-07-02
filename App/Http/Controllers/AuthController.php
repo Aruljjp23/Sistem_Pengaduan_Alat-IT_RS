@@ -63,6 +63,8 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        $role = User::count() == 0 ? 'admin' : 'pengadu';
+
         $request->validate([
             'name' => [
                 'required',
@@ -71,7 +73,9 @@ class AuthController extends Controller
                 'regex:/^[A-Z][a-zA-Z0-9]*$/'
             ],
             'password' => 'required|max:10',
-            'id_ruangan' => 'required|exists:ruangan,id_ruangan'
+            'id_ruangan' => $role === 'pengadu'
+                ? 'required|exists:ruangan,id_ruangan'
+                : 'nullable'
         ], [
             'name.required' => 'Username wajib diisi',
             'name.max' => 'Username maksimal 20 karakter',
@@ -87,14 +91,21 @@ class AuthController extends Controller
             ]);
         }
 
-        DB::table('users')->insert([
+        $data = [
             'name' => $request->name,
-            'id_ruangan'=> $request->id_ruangan,
             'password' => bcrypt($request->password),
-            'role' => 'pengadu',
+            'role' => $role,
             'created_at' => now(),
             'updated_at' => now()
-        ]);
+        ];
+
+        if ($role === 'pengadu') {
+            $data['id_ruangan'] = $request->id_ruangan;
+        } else {
+            $data['id_ruangan'] = null;
+        }
+
+        DB::table('users')->insert($data);
 
         return redirect()->route('login')->with('success', 'Akun berhasil dibuat, menunggu persetujuan admin');
     }
