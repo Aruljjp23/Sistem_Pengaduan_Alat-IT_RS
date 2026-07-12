@@ -54,7 +54,7 @@
             </form>
 
             <div class="signup">
-                Belum Punya Akun? <a href="{{ route('register') }}">Daftar Sekarang</a>
+                Belum Punya Akun? <a href="{{ route('register') }}">Register</a>
             </div>
         </div>
     </div>

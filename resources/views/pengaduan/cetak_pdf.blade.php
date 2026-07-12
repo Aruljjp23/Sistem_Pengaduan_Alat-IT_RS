@@ -78,9 +78,22 @@
 
         .badge { background: #eef2ff; color: #4338ca; padding: 3px 6px; border-radius: 4px; font-size: 10px; }
 
-        .tabel-ttd { width: 100%; margin-top: 60px; border-collapse: collapse; text-align: center; font-size: 12px; color: #334155; }
-        .tabel-ttd td { width: 33.33%; padding: 10px; vertical-align: top; border: none; font-weight: 500; }
-        .spasi-ttd { height: 70px; }
+        .ttd-wrapper{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            width:100%;
+            margin-top:40px;
+        }
+
+        .ttd-item{
+            width:30%;
+            text-align:center;
+        }
+
+        .spasi-ttd{
+            height:80px;
+        }
 
         .table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
@@ -109,11 +122,42 @@
             .spasi-ttd { height: 40px; }
         }
 
-        @media print {
-            @page { size: landscape; margin: 10mm; }
-            body { background: white; }
-            .web-action-bar { display: none; }
-            .paper { margin: 0; box-shadow: none; width: 100%; height: auto; }
+        @media print{
+
+            @page{
+                size:A4 landscape;
+                margin:8mm;
+            }
+
+            html,
+            body{
+                width:100%;
+                height:auto;
+                margin:0;
+                padding:0;
+            }
+
+            .web-action-bar{
+                display:none;
+            }
+
+            .paper{
+                display:flex;
+                flex-direction:column;
+                min-height:190mm;
+            }
+
+            .table-wrapper{
+                flex:1;
+                display:flex;
+                flex-direction:column;
+            }
+
+            .ttd-wrapper{
+                margin-top:auto;
+                display:flex;
+                justify-content:space-between;
+            }
         }
     </style>
     </head>
@@ -175,28 +219,25 @@
                     @endforelse
                     </tbody>
                 </table>
-                <table class="tabel-ttd">
-                    <tr>
-                        <td>
-                            DIREKTUR<br>
-                            RSU DARMAYU MADIUN
-                            <div class="spasi-ttd"></div>
-                            (.................................................)
-                        </td>
-                        <td>
-                            KEPALA BAGIAN<br>
-                            ADMINISTRASI DAN UMUM
-                            <div class="spasi-ttd"></div>
-                            (.................................................)
-                        </td>
-                        <td>
-                            KEPALA UNIT<br>
-                            IT/PROGRAMMER
-                            <div class="spasi-ttd"></div>
-                            (.................................................)
-                        </td>
-                    </tr>
-                </table>
+                <div class="ttd-wrapper">
+                    <div class="ttd-item">
+                        <p>DIREKTUR<br>RSU DARMAYU MADIUN</p>
+                        <div class="spasi-ttd"></div>
+                        <p>(.................................................)</p>
+                    </div>
+
+                    <div class="ttd-item">
+                        <p>KEPALA BAGIAN<br>ADMINISTRASI DAN UMUM</p>
+                        <div class="spasi-ttd"></div>
+                        <p>(.................................................)</p>
+                    </div>
+
+                    <div class="ttd-item">
+                        <p>KEPALA UNIT<br>IT</p>
+                        <div class="spasi-ttd"></div>
+                        <p>(.................................................)</p>
+                    </div>
+                </div>
             </div>
         </div>
 

@@ -37,8 +37,8 @@
         <div class="card-header-modern">
             <div class="header-icon"><i class="fa-solid fa-qrcode"></i></div>
             <div>
-                <h5 class="mb-0 fw-bold">Scan Barcode Perangkat</h5>
-                <p class="text-muted small mb-0">Arahkan kamera ke label barcode pada perangkat</p>
+                <h5 class="mb-0 fw-bold">Scan QR Code Perangkat</h5>
+                <p class="text-muted small mb-0">Arahkan kamera ke label qr code pada perangkat</p>
             </div>
         </div>
 
@@ -221,7 +221,7 @@
                     </div>
 
                     <div class="col-12 col-md-6">
-                        <label class="form-label-custom">LOKASI / GEDUNG</label>
+                        <label class="form-label-custom">LOKASI</label>
                         <input type="text" class="form-control-modern bg-light"
                                value="{{ $ruangan->lokasi }}" readonly>
                     </div>
@@ -238,7 +238,7 @@
                     <div class="col-12">
                         <label class="form-label-custom">DESKRIPSI KERUSAKAN</label>
                         <textarea name="deskripsi_masalah" class="form-control-modern" rows="5"
-                                  placeholder="Jelaskan detail masalah (misal: Monitor bergaris, CPU bunyi terus, dll)..."
+                                  placeholder="Jelaskan detail masalah"
                                   required></textarea>
                     </div>
 
@@ -248,7 +248,7 @@
                                 <i class="fa-solid fa-paper-plane me-2"></i>Kirim Pengaduan
                             </button>
                             <button type="button" class="btn btn-light border py-3 px-4" onclick="kembaliScan()">
-                                <i class="fa-solid fa-rotate-left me-2"></i>Tambah Scan Perangkat Lagi
+                                <i class="fa-solid fa-rotate-left me-2"></i>Tambah Perangkat Lagi
                             </button>
                         </div>
                     </div>

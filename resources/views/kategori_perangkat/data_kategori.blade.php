@@ -1,6 +1,6 @@
 @extends('layout.page')
 
-@section('page_title', 'Kategori Perangkat')
+@section('page_title', 'Data Kategori Perangkat')
 
 @section('content')
 <style>

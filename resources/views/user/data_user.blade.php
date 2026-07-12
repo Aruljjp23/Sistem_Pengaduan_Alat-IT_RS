@@ -1,6 +1,6 @@
 @extends('layout.page')
 
-@section('page_title', 'Manajemen Pengguna')
+@section('page_title', 'Data User')
 
 @section('content')
 <style>
@@ -185,7 +185,7 @@
         <thead>
             <tr class="text-center">
                 <th width="80">No</th>
-                <th class="text-start">Informasi Pengguna</th>
+                <th class="text-start">Nama</th>
                 <th>Role</th>
                 <th width="150">Aksi</th>
             </tr>

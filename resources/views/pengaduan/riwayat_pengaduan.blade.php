@@ -372,7 +372,7 @@
                     <div class="d-flex align-items-center gap-2">
                         <span class="status-pill status-{{ $statusSlug == 'dalam-proses' ? 'proses' : $statusSlug }}">
                             {{ $item->status }}
-                        </span>
+                        </span> 
                         <div class="meta-item">
                             <i class="far fa-clock"></i> {{ \Carbon\Carbon::parse($item->created_at)->format('H:i') }}
                         </div>
@@ -381,7 +381,7 @@
 
                 @if($item->deskripsi_masalah)
                 <div class="issue-text">
-                    <strong>Kendala:</strong> {{ $item->deskripsi_masalah }}
+                    <strong>Deskripsi Masalah:</strong> {{ $item->deskripsi_masalah }}
                 </div>
                 @endif
 

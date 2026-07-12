@@ -146,10 +146,10 @@
             <i class="fas fa-file-pdf me-2"></i> PDF
         </a>
         
-        <a href="{{ url('/pengaduan/export_excel') }}?search={{ request('search') }}&created_at={{ request('created_at') }}" 
+        {{-- <a href="{{ url('/pengaduan/export_excel') }}?search={{ request('search') }}&created_at={{ request('created_at') }}" 
            class="btn btn-success shadow-sm px-3">
             <i class="fas fa-file-excel me-2"></i> Excel
-        </a>
+        </a> --}}
     </div>
 </div>
 
@@ -157,14 +157,14 @@
     <form id="formSearch" action="{{ url('/pengaduan/laporan_pengaduan') }}" method="GET">
         <div class="row g-3">
             <div class="col-md-5">
-                <label class="form-label fw-semibold small text-muted">KATA KUNCI</label>
+                <label class="form-label fw-semibold small text-muted">Search</label>
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-search"></i></span>
                     <input type="text" id="search" class="form-control form-control-custom border-start-0 ps-0" name="search" placeholder="Nama, ruangan, deskripsi, tindakan..." value="{{ request('search') }}">
                 </div>
             </div>
             <div class="col-md-3">
-                <label class="form-label fw-semibold small text-muted">FILTRASI BULANAN</label>
+                <label class="form-label fw-semibold small text-muted">Filter Bulan</label>
                 <input type="month" id="created_at" class="form-control form-control-custom" name="created_at" value="{{ request('created_at') }}">
             </div>
             <div class="col-md-4 d-flex align-items-end gap-2">
@@ -181,10 +181,10 @@
             <thead>
                 <tr>
                     <th class="text-center" width="60">No</th>
-                    <th width="150">Waktu</th>
-                    <th width="150">Pelapor</th>
+                    <th width="150">Tanggal</th>
+                    <th width="150">Pengadu</th>
                     <th width="200">Ruangan & Perangkat</th>
-                    <th width="200">Masalah</th>
+                    <th width="200">Deskripsi</th>
                     <th class="text-center">Aksi</th>
                 </tr>
             </thead>

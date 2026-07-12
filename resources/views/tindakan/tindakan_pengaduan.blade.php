@@ -1,6 +1,6 @@
 @extends('layout.page')
 
-@section('page_title', 'Status Tindakan')
+@section('page_title', 'Form Pengaduan')
 
 @section('content')
 
@@ -195,7 +195,7 @@
                     'semua' => 'Semua Laporan',
                     'menunggu' => 'Menunggu',
                     'diterima' => 'Diterima',
-                    'pending' => 'Tertunda',
+                    'pending' => 'Dipending',
                     'proses' => 'Diproses',
                     'selesai' => 'Selesai'
                 ];
@@ -257,7 +257,7 @@
                             </div>
                         </div>
                         <div class="col-md-6 col-12">
-                            <div class="info-label">Lokasi Detail</div>
+                            <div class="info-label">Lokasi</div>
                             <div class="info-value">
                                 <i class="fa-solid fa-location-dot text-danger opacity-75"></i> 
                                 {{ $item->lokasi }}
@@ -267,7 +267,7 @@
 
                     @if($item->perangkat_list && $item->perangkat_list !== '-')
                     <div class="mb-4">
-                        <div class="info-label">Inventaris Perangkat</div>
+                        <div class="info-label">Perangkat</div>
                         <div class="device-list-box">
                             <i class="fa-solid fa-desktop me-2 text-primary opacity-75"></i>
                             {{ $item->perangkat_list }}

@@ -89,7 +89,7 @@
             </form>
 
             <div class="signup">
-                Sudah Punya Akun? <a href="#" id="link-login" data-href="{{ route('login') }}">Masuk</a>
+                Sudah Punya Akun? <a href="#" id="link-login" data-href="{{ route('login') }}">Login</a>
             </div>
         </div>
     </div>

@@ -157,9 +157,9 @@
             <thead class="table-success">
                 <tr class="text-center">
                     <th width="50">No</th>
-                    <th>No Register</th>
-                    <th>IP Jaringan</th>
-                    <th>Merk</th>
+                    <th>Kode Inventaris</th>
+                    <th>IP Address</th>
+                    <th>Merek</th>
                     <th>Kategori</th>
                     <th width="140">Aksi</th>
                 </tr>
