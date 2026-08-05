@@ -211,7 +211,7 @@
                         <button class="btn btn-danger btn-sm btn-hapus rounded-3 shadow-sm px-3"
                             data-id="{{ $item->id_kategori }}"
                             data-nama="{{ $item->nama_kategori }}"
-                            data-url="{{ url('kategori/data_kategori/' . $item->id_kategori . '/delete') }}">
+                            data-url="{{ url('kategori_perangkat/data_kategori/' . $item->id_kategori . '/delete') }}">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
@@ -249,7 +249,7 @@
 <div class="modal fade" id="modalTambahKategori" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-            <form action="{{ url('kategori/data_kategori') }}" method="POST">
+            <form action="{{ route('kategori.store') }}" method="POST">
                 @csrf
                 <div class="modal-header border-0 p-4 pb-0">
                     <h5 class="fw-bold">Tambah Kategori</h5>
@@ -298,6 +298,5 @@
         </div>
     </div>
 </div>
-
 <script src="{{ asset('js/data_kategori.js') }}"></script>
 @endsection

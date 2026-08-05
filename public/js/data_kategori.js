@@ -30,23 +30,19 @@ document.addEventListener('click', function (e) {
 
     const editBtn = e.target.closest('.btn-edit');
 
-    if (editBtn) {
+    if (!editBtn) return;
 
-        const id   = editBtn.dataset.id;
-        const nama = editBtn.dataset.nama;
+    const id = editBtn.dataset.id;
+    const nama = editBtn.dataset.nama;
 
-        document.getElementById('edit_nama_kategori').value = nama;
+    document.getElementById('edit_nama_kategori').value = nama;
 
-        document.getElementById('formEditKategori').action =
-            window.baseUrl +
-            '/kategori/data_kategori/' +
-            id +
-            '/update';
+    document.getElementById('formEditKategori').action =
+    '/kategori_perangkat/data_kategori/' + id + '/update';
 
-        new bootstrap.Modal(
-            document.getElementById('modalEditKategori')
-        ).show();
-    }
+    new bootstrap.Modal(
+        document.getElementById('modalEditKategori')
+    ).show();
 
 });
 
@@ -57,7 +53,7 @@ document.addEventListener('click', function (e) {
     if (!hapusBtn) return;
 
     const nama = hapusBtn.dataset.nama;
-    const url  = hapusBtn.dataset.url;
+    const url = hapusBtn.dataset.url;
 
     Swal.fire({
         title: 'Hapus Kategori?',
@@ -68,22 +64,23 @@ document.addEventListener('click', function (e) {
         cancelButtonColor: '#6b7280',
         confirmButtonText: 'Ya, Hapus!',
         cancelButtonText: 'Batal'
-    }).then(function(result){
+    }).then(function (result) {
 
-        if(result.isConfirmed){
+        if (result.isConfirmed) {
 
             const form = document.createElement('form');
-
             form.method = 'POST';
             form.action = url;
 
             form.innerHTML =
                 '<input type="hidden" name="_token" value="' +
-                document.querySelector('meta[name=csrf-token]').content +
+                document.querySelector('meta[name="csrf-token"]').content +
                 '">';
 
             document.body.appendChild(form);
             form.submit();
         }
+
     });
+
 });

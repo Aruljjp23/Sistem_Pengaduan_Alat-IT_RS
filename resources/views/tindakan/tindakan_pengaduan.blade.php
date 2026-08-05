@@ -1,6 +1,6 @@
 @extends('layout.page')
 
-@section('page_title', 'Form Pengaduan')
+@section('page_title', 'Tindakan Pengaduan')
 
 @section('content')
 

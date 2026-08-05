@@ -267,7 +267,7 @@
             <form action="{{ url('user/data_user') }}" method="POST">
                 @csrf
                 <div class="modal-header border-0 p-4 pb-0">
-                    <h5 class="fw-bold">Tambah Pengguna</h5>
+                    <h5 class="fw-bold">Tambah User</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
@@ -282,7 +282,7 @@
                                 <option value="{{ $ruangan->id_ruangan }}">{{ $ruangan->nama_ruangan }}</option>
                             @endforeach
                         </select>
-                        <label for="floatRuang">Ruangan (Opsional)</label>
+                        <label for="floatRuang">Ruangan</label>
                     </div>
                     <div class="form-floating mb-3">
                         <input type="password" class="form-control rounded-3" name="password" id="floatPass" placeholder="Password" required>
@@ -292,10 +292,9 @@
                         <select class="form-select rounded-3" name="role" required>
                             <option value="" disabled selected>Pilih Role...</option>
                             <option value="admin">Admin</option>
-                            <option value="teknisi">Teknisi</option>
                             <option value="pengadu">Pengadu</option>
                         </select>
-                        <label>Hak Akses (Role)</label>
+                        <label>Role</label>
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
@@ -313,7 +312,7 @@
             <form id="formEditUser" method="POST">
                 @csrf
                 <div class="modal-header border-0 p-4 pb-0">
-                    <h5 class="fw-bold text-warning">Edit Pengguna</h5>
+                    <h5 class="fw-bold text-warning">Edit User</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
@@ -332,7 +331,7 @@
                     </div>
                     <div class="form-floating mb-3">
                         <input type="password" class="form-control rounded-3" name="password" placeholder="Password">
-                        <label>Password Baru (Opsional)</label>
+                        <label>Password Baru</label>
                     </div>
                     <div class="form-floating mb-3">
                         <select class="form-select rounded-3" id="edit_role" name="role" required>
@@ -340,7 +339,7 @@
                             <option value="teknisi">Teknisi</option>
                             <option value="pengadu">Pengadu</option>
                         </select>
-                        <label>Hak Akses</label>
+                        <label>Role</label>
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">

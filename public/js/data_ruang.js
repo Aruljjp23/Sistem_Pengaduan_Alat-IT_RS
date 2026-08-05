@@ -30,7 +30,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 reverseButtons: true,
                 buttonsStyling: false,
                 customClass: { confirmButton: 'btn btn-danger px-4 mx-2', cancelButton: 'btn btn-secondary px-4 mx-2' }
-            }).then((result) => { if (result.isConfirmed) window.location.href = url; });
+            }).then((result) => { 
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.action = url;
+                    form.method = 'POST';
+
+                    const csrfToken = document.createElement('input');
+                    csrfToken.type = 'hidden';
+                    csrfToken.name = '_token';
+                    csrfToken.value = document.querySelector('meta[name="csrf-token"]').content;
+
+                    form.appendChild(csrfToken);
+                    document.body.appendChild(form);
+                    form.submit();
+                } 
+            });
         }
     });
 

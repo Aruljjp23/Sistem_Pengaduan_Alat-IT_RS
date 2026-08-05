@@ -231,7 +231,7 @@
             <form id="formEditruangan" method="POST">
                 @csrf
                 <div class="modal-header border-0 p-4 pb-0">
-                    <h5 class="fw-bold text-warning"><i class="fa fa-edit me-2"></i>Edit Ruangan</h5>
+                    <h5 class="fw-bold text-warning">Edit Ruangan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">

@@ -41,11 +41,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/ruang/data_ruang', [RuanganCtrl::class, 'data_ruangan']);
         Route::post('/ruang/data_ruang', [RuanganCtrl::class, 'store']);
         Route::post('/ruang/data_ruang/{id}/update', [RuanganCtrl::class, 'update']);
-        Route::post('/ruang/data_ruang/{id}/delete', [RuanganCtrl::class, 'destroy']);
+        Route::get('/ruang/data_ruang/{id}/delete', [RuanganCtrl::class, 'destroy']);
         Route::get('/ruang/data_ruang/cari', [RuanganCtrl::class, 'data_ruangan']);
 
         Route::get('/kategori_perangkat/data_kategori', [KategoriCtrl::class, 'data_kategori']);
-        Route::post('/kategori_perangkat/data_kategori', [KategoriCtrl::class, 'store']);
+        Route::post('/kategori_perangkat/data_kategori', [KategoriCtrl::class, 'store'])
+        ->name('kategori.store');
         Route::post('/kategori_perangkat/data_kategori/{id}/update', [KategoriCtrl::class, 'update']);
         Route::post('/kategori_perangkat/data_kategori/{id}/delete', [KategoriCtrl::class, 'destroy']);
 

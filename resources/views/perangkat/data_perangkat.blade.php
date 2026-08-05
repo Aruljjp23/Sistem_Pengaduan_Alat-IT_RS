@@ -137,18 +137,41 @@
     </div>
 
     <div class="filter-wrapper mb-4 p-3 bg-light rounded shadow-sm">
-        <p class="small text-muted fw-bold mb-2 text-uppercase">Filter Kategori:</p>
+        <p class="small text-muted fw-bold mb-2 text-uppercase">
+            Filter Kategori:
+        </p>
+
         <div class="d-flex flex-wrap gap-2">
+
             <a href="{{ url('/perangkat/data_perangkat?id_ruangan='.$id_ruangan) }}"
-               class="btn btn-sm btn-outline-dark {{ empty($kategori) ? 'active' : '' }}">
+                class="btn btn-sm btn-outline-dark {{ empty($kategori) ? 'active' : '' }}">
                 Semua
             </a>
-            @foreach(['Laptop' => 'primary', 'Printer' => 'success', 'PC' => 'warning', 'Handphone' => 'info'] as $kat => $color)
-                <a href="{{ url('/perangkat/data_perangkat?id_ruangan='.$id_ruangan.'&kategori='.strtoupper($kat)) }}"
-                   class="btn btn-sm btn-outline-{{ $color }} {{ strtoupper($kategori ?? '') == strtoupper($kat) ? 'active' : '' }}">
-                    {{ $kat }}
+
+            @php
+                $colors = [
+                    'primary',
+                    'success',
+                    'warning',
+                    'info',
+                    'secondary',
+                    'danger',
+                    'dark'
+                ];
+            @endphp
+
+            @foreach($kategori_perangkat as $index => $kat)
+
+                <a href="{{ url('/perangkat/data_perangkat?id_ruangan='.$id_ruangan.'&kategori='.urlencode($kat->nama_kategori)) }}"
+                class="btn btn-sm btn-outline-{{ $colors[$index % count($colors)] }}
+                {{ strtolower($kategori ?? '') == strtolower($kat->nama_kategori) ? 'active' : '' }}">
+
+                    {{ $kat->nama_kategori }}
+
                 </a>
+
             @endforeach
+
         </div>
     </div>
 
@@ -272,9 +295,9 @@
         <div class="modal-content border-0 shadow">
             <form id="formEditperangkat" method="POST">
                 @csrf
-                <div class="modal-header bg-warning">
-                    <h5 class="modal-title fw-bold">
-                        <i class="fa fa-edit me-2"></i>Edit Data Perangkat
+                <div class="modal-header bg-white">
+                    <h5 class="modal-title fw-bold" style="color:rgb(255, 221, 0)">
+                        Edit Perangkat
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>

@@ -178,7 +178,18 @@ document.addEventListener('click', function (e) {
             customClass       : { popup: 'rounded-4' },
         }).then((res) => {
             if (res.isConfirmed) {
-                window.location.href = deleteUrl;
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = deleteUrl;
+
+                const csrfToken = document.createElement('input');
+                csrfToken.type = 'hidden';
+                csrfToken.name = '_token';
+                csrfToken.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                
+                form.appendChild(csrfToken);
+                document.body.appendChild(form);
+                form.submit();
             }
         });
 
