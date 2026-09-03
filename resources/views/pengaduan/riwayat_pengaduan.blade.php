@@ -264,6 +264,161 @@
         border-color:var(--primary);
     }
 
+    .page-title {
+        color: #0f172a !important;
+    }
+
+    .filter-modern,
+    .stat-card,
+    .history-card {
+        background: #ffffff;
+        color: #0f172a;
+    }
+
+    .filter-title {
+        color: #64748b !important;
+    }
+
+    .form-control-modern {
+        background: #f8fafc;
+        color: #0f172a;
+    }
+
+    .form-control-modern:focus {
+        background: #ffffff;
+        color: #0f172a;
+    }
+
+    .form-control-modern::placeholder {
+        color: #64748b;
+    }
+
+    .room-name {
+        color: #0f172a !important;
+    }
+
+    .reporter {
+        color: #475569 !important;
+    }
+
+    .issue-text {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .action-result {
+        color: #0f172a !important;
+    }
+
+    .meta-item {
+        color: #64748b !important;
+    }
+
+    .date-line {
+        background: #e2e8f0;
+    }
+
+    .text-dark-soft {
+        color: #475569 !important;
+    }
+
+    .text-slate {
+        color: #64748b !important;
+    }
+
+    .page-btn {
+        background: #ffffff;
+        color: #0f172a;
+        border-color: #e2e8f0;
+    }
+
+    html.dark-mode .page-title {
+        color: #f8fafc !important;
+    }
+
+    html.dark-mode .filter-modern,
+    html.dark-mode .stat-card,
+    html.dark-mode .history-card {
+        background: #1e293b;
+        color: #f1f5f9;
+        border-color: #334155;
+    }
+
+    html.dark-mode .filter-title {
+        color: #94a3b8 !important;
+    }
+
+    html.dark-mode .form-control-modern {
+        background: #0f172a;
+        color: #f1f5f9;
+        border-color: #334155;
+    }
+
+    html.dark-mode .form-control-modern:focus {
+        background: #0f172a;
+        color: #f1f5f9;
+        border-color: #2563eb;
+    }
+
+    html.dark-mode .form-control-modern::placeholder {
+        color: #94a3b8;
+    }
+
+    html.dark-mode .room-name {
+        color: #f1f5f9 !important;
+    }
+
+    html.dark-mode .reporter {
+        color: #cbd5e1 !important;
+    }
+
+    html.dark-mode .issue-text {
+        background: #0f172a;
+        color: #cbd5e1;
+        border-left-color: #334155;
+    }
+
+    html.dark-mode .action-result {
+        color: #f1f5f9 !important;
+    }
+
+    html.dark-mode .meta-item {
+        color: #94a3b8 !important;
+    }
+
+    html.dark-mode .date-line {
+        background: #334155;
+    }
+
+    html.dark-mode .text-dark-soft {
+        color: #cbd5e1 !important;
+    }
+
+    html.dark-mode .text-slate {
+        color: #94a3b8 !important;
+    }
+
+    html.dark-mode .page-btn {
+        background: #1e293b;
+        color: #f1f5f9;
+        border-color: #334155;
+    }
+
+    html.dark-mode .page-btn:hover {
+        background: #334155;
+        color: #60a5fa;
+    }
+
+    html.dark-mode .page-btn.active {
+        background: #2563eb;
+        color: #ffffff;
+        border-color: #2563eb;
+    }
+
+    html.dark-mode input[type="date"] {
+        color-scheme: dark;
+    }
+
     @media (max-width: 768px) {
         .history-card { padding: 1.25rem; }
         .meta-footer { gap: 10px; }

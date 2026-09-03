@@ -224,7 +224,7 @@
                             <button class="btn btn-outline-danger btn-sm btn-hapus"
                                 data-id_perangkat="{{ $perangkat->id_perangkat }}"
                                 data-kategori_perangkat="{{ $perangkat->kategori_perangkat }}"
-                                data-url="{{ url('perangkat/data_perangkat/' . $perangkat->id_perangkat . '/delete') }}">
+                                data-url="{{ url('perangkat/data_perangkat/' . $perangkat->id_perangkat . '/delete') }}?id_ruangan={{ $id_ruangan }}">
                                 <i class="fa fa-trash"></i>
                             </button>
                         </div>

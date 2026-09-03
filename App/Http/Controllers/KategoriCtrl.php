@@ -61,17 +61,23 @@ class KategoriCtrl extends Controller
     public function destroy($id)
     {
         $dipakai = DB::table('perangkat')
-            ->join('kategori_perangkat', 'perangkat.id_kategori', '=', 'kategori_perangkat.id_kategori')
-            ->where('perangkat.id_kategori', $id)
+            ->where('id_kategori', $id)
             ->exists();
 
         if ($dipakai) {
-            return redirect()->back()
-                ->with('error', 'Kategori tidak bisa dihapus karena masih digunakan oleh data perangkat.');
+            return redirect()->back()->with(
+                'error',
+                'Kategori tidak bisa dihapus karena masih digunakan oleh data perangkat.'
+            );
         }
 
-        DB::table('kategori_perangkat')->where('id_kategori', $id)->delete();
+        DB::table('kategori_perangkat')
+            ->where('id_kategori', $id)
+            ->delete();
 
-        return redirect()->back()->with('success', 'Kategori berhasil dihapus.');
+        return redirect()->back()->with(
+            'success',
+            'Kategori berhasil dihapus.'
+        );
     }
 }

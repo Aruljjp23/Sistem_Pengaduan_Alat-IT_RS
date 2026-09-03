@@ -117,9 +117,22 @@ class RuanganCtrl extends Controller
         return back()->with('success', 'Data Ruangan berhasil diperbarui.');
     }
 
-    public function destroy($id)
+   public function destroy($id)
     {
-        DB::table('ruangan')->where('id_ruangan', '=', $id)->delete();
-        return redirect('ruang/data_ruang')->with('success', 'Data Ruangan berhasil dihapus.');
+        $ruangan = DB::table('ruangan')
+            ->where('id_ruangan', $id)
+            ->first();
+
+        if (!$ruangan) {
+            return redirect('ruang/data_ruang')
+                ->with('error', 'Data ruangan tidak ditemukan.');
+        }
+
+        DB::table('ruangan')
+            ->where('id_ruangan', $id)
+            ->delete();
+
+        return redirect('ruang/data_ruang')
+            ->with('success', 'Data ruangan berhasil dihapus.');
     }
 }

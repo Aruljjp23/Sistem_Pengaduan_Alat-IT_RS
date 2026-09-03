@@ -22,49 +22,67 @@ class PengaduanCtrl extends Controller
     public function data_pengaduan(Request $request)
     {
         $tindakanTerbaru = DB::table('tindakan')
-        ->select('id_pengaduan', 'kondisi', 'teknisi', 'status', 'updated_at')->whereIn('id', function ($sub) {
+        ->select(
+            'id_pengaduan',
+            'teknisi',
+            'status',
+            'deskripsi_tindakan',
+            'updated_at'
+        )
+        ->whereIn('id', function ($sub) {
             $sub->select(DB::raw('MAX(id)'))->from('tindakan')->groupBy('id_pengaduan');
         });
 
-        $pengaduan = DB::table('pengaduan as a')
-        ->join('ruangan as b', 'a.id_ruangan', '=', 'b.id_ruangan')
-        ->leftJoin('perangkat as c', 'a.id_perangkat', '=', 'c.id_perangkat')
-        ->leftJoinSub($tindakanTerbaru, 'tl', 'tl.id_pengaduan', '=', 'a.id')
-        ->leftJoin('users as u', 'u.id', '=', 'tl.teknisi')
-        ->select(
-            'a.*',
-            'b.nama_ruangan as ruangan',
-            'b.lokasi as nama_lokasi',
-            'c.kode_inventaris',
-            'c.kategori_perangkat',
+        $pengaduan = DB::table('pengaduan as a')->join('ruangan as b','a.id_ruangan','=','b.id_ruangan')->leftJoin('perangkat as c','a.id_perangkat','=','c.id_perangkat')->leftJoin('kategori_perangkat as d','c.id_kategori','=','d.id_kategori')
+        ->leftJoinSub($tindakanTerbaru,'tl','tl.id_pengaduan','=','a.id')->select(
+            'a.*','b.nama_ruangan as ruangan','b.lokasi as nama_lokasi','c.kode_inventaris','c.merek','d.nama_kategori as kategori_perangkat','a.created_at as tanggal',
             DB::raw("COALESCE(tl.status, 'Pending') as status_tindakan"),
-            'tl.kondisi',
-            'tl.updated_at as tindakan_updated_at',
-            'u.name as nama_teknisi',
+            'tl.deskripsi_tindakan as kondisi',
+            'tl.teknisi as nama_teknisi',
+            'tl.updated_at as tindakan_updated_at'
         );
 
         if ($request->search) {
             $pengaduan->where(function ($data_pengaduan) use ($request) {
-                $data_pengaduan->where('a.nama_pengadu', 'like', "%{$request->search}%")
-                    ->orWhere('b.nama_ruangan', 'like', "%{$request->search}%")
-                    ->orWhere('b.lokasi', 'like', "%{$request->search}%");
+                $data_pengaduan
+                    ->where(
+                        'a.nama_pengadu',
+                        'like',
+                        "%{$request->search}%"
+                    )
+                    ->orWhere(
+                        'b.nama_ruangan',
+                        'like',
+                        "%{$request->search}%"
+                    )
+                    ->orWhere(
+                        'b.lokasi',
+                        'like',
+                        "%{$request->search}%"
+                    );
             });
         }
 
-        if ($request->created_at) {
-            $pengaduan->whereDate('a.created_at', $request->created_at);
+        if ($request->tanggal) {
+            $pengaduan->whereDate(
+                'a.created_at',
+                $request->tanggal
+            );
         }
 
         $data_pengaduan = $pengaduan->orderByDesc('a.created_at')->paginate(10);
 
-        return view('pengaduan/data_pengaduan', compact('data_pengaduan'));
+        return view(
+            'pengaduan/data_pengaduan',
+            compact('data_pengaduan')
+        );
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama_pengadu'      => 'required|string|max:255',
-            'created_at'           => 'required|date',
+            'nama_pengadu' => 'required|string|max:255', 
+            'tanggal' => 'required|date', 
             'deskripsi_masalah' => 'required|string',
         ]);
 
@@ -74,10 +92,10 @@ class PengaduanCtrl extends Controller
         }
 
         DB::table('pengaduan')->where('id', $id)->update([
-            'nama_pengadu'      => $request->nama_pengadu,
-            'created_at'           => $request->created_at,
-            'deskripsi_masalah' => $request->deskripsi_masalah,
-            'updated_at'        => now(),
+            'nama_pengadu' => $request->nama_pengadu, 
+            'created_at' => $request->tanggal, 
+            'deskripsi_masalah' => $request->deskripsi_masalah, 
+            'updated_at' => now(),
         ]);
 
         return redirect('/pengaduan/data_pengaduan')->with('success', 'Pengaduan berhasil diperbarui.');
@@ -311,74 +329,20 @@ class PengaduanCtrl extends Controller
 
     public function laporan_pengaduan(Request $request)
     {
-        $data_pengaduan = DB::table('pengaduan')
-            ->join('ruangan', 'pengaduan.id_ruangan', '=', 'ruangan.id_ruangan')
-            ->leftJoin('perangkat', 'pengaduan.id_perangkat', '=', 'perangkat.id_perangkat') 
-            ->leftJoin('kategori_perangkat', 'perangkat.id_kategori', '=', 'kategori_perangkat.id_kategori')
-            ->join('tindakan', 'pengaduan.id', '=', 'tindakan.id_pengaduan')
-            ->where('tindakan.status', '=', 'Selesai') 
-            ->select(
-                'pengaduan.id as pengaduan_id',
-                'pengaduan.created_at',
-                'pengaduan.nama_pengadu',
-                'pengaduan.deskripsi_masalah',
-                'ruangan.nama_ruangan',
-                'perangkat.kode_inventaris',
-                'kategori_perangkat.nama_kategori as kategori_perangkat',
-                'tindakan.teknisi', 
-                'tindakan.deskripsi_tindakan' 
-            );
-
-        if ($request->filled('search')) {
-            $search = strtolower($request->search);
-
-            $data_pengaduan->where(function ($q) use ($search) {
-                $q->whereRaw('LOWER(pengaduan.nama_pengadu) LIKE ?', ["%{$search}%"])
-                ->orWhereRaw('LOWER(pengaduan.deskripsi_masalah) LIKE ?', ["%{$search}%"])
-                ->orWhereRaw('LOWER(ruangan.nama_ruangan) LIKE ?', ["%{$search}%"])
-                ->orWhereRaw('LOWER(ruangan.lokasi) LIKE ?', ["%{$search}%"])
-                ->orWhereRaw('LOWER(kategori_perangkat.nama_kategori) LIKE ?', ["%{$search}%"])
-                ->orWhereRaw('LOWER(perangkat.kode_inventaris) LIKE ?', ["%{$search}%"])
-                ->orWhereRaw('LOWER(tindakan.teknisi) LIKE ?', ["%{$search}%"]) 
-                ->orWhereRaw('LOWER(tindakan.deskripsi_tindakan) LIKE ?', ["%{$search}%"]) 
-                ->orWhereDate('pengaduan.created_at', $search);
-            });
-        }
-
-        if ($request->filled('created_at')) {
-            $parts = explode('-', $request->created_at);
-            if (count($parts) == 2) {
-                $tahun = $parts[0];
-                $bulan = $parts[1];
-
-                $data_pengaduan->whereYear('pengaduan.created_at', $tahun)->whereMonth('pengaduan.created_at', $bulan);
-            }
-        }
-
-        $pengaduan = $data_pengaduan->orderByDesc('pengaduan.created_at')->paginate(5)->appends($request->query());
-
-        return view('pengaduan.laporan_pengaduan', compact('pengaduan'));
-    }
-
-    public function cetak_pdf(Request $request)
-    {
-        $data_pengaduan = DB::table('pengaduan')
-        ->join('ruangan', 'pengaduan.id_ruangan', '=', 'ruangan.id_ruangan')
-        ->join('tindakan', 'pengaduan.id', '=', 'tindakan.id_pengaduan')
-        ->leftJoin('perangkat', 'pengaduan.id_perangkat', '=', 'perangkat.id_perangkat') 
-        ->leftJoin('kategori_perangkat', 'perangkat.id_kategori', '=', 'kategori_perangkat.id_kategori')
-        ->where('tindakan.status', 'Selesai')
+        $data_pengaduan = DB::table('pengaduan')->join('ruangan', 'pengaduan.id_ruangan', '=', 'ruangan.id_ruangan')->leftJoin('perangkat', 'pengaduan.id_perangkat', '=', 'perangkat.id_perangkat')->leftJoin('kategori_perangkat', 'perangkat.id_kategori', '=', 'kategori_perangkat.id_kategori')->join('tindakan', 'pengaduan.id', '=', 'tindakan.id_pengaduan')->where('tindakan.status', 'Selesai')
         ->select(
+            'pengaduan.id as pengaduan_id',
             'pengaduan.created_at',
             'pengaduan.nama_pengadu',
             'pengaduan.deskripsi_masalah',
+            'ruangan.id_ruangan',
             'ruangan.nama_ruangan',
             'ruangan.lokasi',
+            'perangkat.kode_inventaris',
+            'perangkat.merek',
             'kategori_perangkat.nama_kategori as kategori_perangkat',
-            'tindakan.created_at as created_at_tindakan',
-            'tindakan.status',
             'tindakan.teknisi',
-            'tindakan.deskripsi_tindakan' 
+            'tindakan.deskripsi_tindakan'
         );
 
         if ($request->filled('search')) {
@@ -386,35 +350,197 @@ class PengaduanCtrl extends Controller
 
             $data_pengaduan->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(pengaduan.nama_pengadu) LIKE ?', ["%{$search}%"])
-                ->orWhereRaw('LOWER(pengaduan.deskripsi_masalah) LIKE ?', ["%{$search}%"])
-                ->orWhereRaw('LOWER(ruangan.nama_ruangan) LIKE ?', ["%{$search}%"])
-                ->orWhereRaw('LOWER(ruangan.lokasi) LIKE ?', ["%{$search}%"])
-                ->orWhereRaw('LOWER(kategori_perangkat.nama_kategori) LIKE ?', ["%{$search}%"])
-                ->orWhereRaw('LOWER(tindakan.teknisi) LIKE ?', ["%{$search}%"]) 
-                ->orWhereRaw('LOWER(tindakan.deskripsi_tindakan) LIKE ?', ["%{$search}%"]);
+                    ->orWhereRaw('LOWER(pengaduan.deskripsi_masalah) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(ruangan.nama_ruangan) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(ruangan.lokasi) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(perangkat.kode_inventaris) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(perangkat.merek) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(kategori_perangkat.nama_kategori) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(tindakan.teknisi) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(tindakan.deskripsi_tindakan) LIKE ?', ["%{$search}%"]);
             });
         }
 
         if ($request->filled('created_at')) {
-            $parts = explode('-', $request->created_at);
+            $tanggal = explode('-', $request->created_at);
 
-            if (count($parts) == 2) {
-                $tahun = $parts[0];
-                $bulan = $parts[1];
-
-                $data_pengaduan->whereYear('pengaduan.created_at', $tahun)->whereMonth('pengaduan.created_at', $bulan);
+            if (count($tanggal) == 2) {
+                $data_pengaduan
+                    ->whereYear('pengaduan.created_at', $tanggal[0])
+                    ->whereMonth('pengaduan.created_at', $tanggal[1]);
             }
         }
 
-        $pengaduan = $data_pengaduan->get();
+        if ($request->filled('id_ruangan')) {
+            $data_pengaduan->where(
+                'pengaduan.id_ruangan',
+                $request->id_ruangan
+            );
+        }
+
+        $pengaduan = $data_pengaduan
+            ->orderByDesc('pengaduan.created_at')
+            ->paginate(10)
+            ->appends($request->query());
+
+        $ruangan = DB::table('ruangan')
+            ->orderBy('nama_ruangan')
+            ->get();
+
+        $rekap_ruangan = DB::table('pengaduan')
+            ->join('ruangan', 'pengaduan.id_ruangan', '=', 'ruangan.id_ruangan')
+            ->join('tindakan', 'pengaduan.id', '=', 'tindakan.id_pengaduan')
+            ->where('tindakan.status', 'Selesai')
+            ->select(
+                'ruangan.nama_ruangan',
+                DB::raw('COUNT(pengaduan.id) as jumlah_pengaduan')
+            )
+            ->groupBy('ruangan.id_ruangan', 'ruangan.nama_ruangan')
+            ->orderBy('ruangan.nama_ruangan');
+
+        if ($request->filled('created_at')) {
+            $tanggal = explode('-', $request->created_at);
+
+            if (count($tanggal) == 2) {
+                $rekap_ruangan
+                    ->whereYear('pengaduan.created_at', $tanggal[0])
+                    ->whereMonth('pengaduan.created_at', $tanggal[1]);
+            }
+        }
+
+        if ($request->filled('id_ruangan')) {
+            $rekap_ruangan->where(
+                'pengaduan.id_ruangan',
+                $request->id_ruangan
+            );
+        }
+
+        $rekap_ruangan = $rekap_ruangan->get();
+
+        return view(
+            'pengaduan.laporan_pengaduan',
+            compact('pengaduan', 'ruangan', 'rekap_ruangan')
+        );
+    }
+
+    public function cetak_pdf(Request $request)
+    {
+        $data_pengaduan = DB::table('pengaduan')
+            ->join('ruangan', 'pengaduan.id_ruangan', '=', 'ruangan.id_ruangan')
+            ->leftJoin('perangkat', 'pengaduan.id_perangkat', '=', 'perangkat.id_perangkat')
+            ->leftJoin(
+                'kategori_perangkat',
+                'perangkat.id_kategori',
+                '=',
+                'kategori_perangkat.id_kategori'
+            )
+            ->join('tindakan', 'pengaduan.id', '=', 'tindakan.id_pengaduan')
+            ->where('tindakan.status', 'Selesai')
+            ->select(
+                'pengaduan.id as pengaduan_id',
+                'pengaduan.created_at',
+                'pengaduan.nama_pengadu',
+                'pengaduan.deskripsi_masalah',
+                'ruangan.nama_ruangan',
+                'ruangan.lokasi',
+                'perangkat.kode_inventaris',
+                'perangkat.merek',
+                'kategori_perangkat.nama_kategori as kategori_perangkat',
+                'tindakan.teknisi',
+                'tindakan.deskripsi_tindakan'
+            );
+
+        if ($request->filled('search')) {
+            $search = strtolower($request->search);
+
+            $data_pengaduan->where(function ($q) use ($search) {
+                $q->whereRaw(
+                    'LOWER(pengaduan.nama_pengadu) LIKE ?',
+                    ["%{$search}%"]
+                )
+                ->orWhereRaw(
+                    'LOWER(pengaduan.deskripsi_masalah) LIKE ?',
+                    ["%{$search}%"]
+                )
+                ->orWhereRaw(
+                    'LOWER(ruangan.nama_ruangan) LIKE ?',
+                    ["%{$search}%"]
+                )
+                ->orWhereRaw(
+                    'LOWER(ruangan.lokasi) LIKE ?',
+                    ["%{$search}%"]
+                )
+                ->orWhereRaw(
+                    'LOWER(perangkat.kode_inventaris) LIKE ?',
+                    ["%{$search}%"]
+                )
+                ->orWhereRaw(
+                    'LOWER(perangkat.merek) LIKE ?',
+                    ["%{$search}%"]
+                )
+                ->orWhereRaw(
+                    'LOWER(kategori_perangkat.nama_kategori) LIKE ?',
+                    ["%{$search}%"]
+                )
+                ->orWhereRaw(
+                    'LOWER(tindakan.teknisi) LIKE ?',
+                    ["%{$search}%"]
+                )
+                ->orWhereRaw(
+                    'LOWER(tindakan.deskripsi_tindakan) LIKE ?',
+                    ["%{$search}%"]
+                );
+            });
+        }
+
+        if ($request->filled('created_at')) {
+            $tanggal = explode('-', $request->created_at);
+
+            if (count($tanggal) == 2) {
+                $data_pengaduan
+                    ->whereYear('pengaduan.created_at', $tanggal[0])
+                    ->whereMonth('pengaduan.created_at', $tanggal[1]);
+            }
+        }
+
+        if ($request->filled('id_ruangan')) {
+            $data_pengaduan->where(
+                'pengaduan.id_ruangan',
+                $request->id_ruangan
+            );
+        }
+
+        $pengaduan = $data_pengaduan
+            ->orderBy('ruangan.nama_ruangan')
+            ->orderByDesc('pengaduan.created_at')
+            ->get();
 
         foreach ($pengaduan as $item) {
             if (empty($item->kategori_perangkat)) {
-                $item->kategori_perangkat = 'Non-Perangkat / Fasilitas';
+                $item->kategori_perangkat = 'Fasilitas Umum';
             }
         }
 
-        return view('pengaduan/cetak_pdf', compact('pengaduan'));
+        $penandatangan = [
+            'direktur' => [
+                'jabatan' => 'DIREKTUR',
+                'instansi' => 'RSU DARMAYU MADIUN',
+                'nama' => 'dr. Djemiran, M.Kes',
+                'ttd' => null,
+            ],
+
+            'it' => [
+                'jabatan' => 'KEPALA UNIT IT',
+                'instansi' => 'RSU DARMAYU MADIUN',
+                'nama' => 'Indra Laksana Putra, S.Kom',
+                'ttd' => null,
+            ],
+        ];
+
+        return view(
+            'pengaduan.cetak_pdf',
+            compact('pengaduan', 'penandatangan')
+        );
     }
 
     public function export_excel(Request $request)

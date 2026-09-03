@@ -47,17 +47,18 @@ document.addEventListener('click', function (e) {
 });
 
 document.addEventListener('click', function (e) {
-
     const hapusBtn = e.target.closest('.btn-hapus');
 
-    if (!hapusBtn) return;
+    if (!hapusBtn) {
+        return;
+    }
 
     const nama = hapusBtn.dataset.nama;
     const url = hapusBtn.dataset.url;
 
     Swal.fire({
         title: 'Hapus Kategori?',
-        html: 'Kategori <b>' + nama + '</b> akan dihapus permanen.',
+        html: `Kategori <b>${nama}</b> akan dihapus permanen.`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ef4444',
@@ -65,22 +66,33 @@ document.addEventListener('click', function (e) {
         confirmButtonText: 'Ya, Hapus!',
         cancelButtonText: 'Batal'
     }).then(function (result) {
-
-        if (result.isConfirmed) {
-
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = url;
-
-            form.innerHTML =
-                '<input type="hidden" name="_token" value="' +
-                document.querySelector('meta[name="csrf-token"]').content +
-                '">';
-
-            document.body.appendChild(form);
-            form.submit();
+        if (!result.isConfirmed) {
+            return;
         }
 
-    });
+        const csrfToken = document.querySelector(
+            'meta[name="csrf-token"]'
+        );
 
+        if (!csrfToken) {
+            console.error('CSRF token tidak ditemukan.');
+            return;
+        }
+
+        const form = document.createElement('form');
+
+        form.method = 'POST';
+        form.action = url;
+
+        form.innerHTML = `
+            <input
+                type="hidden"
+                name="_token"
+                value="${csrfToken.getAttribute('content')}"
+            >
+        `;
+
+        document.body.appendChild(form);
+        form.submit();
+    });
 });

@@ -208,7 +208,9 @@
                             data-nama="{{ $item->nama_kategori }}">
                             <i class="fa-solid fa-pencil"></i>
                         </button>
-                        <button class="btn btn-danger btn-sm btn-hapus rounded-3 shadow-sm px-3"
+                        <button
+                            type="button"
+                            class="btn btn-danger btn-sm btn-hapus rounded-3 shadow-sm px-3"
                             data-id="{{ $item->id_kategori }}"
                             data-nama="{{ $item->nama_kategori }}"
                             data-url="{{ url('kategori_perangkat/data_kategori/' . $item->id_kategori . '/delete') }}">

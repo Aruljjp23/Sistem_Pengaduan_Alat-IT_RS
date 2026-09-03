@@ -134,10 +134,23 @@ class PerangkatCtrl extends Controller
 
     public function destroy(Request $request, $id)
     {
-        DB::table('perangkat')->where('id_perangkat', $id)->delete();
+        $perangkat = DB::table('perangkat')
+            ->where('id_perangkat', $id)
+            ->first();
 
-        return redirect('perangkat/data_perangkat?id_ruangan=' . $request->id_ruangan)
-            ->with('success', 'Data perangkat berhasil dihapus.');
+        if (!$perangkat) {
+            return back()->with('error', 'Data perangkat tidak ditemukan.');
+        }
+
+        $idRuangan = $request->id_ruangan ?? $perangkat->id_ruangan;
+
+        DB::table('perangkat')
+            ->where('id_perangkat', $id)
+            ->delete();
+
+        return redirect(
+            'perangkat/data_perangkat?id_ruangan=' . $idRuangan
+        )->with('success', 'Data perangkat berhasil dihapus.');
     }
 
     public function qr_png($id)

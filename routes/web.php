@@ -41,19 +41,21 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/ruang/data_ruang', [RuanganCtrl::class, 'data_ruangan']);
         Route::post('/ruang/data_ruang', [RuanganCtrl::class, 'store']);
         Route::post('/ruang/data_ruang/{id}/update', [RuanganCtrl::class, 'update']);
-        Route::get('/ruang/data_ruang/{id}/delete', [RuanganCtrl::class, 'destroy']);
+        Route::post('/ruang/data_ruang/{id}/delete',[RuanganCtrl::class, 'destroy'])->name('ruangan.destroy');
         Route::get('/ruang/data_ruang/cari', [RuanganCtrl::class, 'data_ruangan']);
 
         Route::get('/kategori_perangkat/data_kategori', [KategoriCtrl::class, 'data_kategori']);
         Route::post('/kategori_perangkat/data_kategori', [KategoriCtrl::class, 'store'])
         ->name('kategori.store');
         Route::post('/kategori_perangkat/data_kategori/{id}/update', [KategoriCtrl::class, 'update']);
-        Route::post('/kategori_perangkat/data_kategori/{id}/delete', [KategoriCtrl::class, 'destroy']);
+        Route::post('/kategori_perangkat/data_kategori/{id}/delete',[KategoriCtrl::class, 'destroy'])->name('kategori.destroy');
 
         Route::get('/pengaduan/laporan_pengaduan', [PengaduanCtrl::class, 'laporan_pengaduan']);
         Route::get('/pengaduan/cetak_pdf', [PengaduanCtrl::class, 'cetak_pdf']);
         Route::get('/pengaduan/riwayat_pengaduan', [PengaduanCtrl::class, 'riwayat_pengaduan']);
         Route::get('/pengaduan/export_excel', [PengaduanCtrl::class, 'export_excel']);
+        Route::post( '/pengaduan/data_pengaduan/{id}/update', [PengaduanCtrl::class, 'update'] )->name('pengaduan.update'); 
+        Route::post( '/pengaduan/data_pengaduan/{id}/delete', [PengaduanCtrl::class, 'destroy'] )->name('pengaduan.destroy');
 
         
         Route::get('/perangkat/data_perangkat', [PerangkatCtrl::class, 'data_perangkat']);

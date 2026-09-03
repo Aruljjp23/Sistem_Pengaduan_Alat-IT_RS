@@ -16,6 +16,7 @@
 
 
 -- Dumping database structure for sistem_pengaduan
+DROP DATABASE IF EXISTS `sistem_pengaduan`;
 CREATE DATABASE IF NOT EXISTS `sistem_pengaduan` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `sistem_pengaduan`;
 
@@ -40,9 +41,9 @@ DELETE FROM `failed_jobs`;
 DROP TABLE IF EXISTS `kategori_perangkat`;
 CREATE TABLE IF NOT EXISTS `kategori_perangkat` (
   `id_kategori` int NOT NULL AUTO_INCREMENT,
-  `nama_kategori` varchar(100) DEFAULT NULL,
+  `nama_kategori` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   PRIMARY KEY (`id_kategori`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table sistem_pengaduan.kategori_perangkat: ~15 rows (approximately)
 DELETE FROM `kategori_perangkat`;
@@ -103,18 +104,21 @@ CREATE TABLE IF NOT EXISTS `pengaduan` (
   `id_ruangan` int DEFAULT NULL,
   `id_perangkat` int DEFAULT NULL,
   `nama_pengadu` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `deskripsi_masalah` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '',
+  `deskripsi_masalah` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table sistem_pengaduan.pengaduan: ~3 rows (approximately)
+-- Dumping data for table sistem_pengaduan.pengaduan: ~4 rows (approximately)
 DELETE FROM `pengaduan`;
 INSERT INTO `pengaduan` (`id`, `id_ruangan`, `id_perangkat`, `nama_pengadu`, `deskripsi_masalah`, `created_at`, `updated_at`) VALUES
-	(1, 15, 114, 'Reyhan', 'pc matot dan mouse matot', '2026-06-23 05:22:50', '2026-06-23 05:22:50'),
-	(2, 15, 115, 'Reyhan', 'pc matot dan mouse matot', '2026-06-23 05:22:50', '2026-06-23 05:22:50'),
-	(3, 9, 132, 'Hendro', 'printer mancet', '2026-06-23 08:05:13', '2026-06-23 08:05:13');
+	(1, 16, 383, 'Bagus', 'PC mati total', '2026-06-25 13:32:31', '2026-06-25 13:32:31'),
+	(2, 16, 383, 'Bagus', 'PC mti', '2026-07-06 02:20:47', '2026-07-06 02:20:47'),
+	(3, 16, 383, 'Bagus', 'PC dan Monitor mati total', '2026-07-12 23:50:24', '2026-07-12 23:50:24'),
+	(4, 16, 386, 'Bagus', 'PC dan Monitor mati total', '2026-07-12 23:50:24', '2026-07-12 23:50:24'),
+	(5, 6, 44, 'Doni', 'Printer tidak bisa dibuat ngeprint', '2026-07-29 05:19:30', '2026-07-29 05:19:30'),
+	(6, 16, 383, 'Bagus', 'pc matot', '2026-08-10 06:41:14', '2026-08-10 06:41:14');
 
 -- Dumping structure for table sistem_pengaduan.perangkat
 DROP TABLE IF EXISTS `perangkat`;
@@ -126,9 +130,9 @@ CREATE TABLE IF NOT EXISTS `perangkat` (
   `alamat_ip` varchar(50) DEFAULT NULL,
   `merek` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id_perangkat`)
-) ENGINE=InnoDB AUTO_INCREMENT=389 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=390 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table sistem_pengaduan.perangkat: ~374 rows (approximately)
+-- Dumping data for table sistem_pengaduan.perangkat: ~375 rows (approximately)
 DELETE FROM `perangkat`;
 INSERT INTO `perangkat` (`id_perangkat`, `id_ruangan`, `id_kategori`, `kode_inventaris`, `alamat_ip`, `merek`) VALUES
 	(2, 5, 2, 'MDN/MG/01.01/26/0001', '192.168.1.11', 'SIMBADDA'),
@@ -505,8 +509,7 @@ INSERT INTO `perangkat` (`id_perangkat`, `id_ruangan`, `id_kategori`, `kode_inve
 	(384, 16, 13, 'MDN/MG/01.06/26/0016', '-', 'LOGITECH'),
 	(385, 16, 14, 'MDN/MG/01.07/26/0016', '-', 'LOGITECH'),
 	(386, 16, 15, 'MDN/MG/01.08/26/0016', '-', 'LG'),
-	(387, 5, 14, 'MDN/MG/01.12/26/0002', '-', 'LOGITECH'),
-	(388, 5, 3, 'MDN/MG/01.07/26/0067', '-', 'HP');
+	(387, 5, 14, 'MDN/MG/01.12/26/0002', '-', 'LOGITECH');
 
 -- Dumping structure for table sistem_pengaduan.personal_access_tokens
 DROP TABLE IF EXISTS `personal_access_tokens`;
@@ -536,7 +539,7 @@ CREATE TABLE IF NOT EXISTS `ruangan` (
   `nama_ruangan` varchar(100) DEFAULT NULL,
   `lokasi` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id_ruangan`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table sistem_pengaduan.ruangan: ~43 rows (approximately)
 DELETE FROM `ruangan`;
@@ -601,14 +604,17 @@ CREATE TABLE IF NOT EXISTS `tindakan` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table sistem_pengaduan.tindakan: ~3 rows (approximately)
+-- Dumping data for table sistem_pengaduan.tindakan: ~4 rows (approximately)
 DELETE FROM `tindakan`;
 INSERT INTO `tindakan` (`id`, `id_pengaduan`, `id_ruangan`, `id_perangkat`, `kode_inventaris`, `kategori_perangkat`, `merek_perangkat`, `teknisi`, `status`, `deskripsi_tindakan`, `created_at`, `updated_at`) VALUES
-	(1, 1, 15, 114, 'MDN/MG/01.01/26/0015', 'PC', 'ASUS', 'AZHIS', 'Diterima', NULL, '2026-06-23 05:23:15', '2026-06-23 05:23:15'),
-	(2, 2, 15, 115, 'MDN/MG/01.06/26/0015', 'Mouse', 'LOGITECH', 'AZHIS', 'Diterima', NULL, '2026-06-23 05:23:01', '2026-06-23 05:23:01'),
-	(3, 3, 9, 132, 'MDN/MG/01.02/26/0009', 'Printer / Scanner', 'EPSON', 'AZHIS', 'Selesai', 'ganti nozzle warna', '2026-06-23 08:06:23', '2026-06-23 08:06:23');
+	(1, 1, 16, 383, 'MDN/MG/01.01/26/0016', 'PC', 'ASUS', 'RIZAL', 'Selesai', 'Ganti PSU baru', '2026-06-25 13:39:34', '2026-06-25 13:39:34'),
+	(2, 2, 16, 383, 'MDN/MG/01.01/26/0016', 'PC', 'ASUS', NULL, 'Menunggu', NULL, '2026-07-06 02:20:47', '2026-07-06 02:20:47'),
+	(3, 3, 16, 383, 'MDN/MG/01.01/26/0016', 'PC', 'ASUS', NULL, 'Menunggu', NULL, '2026-07-12 23:50:24', '2026-07-12 23:50:24'),
+	(4, 4, 16, 386, 'MDN/MG/01.08/26/0016', 'Monitor', 'LG', NULL, 'Menunggu', NULL, '2026-07-12 23:50:24', '2026-07-12 23:50:24'),
+	(5, 5, 6, 44, 'MDN/MG/01.02/26/0004', 'Printer / Scanner', 'EPSON', 'AZHIS', 'Selesai', 'Tinta habis', '2026-07-29 05:29:58', '2026-07-29 05:29:58'),
+	(6, 6, 16, 383, 'MDN/MG/01.01/26/0016', 'PC', 'ASUS', NULL, 'Menunggu', NULL, '2026-08-10 06:41:14', '2026-08-10 06:41:14');
 
 -- Dumping structure for table sistem_pengaduan.users
 DROP TABLE IF EXISTS `users`;
@@ -622,17 +628,18 @@ CREATE TABLE IF NOT EXISTS `users` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table sistem_pengaduan.users: ~2 rows (approximately)
+-- Dumping data for table sistem_pengaduan.users: ~8 rows (approximately)
 DELETE FROM `users`;
 INSERT INTO `users` (`id`, `name`, `role`, `id_ruangan`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
 	(1, 'Aruljjp', 'admin', NULL, '$2y$12$4ufh8jrn9pMF8mTM4fVJJ.Q5.oO1kHyP1W/62qDThYlOyo.P7/n3u', NULL, '2026-05-02 06:03:05', '2026-05-02 06:03:05'),
-	(3, 'Adi', 'admin', NULL, '$2y$12$TwMxIHnxYGbkUusG7wuIuezBmBloyopzAK/qbQzdN9TbVFuhniWWa', NULL, '2026-05-02 21:46:45', '2026-05-02 21:46:45'),
+	(3, 'Adi', 'pengadu', 14, '$2y$12$TwMxIHnxYGbkUusG7wuIuezBmBloyopzAK/qbQzdN9TbVFuhniWWa', NULL, '2026-05-02 21:46:45', '2026-07-12 07:55:00'),
 	(6, 'Bagus', 'pengadu', 16, '$2y$12$lWD7C7k5iIVrb3TgfG8VxO9DEmUb2OMOXwHjLc7fQDbSmAxKBda2G', NULL, '2026-05-09 20:22:52', '2026-06-18 19:37:37'),
 	(7, 'Sumanto', 'pengadu', 20, '$2y$12$d.rmVyTlcL4RYipc/r8g7ur9VqDr6x6C6ppGmvDW6CLijrn9K4FDa', NULL, '2026-05-10 20:02:43', '2026-05-10 20:03:08'),
 	(8, 'Reyhan', 'pengadu', 15, '$2y$12$yyGFgsQROGtKq9L4ioQwJO9UvhzeN/ttiVWxVl80f/xQEtuM9gO5K', NULL, '2026-05-15 01:04:24', '2026-05-15 01:04:24'),
-	(9, 'Hendro', 'pengadu', 9, '$2y$12$X6867Lh2XJIXEyXrFKClY.dJ8xmKEr5.dfmYIlDq8vp2MXww1WMOS', NULL, '2026-06-22 22:58:10', '2026-06-22 22:58:10');
+	(9, 'Hendro', 'pengadu', 9, '$2y$12$X6867Lh2XJIXEyXrFKClY.dJ8xmKEr5.dfmYIlDq8vp2MXww1WMOS', NULL, '2026-06-22 22:58:10', '2026-06-22 22:58:10'),
+	(10, 'Doni', 'pengadu', 6, '$2y$12$7fRbugYY34DDXN3ZRnFvSukfwqFWBsAFm/iSOr4IPhwZ4QpS3cU0a', NULL, '2026-07-12 07:37:44', '2026-07-12 07:37:44');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

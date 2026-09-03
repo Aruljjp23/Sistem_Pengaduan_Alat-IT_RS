@@ -336,7 +336,6 @@
                     <div class="form-floating mb-3">
                         <select class="form-select rounded-3" id="edit_role" name="role" required>
                             <option value="admin">Admin</option>
-                            <option value="teknisi">Teknisi</option>
                             <option value="pengadu">Pengadu</option>
                         </select>
                         <label>Role</label>

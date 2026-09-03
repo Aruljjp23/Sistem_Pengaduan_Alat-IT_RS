@@ -128,7 +128,7 @@
                         <div class="stat-icon-box"><i class="fas fa-bullhorn text-white"></i></div>
                     </div>
                 </div>
-                <a href="{{ url('/tindakan/riwayat_tindakan') }}" class="card-footer-custom text-decoration-none">
+                <a href="{{ url('/pengaduan/data_pengaduan') }}" class="card-footer-custom text-decoration-none">
                     <span>Lihat Detail</span> <i class="fas fa-chevron-right small"></i>
                 </a>
             </div>

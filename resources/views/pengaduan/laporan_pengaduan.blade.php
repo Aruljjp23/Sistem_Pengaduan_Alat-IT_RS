@@ -8,292 +8,738 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
     :root {
-        --brand-primary: #0d934a;
-        --brand-dark: #096e37;
-        --brand-success: #10b981;
-        --brand-info: #0ea5e9;
-        --surface-color: #ffffff;
-        --bg-soft: #f8fafc;
+        --primary: #0d8a45;
+        --primary-dark: #086b35;
+        --primary-soft: #eaf8f0;
+
+        --blue: #0ea5e9;
+        --blue-soft: #e0f2fe;
+
         --text-main: #1e293b;
         --text-muted: #64748b;
-        --border-soft: #e2e8f0;
-        --radius: 12px;
-        --shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+
+        --border: #e2e8f0;
+        --background: #f8fafc;
+
+        --radius: 14px;
     }
 
-    body { font-family: 'Inter', sans-serif; background-color: var(--bg-soft); color: var(--text-main); }
-
-    .report-container {
-        background: var(--surface-color);
-        border-radius: var(--radius);
-        border: 1px solid var(--border-soft);
-        box-shadow: var(--shadow-subtle);
-        overflow: hidden;
+    .laporan-wrapper {
+        font-family: 'Inter', sans-serif;
+        color: var(--text-main);
     }
 
-    .modern-table { margin-bottom: 0; }
-    .modern-table thead {
-        background-color: var(--brand-primary);
-        border-bottom: 2px solid var(--border-soft);
-    }
-    .modern-table thead th {
-        color: white !important;
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 0.05em;
-        padding: 16px;
-        border: none;
-    }
-    .modern-table tbody tr { transition: all 0.2s; border-bottom: 1px solid var(--border-soft); }
-    .modern-table tbody tr:hover { background-color: #f8fafc; }
-    .modern-table td { padding: 16px; vertical-align: middle; }
-
-    .filter-panel {
-        background: var(--surface-color);
-        border-radius: var(--radius);
-        border: 1px solid var(--border-soft);
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
+    .laporan-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 24px;
     }
 
-    .form-control-custom {
-        border: 1.5px solid var(--border-soft);
-        border-radius: 8px;
-        padding: 0.6rem 1rem;
+    .laporan-title {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text-main);
+    }
+
+    .laporan-subtitle {
+        margin-top: 5px;
+        color: var(--text-muted);
         font-size: 0.9rem;
-        transition: all 0.2s;
-    }
-    .form-control-custom:focus {
-        border-color: var(--brand-primary);
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        outline: none;
     }
 
-    .btn-brand {
-        background: var(--brand-primary);
+    .btn-modern {
+        border-radius: 10px;
+        padding: 10px 18px;
+        font-weight: 600;
+        transition: all .2s ease;
+    }
+
+    .btn-pdf {
+        background: #fff;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+    }
+
+    .btn-pdf:hover {
+        background: #fef2f2;
+        color: #b91c1c;
+        transform: translateY(-1px);
+    }
+
+    .btn-filter {
+        background: var(--primary);
         color: white;
         border: none;
-        border-radius: 8px;
-        font-weight: 500;
-        padding: 0.6rem 1.25rem;
-        transition: all 0.2s;
     }
-    .btn-brand:hover { background: var(--brand-dark); color: white; }
 
-    .btn-outline-custom {
-        border: 1.5px solid var(--border-soft);
+    .btn-filter:hover {
+        background: var(--primary-dark);
+        color: white;
+    }
+
+    .btn-reset {
         background: white;
+        border: 1px solid var(--border);
         color: var(--text-main);
-        border-radius: 8px;
-        padding: 0.6rem 1.25rem;
     }
-    .btn-outline-custom:hover { background: #f1f5f9; border-color: var(--text-muted); }
 
-    .custom-pagination {
+    .btn-reset:hover {
+        background: #f1f5f9;
+    }
+
+    .filter-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, .03);
+    }
+
+    .filter-label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: .82rem;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+
+    .form-modern {
+        height: 48px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        font-size: .92rem;
+    }
+
+    .form-modern:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(13, 138, 69, .10);
+    }
+
+    .section-title {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: var(--text-main);
+    }
+
+    .rekap-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px;
+        height: 100%;
+        transition: all .2s ease;
+    }
+
+    .rekap-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(15, 23, 42, .06);
+    }
+
+    .rekap-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background: var(--primary-soft);
+        color: var(--primary);
         display: flex;
-        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+
+    .rekap-title {
+        font-size: .82rem;
+        color: var(--text-muted);
+        margin-bottom: 4px;
+    }
+
+    .rekap-total {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-main);
+    }
+
+    .table-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, .03);
+    }
+
+    .modern-table {
+        margin-bottom: 0;
+    }
+
+    .modern-table thead {
+        background: var(--primary);
+    }
+
+    .modern-table thead th {
+        color: white;
+        border: none;
+        padding: 16px;
+        font-size: .75rem;
+        font-weight: 600;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .modern-table tbody td {
+        padding: 17px 16px;
+        vertical-align: middle;
+        border-color: var(--border);
+    }
+
+    .modern-table tbody tr {
+        transition: background .2s ease;
+    }
+
+    .modern-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .badge-ruangan {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--primary-soft);
+        color: var(--primary-dark);
+        padding: 5px 9px;
+        border-radius: 6px;
+        font-size: .72rem;
+        font-weight: 600;
+    }
+
+    .badge-perangkat {
+        color: #2563eb;
+        font-size: .78rem;
+        font-weight: 600;
+        margin-top: 5px;
+    }
+
+    .btn-detail {
+        background: var(--blue);
+        border: none;
+        color: white;
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: .84rem;
+        font-weight: 600;
+        transition: all .2s ease;
+    }
+
+    .btn-detail:hover {
+        background: #0284c7;
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    .pagination-modern {
+        display: flex;
         justify-content: center;
         gap: 6px;
-        margin-top: 15px;
+        padding: 20px;
     }
 
-    .page-btn {
-        padding: 6px 12px;
+    .pagination-modern a {
+        min-width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         border-radius: 8px;
-        border: 1px solid var(--border-soft);
-        text-decoration: none;
+        border: 1px solid var(--border);
         color: var(--text-main);
-        font-size: 0.85rem;
-        transition: 0.2s;
+        text-decoration: none;
         background: white;
     }
 
-    .page-btn:hover { background: #f1f5f9; }
-
-    .page-btn.active {
-        background: var(--brand-primary);
+    .pagination-modern a.active {
+        background: var(--primary);
         color: white;
-        border-color: var(--brand-primary);
-    }
-
-    /* Styling tombol detail */
-    .btn-detail {
-        background: var(--brand-info);
-        color: white;
-        border: none;
-        border-radius: 6px;
-        padding: 0.4rem 0.8rem;
-        font-size: 0.85rem;
-        transition: 0.2s;
-    }
-    .btn-detail:hover { background: #0284c7; color: white; transform: translateY(-1px); }
-
-    @media print {
-        .no-print { display: none !important; }
-        .report-container { border: none; box-shadow: none; }
+        border-color: var(--primary);
     }
 
     @media (max-width: 768px) {
-        .filter-panel .row > div { margin-bottom: 10px; }
+
+        .laporan-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
     }
 </style>
 
-<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 no-print">
-    <div class="d-flex gap-2">
-        <a href="{{ url('/pengaduan/cetak_pdf') }}?search={{ request('search') }}&created_at={{ request('created_at') }}" 
-           target="_blank" class="btn btn-outline-danger shadow-sm px-3">
-            <i class="fas fa-file-pdf me-2"></i> PDF
-        </a>
-        
-        {{-- <a href="{{ url('/pengaduan/export_excel') }}?search={{ request('search') }}&created_at={{ request('created_at') }}" 
-           class="btn btn-success shadow-sm px-3">
-            <i class="fas fa-file-excel me-2"></i> Excel
-        </a> --}}
-    </div>
-</div>
 
-<div class="filter-panel no-print">
-    <form id="formSearch" action="{{ url('/pengaduan/laporan_pengaduan') }}" method="GET">
-        <div class="row g-3">
-            <div class="col-md-5">
-                <label class="form-label fw-semibold small text-muted">Search</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-search"></i></span>
-                    <input type="text" id="search" class="form-control form-control-custom border-start-0 ps-0" name="search" placeholder="Nama, ruangan, deskripsi, tindakan..." value="{{ request('search') }}">
+<div class="laporan-wrapper">
+
+    <div class="laporan-header">
+
+
+        <a href="{{ url('/pengaduan/cetak_pdf') }}?search={{ request('search') }}&created_at={{ request('created_at') }}&id_ruangan={{ request('id_ruangan') }}" target="_blank" class="btn btn-modern btn-pdf">
+            <i class="fas fa-file-pdf me-2"></i>
+            Cetak PDF
+        </a>
+
+    </div>
+
+
+    <div class="filter-card">
+
+        <form id="formSearch" action="{{ url('/pengaduan/laporan_pengaduan') }}" method="GET">
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+
+                    <label class="filter-label">
+                        Pencarian
+                    </label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+
+                        <input type="text" id="search" name="search" class="form-control form-modern border-start-0" placeholder="Nama, ruangan, perangkat..." value="{{ request('search') }}">
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <label class="filter-label">
+                        Filter Bulan
+                    </label>
+
+                    <input type="month" id="created_at" name="created_at" class="form-control form-modern" value="{{ request('created_at') }}">
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <label class="filter-label">
+                        Filter Ruangan
+                    </label>
+
+                    <select id="id_ruangan" name="id_ruangan" class="form-select form-modern">
+
+                        <option value="">
+                            Semua Ruangan
+                        </option>
+
+                        @foreach($ruangan as $itemRuangan)
+
+                            <option value="{{ $itemRuangan->id_ruangan }}" {{ request('id_ruangan') == $itemRuangan->id_ruangan ? 'selected' : '' }}>
+                                {{ $itemRuangan->nama_ruangan }}
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+
+                    <a href="{{ url('/pengaduan/laporan_pengaduan') }}" class="btn btn-modern btn-reset w-100 text-center">
+                        <i class="fas fa-rotate-left me-1"></i>
+                        Reset
+                    </a>
+
                 </div>
             </div>
-            <div class="col-md-3">
-                <label class="form-label fw-semibold small text-muted">Filter Bulan</label>
-                <input type="month" id="created_at" class="form-control form-control-custom" name="created_at" value="{{ request('created_at') }}">
-            </div>
-            <div class="col-md-4 d-flex align-items-end gap-2">
-                <button type="submit" class="btn btn-brand flex-grow-1">Terapkan Filter</button>
-                <a href="{{ url('/pengaduan/laporan_pengaduan') }}" class="btn btn-outline-custom text-nowrap">Reset</a>
-            </div>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
 
-<div class="report-container">
-    <div class="table-responsive">
-        <table class="table modern-table align-middle" id="tabelLaporan">
-            <thead>
-                <tr>
-                    <th class="text-center" width="60">No</th>
-                    <th width="150">Tanggal</th>
-                    <th width="150">Pengadu</th>
-                    <th width="200">Ruangan & Perangkat</th>
-                    <th width="200">Deskripsi</th>
-                    <th class="text-center">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($pengaduan as $index => $item)
-                <tr>
-                    <td class="text-center text-muted fw-medium">{{ $pengaduan->firstItem() + $index }}</td>
-                    <td>
-                        <div class="fw-semibold">{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('d M Y') }}</div>
-                        <div class="text-muted small">{{ \Carbon\Carbon::parse($item->created_at)->format('H:i') }} WIB</div>
-                    </td>
-                    <td>
-                        <div class="fw-semibold">{{ $item->nama_pengadu }}</div>
-                    </td>
-                    <td>
-                        <div class="fw-bold text-dark">{{ $item->nama_ruangan }}</div>
-                        <div class="text-primary small fw-medium" style="font-size: 0.75rem;">
-                            {{ $item->kode_inventaris ? $item->kode_inventaris . ' - ' : '' }}{{ $item->kategori_perangkat ?? 'Fasilitas Umum' }}
-                        </div>
-                    </td>
-                    <td class="text-secondary small">
-                        {{ $item->deskripsi_masalah }}
-                    </td>
-                    <td class="text-center">
-                        <button type="button" class="btn-detail" data-bs-toggle="modal" data-bs-target="#detailModal{{ $item->pengaduan_id }}">
-                            <i class="fas fa-info-circle me-1"></i> Detail
-                        </button>
-                        <span class="d-none text-excel-tindakan">{{ $item->deskripsi_tindakan }}</span>
-                    </td>
-                </tr>
 
-                <div class="modal fade" id="detailModal{{ $item->pengaduan_id }}" tabindex="-1" aria-labelledby="detailModalLabel{{ $item->pengaduan_id }}" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content border-0 shadow">
-                            <div class="modal-header bg-success text-white">
-                                <h5 class="modal-title fs-6 fw-bold" id="detailModalLabel{{ $item->pengaduan_id }}">
-                                    <i class="fas fa-clipboard-check me-2"></i> Detail Tindakan
-                                </h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body p-4">
-                                <div class="mb-3">
-                                    <label class="text-muted small fw-bold mb-1">Status Pengerjaan</label>
-                                    <div><span class="badge bg-success">Selesai</span></div>
+    @if($rekap_ruangan->count() > 0)
+
+        <div class="mb-4">
+
+            <div class="section-title">
+                <i class="fas fa-building me-2 text-success"></i>
+                Rekap Pengaduan Berdasarkan Ruangan
+            </div>
+
+            <div class="row g-3">
+
+                @foreach($rekap_ruangan as $rekap)
+
+                    <div class="col-xl-3 col-lg-4 col-md-6">
+
+                        <div class="rekap-card">
+
+                            <div class="d-flex align-items-center gap-3">
+
+                                <div class="rekap-icon">
+                                    <i class="fas fa-door-open"></i>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="text-muted small fw-bold mb-1">Dikerjakan Oleh (Teknisi)</label>
-                                    <div class="fw-semibold text-dark"><i class="fas fa-user-cog text-muted me-2"></i>{{ $item->teknisi }}</div>
-                                </div>
-                                <div class="mb-0">
-                                    <label class="text-muted small fw-bold mb-1">Deskripsi Tindakan / Solusi</label>
-                                    <div class="p-3 bg-light rounded text-secondary" style="font-size: 0.9rem; white-space: pre-line;">
-                                        {{ $item->deskripsi_tindakan ?? 'Tidak ada deskripsi yang dilampirkan.' }}
+
+                                <div>
+
+                                    <div class="rekap-title">
+                                        {{ $rekap->nama_ruangan }}
+                                    </div>
+
+                                    <div class="rekap-total">
+
+                                        {{ $rekap->jumlah_pengaduan }}
+
+                                        <span style="font-size: .8rem; font-weight: 500;">
+                                            Pengaduan
+                                        </span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="modal-footer border-0 bg-light">
-                                <button type="button" class="btn btn-secondary shadow-sm" data-bs-dismiss="modal">Tutup</button>
-                            </div>
                         </div>
                     </div>
-                </div>
-                @empty
-                <tr>
-                    <td colspan="7" class="text-center py-5">
-                        <div class="py-4">
-                            <i class="fas fa-folder-open fa-3x text-light mb-3"></i>
-                            <h5 class="text-muted fw-normal">Data tidak ditemukan dalam database</h5>
-                        </div>
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-    @if ($pengaduan->lastPage() > 1)
-        <div class="custom-pagination d-flex justify-content-center gap-2 py-3 no-print">
-            @for ($i = 1; $i <= $pengaduan->lastPage(); $i++)
-                <a href="{{ $pengaduan->appends(request()->query())->url($i) }}"
-                class="page-btn {{ $pengaduan->currentPage() == $i ? 'active' : '' }}">
-                    {{ $i }}
-                </a>
-            @endfor
+                @endforeach
+            </div>
         </div>
     @endif
+
+
+    <div class="table-card">
+
+        <div class="table-responsive">
+
+            <table class="table modern-table">
+
+                <thead>
+
+                    <tr>
+                        <th class="text-center">No</th>
+                        <th>Tanggal</th>
+                        <th>Pengadu</th>
+                        <th>Ruangan & Perangkat</th>
+                        <th>Deskripsi Masalah</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @forelse($pengaduan as $index => $item)
+
+                        <tr>
+
+                            <td class="text-center text-muted fw-semibold">
+
+                                {{ $pengaduan->firstItem() + $index }}
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="fw-semibold">
+
+                                    {{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('d M Y') }}
+
+                                </div>
+
+                                <small class="text-muted">
+
+                                    <i class="far fa-clock me-1"></i>
+
+                                    {{ \Carbon\Carbon::parse($item->created_at)->format('H:i') }}
+                                    WIB
+
+                                </small>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="fw-semibold">
+
+                                    <i class="fas fa-user text-muted me-1"></i>
+
+                                    {{ $item->nama_pengadu }}
+
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="fw-bold">
+
+                                    {{ $item->nama_ruangan }}
+
+                                </div>
+
+                                <div class="badge-ruangan mt-1">
+
+                                    <i class="fas fa-location-dot"></i>
+
+                                    {{ $item->lokasi ?? '-' }}
+
+                                </div>
+
+
+                                <div class="badge-perangkat">
+
+                                    @if($item->kode_inventaris)
+
+                                        {{ $item->kode_inventaris }} -
+
+                                    @endif
+
+                                    {{ $item->kategori_perangkat ?? 'Fasilitas Umum' }}
+
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <div
+                                    class="text-secondary"
+                                    style="max-width: 260px;"
+                                >
+
+                                    {{ \Illuminate\Support\Str::limit($item->deskripsi_masalah, 100) }}
+
+                                </div>
+
+                            </td>
+
+
+                            <td class="text-center">
+
+                                <button
+                                    type="button"
+                                    class="btn-detail"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#detailModal{{ $item->pengaduan_id }}"
+                                >
+
+                                    <i class="fas fa-circle-info me-1"></i>
+
+                                    Detail
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+
+                        <div
+                            class="modal fade"
+                            id="detailModal{{ $item->pengaduan_id }}"
+                            tabindex="-1"
+                        >
+
+                            <div class="modal-dialog modal-dialog-centered">
+
+                                <div class="modal-content border-0 shadow">
+
+                                    <div class="modal-header bg-success text-white">
+
+                                        <h5 class="modal-title">
+
+                                            <i class="fas fa-clipboard-check me-2"></i>
+
+                                            Detail Penanganan Pengaduan
+
+                                        </h5>
+
+                                        <button
+                                            type="button"
+                                            class="btn-close btn-close-white"
+                                            data-bs-dismiss="modal"
+                                        ></button>
+
+                                    </div>
+
+
+                                    <div class="modal-body p-4">
+
+                                        <div class="mb-4">
+
+                                            <small class="text-muted fw-semibold">
+                                                DATA RUANGAN
+                                            </small>
+
+                                            <div class="mt-2 fw-semibold">
+
+                                                <i class="fas fa-building text-success me-2"></i>
+
+                                                {{ $item->nama_ruangan }}
+
+                                            </div>
+
+                                            <div class="text-muted small">
+
+                                                {{ $item->lokasi ?? '-' }}
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="mb-4">
+
+                                            <small class="text-muted fw-semibold">
+                                                TEKNISI
+                                            </small>
+
+                                            <div class="mt-2 fw-semibold">
+
+                                                <i class="fas fa-user-gear me-2 text-primary"></i>
+
+                                                {{ $item->teknisi ?? '-' }}
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <small class="text-muted fw-semibold">
+                                                TINDAKAN / SOLUSI
+                                            </small>
+
+                                            <div
+                                                class="bg-light rounded-3 p-3 mt-2 text-secondary"
+                                                style="white-space: pre-line;"
+                                            >
+
+                                                {{ $item->deskripsi_tindakan ?? 'Tidak ada deskripsi tindakan.' }}
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="modal-footer">
+
+                                        <button
+                                            type="button"
+                                            class="btn btn-secondary"
+                                            data-bs-dismiss="modal"
+                                        >
+                                            Tutup
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    @empty
+
+                        <tr>
+
+                            <td
+                                colspan="6"
+                                class="text-center py-5"
+                            >
+
+                                <i class="fas fa-folder-open fa-3x text-muted opacity-25 mb-3"></i>
+
+                                <div class="text-muted">
+                                    Data laporan belum ditemukan
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        @if($pengaduan->lastPage() > 1)
+
+            <div class="pagination-modern">
+
+                @for($i = 1; $i <= $pengaduan->lastPage(); $i++)
+
+                    <a
+                        href="{{ $pengaduan->appends(request()->query())->url($i) }}"
+                        class="{{ $pengaduan->currentPage() == $i ? 'active' : '' }}"
+                    >
+
+                        {{ $i }}
+                    </a>
+
+                @endfor
+
+            </div>
+
+        @endif
+
+    </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+
         const formSearch = document.getElementById('formSearch');
         const searchInput = document.getElementById('search');
         const monthInput = document.getElementById('created_at');
+        const ruanganInput = document.getElementById('id_ruangan');
+
         let timeout;
 
-        if (searchInput) {
-            searchInput.addEventListener('input', function () {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => {
-                    formSearch.submit();
-                }, 800); 
-            });
-        }
+        searchInput.addEventListener('input', function () {
 
-        if (monthInput) {
-            monthInput.addEventListener('change', function () {
+            clearTimeout(timeout);
+
+            timeout = setTimeout(function () {
+
                 formSearch.submit();
-            });
-        }
+
+            }, 700);
+
+        });
+
+
+        monthInput.addEventListener('change', function () {
+
+            formSearch.submit();
+
+        });
+
+
+        ruanganInput.addEventListener('change', function () {
+
+            formSearch.submit();
+
+        });
+
     });
 
     function eksporExcel() {
