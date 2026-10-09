@@ -17,17 +17,12 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
-/*
-|--------------------------------------------------------------------------
-| AUTH
-|--------------------------------------------------------------------------
-*/
-
 Route::get('/', [AuthController::class, 'form_login'])->name('login');
 Route::post('/login/proses', [AuthController::class, 'login'])->name('login.proses');
 Route::get('/register', [AuthController::class, 'form_register'])->name('register');
 Route::post('/register/save', [AuthController::class, 'register'])->name('register.save');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+ Route::get('/pengaduan/verifikasi_ttd', [PengaduanCtrl::class, 'verifikasiTtd'])->middleware('signed')->name('verifikasi.ttd');
 
 Route::middleware(['auth'])->group(function () {
 
@@ -56,7 +51,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/pengaduan/export_excel', [PengaduanCtrl::class, 'export_excel']);
         Route::post( '/pengaduan/data_pengaduan/{id}/update', [PengaduanCtrl::class, 'update'] )->name('pengaduan.update'); 
         Route::post( '/pengaduan/data_pengaduan/{id}/delete', [PengaduanCtrl::class, 'destroy'] )->name('pengaduan.destroy');
-
         
         Route::get('/perangkat/data_perangkat', [PerangkatCtrl::class, 'data_perangkat']);
         Route::post('/perangkat/data_perangkat', [PerangkatCtrl::class, 'store']);
@@ -68,38 +62,132 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:pengadu'])->group(function () {
 
         Route::get('/pengaduan/form_pengaduan/{id}', [PengaduanCtrl::class, 'form_pengaduan']);
+
         Route::post('/pengaduan/simpan', [PengaduanCtrl::class, 'simpan_pengaduan']);
+
         Route::get('/api/perangkat/kode/{kode}', function (Request $request, $kode) {
 
-        $perangkat = DB::table('perangkat')
-            ->join('ruangan', 'perangkat.id_ruangan', '=', 'ruangan.id_ruangan')
-            ->join('kategori_perangkat', 'kategori_perangkat.id_kategori', '=', 'perangkat.id_kategori')
-            ->where('perangkat.kode_inventaris', $kode)
-            ->select(
-                'perangkat.id_perangkat as id',
-                'perangkat.kode_inventaris',
-                'perangkat.merek',
-                'perangkat.alamat_ip',
-                'perangkat.id_ruangan',
-                'kategori_perangkat.nama_kategori as kategori_perangkat',
-                'ruangan.nama_ruangan',
-                'ruangan.lokasi'
-            )
-            ->first();
+            $perangkat = DB::table('perangkat')
+                ->join('ruangan', 'perangkat.id_ruangan', '=', 'ruangan.id_ruangan')
+                ->join(
+                    'kategori_perangkat',
+                    'kategori_perangkat.id_kategori',
+                    '=',
+                    'perangkat.id_kategori'
+                )
+                ->where('perangkat.kode_inventaris', $kode)
+                ->select(
+                    'perangkat.id_perangkat as id',
+                    'perangkat.kode_inventaris',
+                    'perangkat.merek',
+                    'perangkat.alamat_ip',
+                    'perangkat.id_ruangan',
+                    'kategori_perangkat.nama_kategori as kategori_perangkat',
+                    'ruangan.nama_ruangan',
+                    'ruangan.lokasi'
+                )
+                ->first();
 
-        if (!$perangkat) {
-            return response()->json(['error' => 'not_found'], 404);
-        }
-
-        if ($request->filled('id_ruangan')) {
-            if ((int) $request->id_ruangan !== (int) $perangkat->id_ruangan) {
-                return response()->json(['error' => 'wrong_room'], 403);
+            if (!$perangkat) {
+                return response()->json([
+                    'error' => 'not_found'
+                ], 404);
             }
-        }
 
-        return response()->json($perangkat);
+            if ($request->filled('id_ruangan')) {
+
+                if ((int) $request->id_ruangan !== (int) $perangkat->id_ruangan) {
+
+                    return response()->json([
+                        'error' => 'wrong_room'
+                    ], 403);
+
+                }
+            }
+
+            return response()->json($perangkat);
 
         })->where('kode', '.*');
+
+
+        Route::get('/api/perangkat/cari', function (Request $request) {
+
+            $keyword = $request->get('keyword');
+            $idRuangan = $request->get('id_ruangan');
+
+            $query = DB::table('perangkat')
+                ->join(
+                    'ruangan',
+                    'perangkat.id_ruangan',
+                    '=',
+                    'ruangan.id_ruangan'
+                )
+                ->join(
+                    'kategori_perangkat',
+                    'kategori_perangkat.id_kategori',
+                    '=',
+                    'perangkat.id_kategori'
+                )
+                ->select(
+                    'perangkat.id_perangkat as id',
+                    'perangkat.kode_inventaris',
+                    'perangkat.merek',
+                    'perangkat.alamat_ip',
+                    'perangkat.id_ruangan',
+                    'kategori_perangkat.nama_kategori as kategori_perangkat',
+                    'ruangan.nama_ruangan',
+                    'ruangan.lokasi'
+                );
+
+            // Filter perangkat berdasarkan ruangan pengadu
+            if ($idRuangan) {
+
+                $query->where(
+                    'perangkat.id_ruangan',
+                    $idRuangan
+                );
+
+            }
+
+            // Filter berdasarkan kata kunci
+            if ($keyword) {
+
+                $query->where(function ($q) use ($keyword) {
+
+                    $q->where(
+                        'perangkat.kode_inventaris',
+                        'like',
+                        '%' . $keyword . '%'
+                    )
+                    ->orWhere(
+                        'perangkat.merek',
+                        'like',
+                        '%' . $keyword . '%'
+                    )
+                    ->orWhere(
+                        'perangkat.alamat_ip',
+                        'like',
+                        '%' . $keyword . '%'
+                    )
+                    ->orWhere(
+                        'kategori_perangkat.nama_kategori',
+                        'like',
+                        '%' . $keyword . '%'
+                    );
+
+                });
+
+            }
+
+            $perangkat = $query
+                ->orderBy('perangkat.kode_inventaris', 'asc')
+                ->limit(20)
+                ->get();
+
+            return response()->json($perangkat);
+
+        });
+
 
         Route::get('/test-wa', function () {
 
@@ -115,7 +203,9 @@ Route::middleware(['auth'])->group(function () {
                 'token' => env('FONNTE_TOKEN'),
                 'response' => $response->json()
             ]);
+
         });
+
 
         Route::get('/group-list', function () {
 
@@ -124,15 +214,28 @@ Route::middleware(['auth'])->group(function () {
             ])->get('https://api.fonnte.com/fetch-group');
 
             dd($response->json());
+
         });
 
-        Route::get('/tindakan/tindakan_pengaduan', [TindakanCtrl::class, 'tindakan_pengaduan'])->name('tindakan.tindakan_pengaduan');
+
+        Route::get(
+            '/tindakan/tindakan_pengaduan',
+            [TindakanCtrl::class, 'tindakan_pengaduan']
+        )->name('tindakan.tindakan_pengaduan');
+
 
         Route::get('/api/perangkat/ruangan/{id}', function ($id) {
+
             return DB::table('perangkat')
                 ->where('id_ruangan', $id)
-                ->select('id', 'kode_perangkat', 'kategori_perangkat', 'merek')
+                ->select(
+                    'id',
+                    'kode_perangkat',
+                    'kategori_perangkat',
+                    'merek'
+                )
                 ->get();
+
         });
 
     });

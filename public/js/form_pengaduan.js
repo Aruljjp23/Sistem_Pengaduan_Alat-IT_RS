@@ -72,19 +72,45 @@ async function doManualSearch() {
 
     try {
         const params = new URLSearchParams({ keyword });
-        if (ID_RUANGAN_AKTIF) params.append("id_ruangan", ID_RUANGAN_AKTIF);
 
-        const res = await fetch(`/api/perangkat/cari?${params.toString()}`);
+        if (ID_RUANGAN_AKTIF) {
+            params.append("id_ruangan", ID_RUANGAN_AKTIF);
+        }
 
-        if (!res.ok) throw new Error("HTTP " + res.status);
+        const url = `/api/perangkat/cari?${params.toString()}`;
+
+        console.log("URL Request:", url);
+
+        const res = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+
+        console.log("Status Response:", res.status);
+
+        if (!res.ok) {
+            const text = await res.text();
+            console.error("Response Server:", text);
+
+            throw new Error(`HTTP ${res.status}`);
+        }
 
         const data = await res.json();
-        const list = Array.isArray(data) ? data : (data.data ?? []);
+
+        console.log("Data Perangkat:", data);
+
+        const list = Array.isArray(data)
+            ? data
+            : (data.data ?? []);
 
         setManualLoading(false);
 
         if (list.length === 0) {
-            showManualEmpty(`Tidak ada perangkat yang cocok dengan "<strong>${esc(keyword)}</strong>".`);
+            showManualEmpty(
+                `Tidak ada perangkat yang cocok dengan "<strong>${esc(keyword)}</strong>".`
+            );
             return;
         }
 
@@ -92,8 +118,12 @@ async function doManualSearch() {
 
     } catch (err) {
         setManualLoading(false);
-        console.error("[doManualSearch]", err);
-        showManualEmpty("Gagal menghubungi server. Coba lagi.");
+
+        console.error("[doManualSearch ERROR]", err);
+
+        showManualEmpty(
+            `Gagal mengambil data perangkat. Error: ${esc(err.message)}`
+        );
     }
 }
 

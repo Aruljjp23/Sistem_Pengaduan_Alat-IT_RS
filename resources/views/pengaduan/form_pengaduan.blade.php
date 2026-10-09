@@ -236,10 +236,182 @@
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label-custom">DESKRIPSI KERUSAKAN</label>
-                        <textarea name="deskripsi_masalah" class="form-control-modern" rows="5"
-                                  placeholder="Jelaskan detail masalah"
-                                  required></textarea>
+                        <label class="form-label-custom d-block mb-3">
+                            DESKRIPSI KERUSAKAN
+                        </label>
+
+                        <div class="row g-3">
+
+                            <div class="col-12 col-md-6">
+                                <label class="kerusakan-option">
+                                    <input type="radio"
+                                        name="deskripsi_masalah"
+                                        value="Perangkat tidak menyala"
+                                        required>
+
+                                    <span>
+                                        Perangkat tidak menyala
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="kerusakan-option">
+                                    <input type="radio"
+                                        name="deskripsi_masalah"
+                                        value="Perangkat mati tiba-tiba">
+
+                                    <span>
+                                        Perangkat mati tiba-tiba
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="kerusakan-option">
+                                    <input type="radio"
+                                        name="deskripsi_masalah"
+                                        value="Perangkat berjalan lambat / Lemot">
+
+                                    <span>
+                                        Perangkat berjalan lambat / Lemot
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="kerusakan-option">
+                                    <input type="radio"
+                                        name="deskripsi_masalah"
+                                        value="Tidak dapat terhubung ke jaringan">
+
+                                    <span>
+                                        Tidak dapat terhubung ke jaringan
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="kerusakan-option">
+                                    <input type="radio"
+                                        name="deskripsi_masalah"
+                                        value="Tidak dapat terhubung ke internet">
+
+                                    <span>
+                                        Tidak dapat terhubung ke internet
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="kerusakan-option">
+                                    <input type="radio"
+                                        name="deskripsi_masalah"
+                                        value="Monitor tidak menampilkan gambar">
+
+                                    <span>
+                                        Monitor tidak menampilkan gambar
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="kerusakan-option">
+                                    <input type="radio"
+                                        name="deskripsi_masalah"
+                                        value="Keyboard tidak berfungsi">
+
+                                    <span>
+                                        Keyboard tidak berfungsi
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="kerusakan-option">
+                                    <input type="radio"
+                                        name="deskripsi_masalah"
+                                        value="Mouse tidak berfungsi">
+
+                                    <span>
+                                        Mouse tidak berfungsi
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="kerusakan-option">
+                                    <input type="radio"
+                                        name="deskripsi_masalah"
+                                        value="Printer tidak dapat mencetak">
+
+                                    <span>
+                                        Printer tidak dapat mencetak
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="kerusakan-option">
+                                    <input type="radio"
+                                        name="deskripsi_masalah"
+                                        value="Printer mengalami paper jam">
+
+                                    <span>
+                                        Printer mengalami paper jam
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="kerusakan-option">
+                                    <input type="radio"
+                                        name="deskripsi_masalah"
+                                        value="Scanner tidak berfungsi">
+
+                                    <span>
+                                        Scanner tidak berfungsi
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="kerusakan-option">
+                                    <input type="radio"
+                                        name="deskripsi_masalah"
+                                        value="Aplikasi mengalami error">
+
+                                    <span>
+                                        Aplikasi mengalami error
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="kerusakan-option">
+                                    <input type="radio"
+                                        name="deskripsi_masalah"
+                                        value="Sistem tidak dapat digunakan">
+
+                                    <span>
+                                        Sistem tidak dapat digunakan
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="kerusakan-option">
+                                    <input type="radio"
+                                        name="deskripsi_masalah"
+                                        value="IP Address mengalami masalah">
+
+                                    <span>
+                                        IP Address mengalami masalah
+                                    </span>
+                                </label>
+                            </div>
+
+                        </div>
                     </div>
 
                     <div class="col-12 mt-2">

@@ -315,7 +315,52 @@ body { background-color: var(--bg-main); }
     font-size: 0.85rem;
 }
 
+.kerusakan-option {
+    width: 100%;
+    min-height: 58px;
+    display: flex;
+    align-items: center;
+    padding: 15px 18px;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
 
+.kerusakan-option:hover {
+    border-color: #4f46e5;
+    background: #f8f7ff;
+}
+
+.kerusakan-option input[type="radio"] {
+    width: 19px;
+    height: 19px;
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.kerusakan-option span {
+    font-size: 15px;
+    color: #374151;
+    font-weight: 500;
+}
+
+.kerusakan-option span i {
+    margin-right: 8px;
+    color: #4f46e5;
+}
+
+.kerusakan-option:has(input[type="radio"]:checked) {
+    border-color: #4f46e5;
+    background: #eef2ff;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.kerusakan-option:has(input[type="radio"]:checked) span {
+    color: #3730a3;
+    font-weight: 600;
+}
 
 @media (max-width: 768px) {
     .card-header-modern { padding: 1rem; }

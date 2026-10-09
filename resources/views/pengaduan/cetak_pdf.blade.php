@@ -104,12 +104,15 @@
             font-size: 11px;
         }
 
+        /* HEADER TABEL DIRAPIKAN DAN DITENGAHKAN */
         th {
             background: #2563eb;
             color: white;
-            padding: 10px;
-            text-align: left;
+            padding: 12px 10px;
+            text-align: center;
+            vertical-align: middle;
             font-weight: 600;
+            line-height: 1.3;
         }
 
         td {
@@ -133,12 +136,11 @@
 
         .ttd-wrapper {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: flex-start;
             width: 100%;
             margin-top: 45px;
             padding-top: 20px;
-
             page-break-inside: avoid;
             break-inside: avoid;
         }
@@ -147,7 +149,6 @@
             width: 32%;
             flex: 0 0 32%;
             text-align: center;
-
             page-break-inside: avoid;
             break-inside: avoid;
         }
@@ -165,15 +166,23 @@
         }
 
         .spasi-ttd {
-            height: 80px;
+            height: 130px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        .ttd-digital {
-            max-width: 130px;
-            max-height: 75px;
+        .qr-ttd {
+            width: 115px;
+            height: 115px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .qr-ttd img {
+            width: 110px;
+            height: 110px;
             object-fit: contain;
         }
 
@@ -281,8 +290,7 @@
 
             .ttd-wrapper {
                 display: flex !important;
-                flex-direction: row !important;
-                justify-content: space-between !important;
+                justify-content: flex-end !important;
                 align-items: flex-start !important;
             }
 
@@ -292,7 +300,7 @@
             }
 
             .spasi-ttd {
-                height: 60px;
+                height: 120px;
             }
         }
 
@@ -333,13 +341,11 @@
             .ttd-wrapper {
                 display: flex !important;
                 flex-direction: row !important;
-                justify-content: space-between !important;
+                justify-content: flex-end !important;
                 align-items: flex-start !important;
-
                 width: 100%;
                 margin-top: 35px;
                 padding-top: 10px;
-
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
             }
@@ -347,13 +353,12 @@
             .ttd-item {
                 width: 32% !important;
                 flex: 0 0 32% !important;
-
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
             }
 
             .spasi-ttd {
-                height: 70px;
+                height: 125px;
             }
 
             table {
@@ -368,7 +373,6 @@
         }
     </style>
 </head>
-
 
 <body onload="window.print()">
 
@@ -388,7 +392,6 @@
 
     </div>
 
-
     <div class="paper">
 
         <div class="header">
@@ -403,7 +406,6 @@
 
             </div>
 
-
             <div class="title">
 
                 Laporan Pengaduan
@@ -411,7 +413,6 @@
             </div>
 
         </div>
-
 
         <div class="info">
 
@@ -434,7 +435,6 @@
             <b>{{ count($pengaduan) }}</b>
 
         </div>
-
 
         <div class="table-wrapper">
 
@@ -480,7 +480,6 @@
 
                 </thead>
 
-
                 <tbody>
 
                     @forelse($pengaduan as $i => $item)
@@ -503,27 +502,21 @@
                                 {{ $item->nama_ruangan }}
                             </td>
 
-
                             <td>
 
                                 <span class="badge">
-
                                     {{ $item->kategori_perangkat }}
-
                                 </span>
 
                             </td>
-
 
                             <td>
                                 {{ $item->deskripsi_masalah }}
                             </td>
 
-
                             <td>
                                 {{ $item->teknisi }}
                             </td>
-
 
                             <td style="white-space: pre-wrap;">
                                 {{ $item->deskripsi_tindakan }}
@@ -551,45 +544,7 @@
 
         </div>
 
-
         <div class="ttd-wrapper">
-
-            <div class="ttd-item">
-
-                <p class="jabatan">
-
-                    {{ $penandatangan['direktur']['jabatan'] }}
-
-                    <br>
-
-                    {{ $penandatangan['direktur']['instansi'] }}
-
-                </p>
-
-
-                <div class="spasi-ttd">
-
-                    @if($penandatangan['direktur']['ttd'])
-
-                        <img
-                            src="{{ asset($penandatangan['direktur']['ttd']) }}"
-                            class="ttd-digital"
-                            alt="Tanda Tangan Direktur">
-
-                    @endif
-
-                </div>
-
-
-                <p class="nama-ttd">
-
-                    <u>
-                        {{ $penandatangan['direktur']['nama'] }}
-                    </u>
-
-                </p>
-
-            </div>
 
             <div class="ttd-item">
 
@@ -605,17 +560,15 @@
 
                 <div class="spasi-ttd">
 
-                    @if($penandatangan['it']['ttd'])
+                    <div class="qr-ttd">
 
                         <img
-                            src="{{ asset($penandatangan['it']['ttd']) }}"
-                            class="ttd-digital"
-                            alt="Tanda Tangan Kepala Unit IT">
+                            src="{{ $qrCode }}"
+                            alt="QR Code Verifikasi Tanda Tangan">
 
-                    @endif
+                    </div>
 
                 </div>
-
 
                 <p class="nama-ttd">
 

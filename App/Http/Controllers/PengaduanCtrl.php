@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\URL;
+use Carbon\Carbon;
 
 class PengaduanCtrl extends Controller
 {
@@ -427,14 +429,24 @@ class PengaduanCtrl extends Controller
     {
         $data_pengaduan = DB::table('pengaduan')
             ->join('ruangan', 'pengaduan.id_ruangan', '=', 'ruangan.id_ruangan')
-            ->leftJoin('perangkat', 'pengaduan.id_perangkat', '=', 'perangkat.id_perangkat')
+            ->leftJoin(
+                'perangkat',
+                'pengaduan.id_perangkat',
+                '=',
+                'perangkat.id_perangkat'
+            )
             ->leftJoin(
                 'kategori_perangkat',
                 'perangkat.id_kategori',
                 '=',
                 'kategori_perangkat.id_kategori'
             )
-            ->join('tindakan', 'pengaduan.id', '=', 'tindakan.id_pengaduan')
+            ->join(
+                'tindakan',
+                'pengaduan.id',
+                '=',
+                'tindakan.id_pengaduan'
+            )
             ->where('tindakan.status', 'Selesai')
             ->select(
                 'pengaduan.id as pengaduan_id',
@@ -451,9 +463,11 @@ class PengaduanCtrl extends Controller
             );
 
         if ($request->filled('search')) {
+
             $search = strtolower($request->search);
 
             $data_pengaduan->where(function ($q) use ($search) {
+
                 $q->whereRaw(
                     'LOWER(pengaduan.nama_pengadu) LIKE ?',
                     ["%{$search}%"]
@@ -494,16 +508,25 @@ class PengaduanCtrl extends Controller
         }
 
         if ($request->filled('created_at')) {
+
             $tanggal = explode('-', $request->created_at);
 
             if (count($tanggal) == 2) {
+
                 $data_pengaduan
-                    ->whereYear('pengaduan.created_at', $tanggal[0])
-                    ->whereMonth('pengaduan.created_at', $tanggal[1]);
+                    ->whereYear(
+                        'pengaduan.created_at',
+                        $tanggal[0]
+                    )
+                    ->whereMonth(
+                        'pengaduan.created_at',
+                        $tanggal[1]
+                    );
             }
         }
 
         if ($request->filled('id_ruangan')) {
+
             $data_pengaduan->where(
                 'pengaduan.id_ruangan',
                 $request->id_ruangan
@@ -516,162 +539,82 @@ class PengaduanCtrl extends Controller
             ->get();
 
         foreach ($pengaduan as $item) {
+
             if (empty($item->kategori_perangkat)) {
                 $item->kategori_perangkat = 'Fasilitas Umum';
             }
         }
 
         $penandatangan = [
-            'direktur' => [
-                'jabatan' => 'DIREKTUR',
-                'instansi' => 'RSU DARMAYU MADIUN',
-                'nama' => 'dr. Djemiran, M.Kes',
-                'ttd' => null,
-            ],
 
             'it' => [
                 'jabatan' => 'KEPALA UNIT IT',
                 'instansi' => 'RSU DARMAYU MADIUN',
                 'nama' => 'Indra Laksana Putra, S.Kom',
-                'ttd' => null,
             ],
+
         ];
+
+        $tanggalTtd = now('Asia/Jakarta');
+
+        $urlVerifikasi = URL::signedRoute(
+            'verifikasi.ttd',
+            [
+                'dokumen' => 'LAPORAN PENGADUAN',
+                'instansi' => 'RSU DARMAYU MADIUN',
+                'jabatan' => 'KEPALA UNIT IT / PROGRAMER',
+                'nama' => 'Indra Laksana Putra, S.Kom',
+                'tanggal_ttd' => $tanggalTtd->format('Y-m-d H:i:s'),
+            ]
+        );
+
+        $qrCode = 'https://api.qrserver.com/v1/create-qr-code/'
+            . '?size=180x180'
+            . '&format=png'
+            . '&data='
+            . urlencode($urlVerifikasi);
 
         return view(
             'pengaduan.cetak_pdf',
-            compact('pengaduan', 'penandatangan')
+            compact(
+                'pengaduan',
+                'penandatangan',
+                'qrCode'
+            )
         );
     }
 
-    public function export_excel(Request $request)
+    public function verifikasiTtd(Request $request)
     {
-        $data = DB::table('pengaduan')
-            ->join('ruangan', 'pengaduan.id_ruangan', '=', 'ruangan.id_ruangan')
-            ->join('tindakan', 'pengaduan.id', '=', 'tindakan.id_pengaduan') 
-            ->leftJoin('perangkat', 'pengaduan.id_perangkat', '=', 'perangkat.id_perangkat')
-            ->leftJoin('kategori_perangkat', 'perangkat.id_kategori', '=', 'kategori_perangkat.id_kategori')
-            ->where('tindakan.status', 'Selesai')
-            ->select(
-                'pengaduan.created_at',
-                'pengaduan.nama_pengadu',
-                'pengaduan.deskripsi_masalah',
-                'ruangan.nama_ruangan',
-                'perangkat.kode_inventaris',
-                'kategori_perangkat.nama_kategori',
-                'tindakan.teknisi', 
-                'tindakan.deskripsi_tindakan' 
-            );
-
-        if ($request->filled('search')) {
-            $search = strtolower($request->search);
-
-            $data->where(function ($q) use ($search) {
-                $q->whereRaw('LOWER(pengaduan.nama_pengadu) LIKE ?', ["%{$search}%"])
-                ->orWhereRaw('LOWER(pengaduan.deskripsi_masalah) LIKE ?', ["%{$search}%"])
-                ->orWhereRaw('LOWER(ruangan.nama_ruangan) LIKE ?', ["%{$search}%"])
-                ->orWhereRaw('LOWER(kategori_perangkat.nama_kategori) LIKE ?', ["%{$search}%"])
-                ->orWhereRaw('LOWER(perangkat.kode_inventaris) LIKE ?', ["%{$search}%"])
-                ->orWhereRaw('LOWER(tindakan.teknisi) LIKE ?', ["%{$search}%"])
-                ->orWhereRaw('LOWER(tindakan.deskripsi_tindakan) LIKE ?', ["%{$search}%"]);
-            });
+        if (!$request->hasValidSignature()) {
+            abort(403, 'QR Code tidak valid atau telah dimodifikasi.');
         }
 
-        if ($request->filled('created_at')) {
-            $parts = explode('-', $request->created_at);
+        $dokumen = $request->get('dokumen');
 
-            if (count($parts) == 2) {
-                $data->whereYear('pengaduan.created_at', $parts[0])
-                    ->whereMonth('pengaduan.created_at', $parts[1]);
-            }
-        }
+        $instansi = $request->get('instansi');
 
-        $data = $data->get();
+        $jabatan = $request->get('jabatan');
 
-        $fileName = "laporan_pengaduan_selesai_" . date('Y-m-d_H-i-s') . ".csv";
+        $nama = $request->get('nama');
 
-        $headers = [
-            "Content-Type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$fileName",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
-        ];
+        $tanggalTtd = \Carbon\Carbon::parse(
+            $request->get('tanggal_ttd')
+        )->setTimezone('Asia/Jakarta');
 
-        $columns = [
-            'Tanggal',
-            'Nama Pengadu',
-            'Ruangan',
-            'Kode Inventaris',
-            'Kategori',
-            'Deskripsi Masalah',
-            'Teknisi',
-            'Tindakan / Solusi'
-        ];
+        $tanggalPindai = now('Asia/Jakarta');
 
-        $callback = function () use ($data, $columns) {
-            $file = fopen('php://output', 'w');
-
-            fputcsv($file, $columns);
-
-            foreach ($data as $row) {
-                fputcsv($file, [
-                    date('d-m-Y H:i', strtotime($row->created_at)),
-                    $row->nama_pengadu,
-                    $row->nama_ruangan,
-                    $row->kode_inventaris ?? '-',
-                    $row->nama_kategori ?? 'Fasilitas Umum',
-                    $row->deskripsi_masalah,
-                    $row->teknisi, 
-                    $row->deskripsi_tindakan 
-                ]);
-            }
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
-    }
-
-    public function apiCariManual(Request $request)
-    {
-        $keyword    = trim($request->input('keyword', ''));
-        $id_ruangan = $request->filled('id_ruangan')
-            ? (int) $request->id_ruangan
-            : null;
-
-        if (strlen($keyword) < 2) {
-            return response()->json([], 200);
-        }
- 
-        $query = DB::table('perangkat')
-            ->join('kategori_perangkat', 'kategori_perangkat.id_kategori', '=', 'perangkat.id_kategori')
-            ->select(
-                'perangkat.id_perangkat as id',
-                'perangkat.kode_inventaris',
-                'perangkat.merek',
-                'perangkat.alamat_ip',
-                'perangkat.id_ruangan',
-                'kategori_perangkat.id_kategori',
-                'kategori_perangkat.nama_kategori as kategori_perangkat'
-            );
- 
-        $query->where(function ($q) use ($keyword) {
-            $q->where('perangkat.kode_inventaris', 'LIKE', "%{$keyword}%")
-              ->orWhere('perangkat.merek',          'LIKE', "%{$keyword}%")
-              ->orWhere('perangkat.alamat_ip',       'LIKE', "%{$keyword}%")
-              ->orWhere('kategori_perangkat.nama_kategori', 'LIKE', "%{$keyword}%");
-        });
- 
-        if ($id_ruangan) {
-            $query->where('perangkat.id_ruangan', $id_ruangan);
-        }
- 
-        $results = $query
-            ->orderBy('perangkat.kode_inventaris', 'asc')
-            ->limit(20)           
-            ->get();
- 
-        return response()->json($results);
+        return view(
+            'pengaduan.verifikasi_ttd',
+            compact(
+                'dokumen',
+                'instansi',
+                'jabatan',
+                'nama',
+                'tanggalTtd',
+                'tanggalPindai'
+            )
+        );
     }
 
     public function riwayat_pengaduan(Request $request)
